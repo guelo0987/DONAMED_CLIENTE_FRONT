@@ -90,7 +90,7 @@ export const NavigationHeaderSection = () => {
         <header className="relative w-full bg-transparent py-4 lg:py-8 z-50">
             <div className="flex items-center justify-between max-w-[1299px] mx-auto px-4">
                 {/* Logo - Clickable to go home */}
-                <Link to="/solicitudes">
+                <Link to="/">
                     <img
                         className="h-auto w-[150px] lg:w-[200px] object-contain cursor-pointer"
                         alt="Donamed Logo"

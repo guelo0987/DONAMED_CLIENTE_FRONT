@@ -5,6 +5,7 @@ import { ResetPass } from "./Pages/Auth/ResetPass";
 import { HistorialSolicitudes } from "./Pages/Solicitudes/Historial_Solicitudes";
 import Dashboard from "./Pages/MiPerfil/Dashboard";
 import LandingPage from "./Pages/Landing/LandingPage";
+import { DetalleSolicitud } from "./Pages/Solicitudes/DetalleSolicitud";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
     {
         path: "/dashboard",
         element: <Dashboard />,
+    },
+    {
+        path: "/detalle-solicitud",
+        element: <DetalleSolicitud />,
     },
 ]);
 
