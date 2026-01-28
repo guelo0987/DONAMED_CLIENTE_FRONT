@@ -1,6 +1,6 @@
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface DropdownItem {
     label: string;
@@ -43,9 +43,17 @@ const navigationItems: NavigationItem[] = [
 export const NavigationHeaderSection = () => {
     const navigate = useNavigate();
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+    // Close mobile menu when route changes
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+        setOpenDropdown(null);
+    }, [navigate]);
+
     const handleDropdownOpen = (label: string) => {
+        if (window.innerWidth < 1024) return; // Disable hover on mobile
         // Clear any pending close timeout
         if (closeTimeoutRef.current) {
             clearTimeout(closeTimeoutRef.current);
@@ -55,6 +63,7 @@ export const NavigationHeaderSection = () => {
     };
 
     const handleDropdownClose = () => {
+        if (window.innerWidth < 1024) return; // Disable hover on mobile
         // Add delay before closing to allow user to move mouse to dropdown
         closeTimeoutRef.current = setTimeout(() => {
             setOpenDropdown(null);
@@ -65,31 +74,45 @@ export const NavigationHeaderSection = () => {
         if (openDropdown === label) {
             setOpenDropdown(null);
         } else {
-            handleDropdownOpen(label);
+            setOpenDropdown(label); // Open immediately on click/tap
         }
     };
 
     const handleItemClick = (to: string | null) => {
         setOpenDropdown(null);
+        setIsMobileMenuOpen(false);
         if (to) {
             navigate(to);
         }
     };
 
     return (
-        <header className="relative w-full bg-transparent py-8 z-50">
+        <header className="relative w-full bg-transparent py-4 lg:py-8 z-50">
             <div className="flex items-center justify-between max-w-[1299px] mx-auto px-4">
                 {/* Logo - Clickable to go home */}
                 <Link to="/solicitudes">
                     <img
-                        className="h-auto w-[200px] object-contain cursor-pointer"
+                        className="h-auto w-[150px] lg:w-[200px] object-contain cursor-pointer"
                         alt="Donamed Logo"
                         src="/logos/donamed_logo_header.png"
                     />
                 </Link>
 
-                {/* Navigation & User Profile */}
-                <nav className="flex items-center gap-[60px]">
+                {/* Mobile Menu Button */}
+                <button
+                    className="lg:hidden p-2 text-[#404040] hover:bg-gray-100 rounded-md transition-colors"
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    aria-label="Toggle menu"
+                >
+                    {isMobileMenuOpen ? (
+                        <X className="w-6 h-6" />
+                    ) : (
+                        <Menu className="w-6 h-6" />
+                    )}
+                </button>
+
+                {/* Navigation & User Profile (Desktop) */}
+                <nav className="hidden lg:flex items-center gap-[60px]">
                     {navigationItems.map((item, index) => (
                         <div
                             key={index}
@@ -123,8 +146,8 @@ export const NavigationHeaderSection = () => {
                                                     onClick={() => handleItemClick(dropdownItem.to)}
                                                     disabled={!dropdownItem.to}
                                                     className={`block w-full text-left px-4 py-3 transition-colors [font-family:'Poppins',sans-serif] text-base ${dropdownItem.to
-                                                            ? "text-[#404040] hover:bg-[#40C9DB]/10 hover:text-[#34A4B3] cursor-pointer"
-                                                            : "text-gray-400 cursor-not-allowed"
+                                                        ? "text-[#404040] hover:bg-[#40C9DB]/10 hover:text-[#34A4B3] cursor-pointer"
+                                                        : "text-gray-400 cursor-not-allowed"
                                                         }`}
                                                 >
                                                     {dropdownItem.label}
@@ -140,8 +163,8 @@ export const NavigationHeaderSection = () => {
                                 <span
                                     onClick={() => item.to && navigate(item.to)}
                                     className={`[font-family:'Poppins',sans-serif] font-medium text-[20px] leading-[30px] transition-colors ${item.to
-                                            ? "text-[#404040] hover:text-black cursor-pointer"
-                                            : "text-gray-400 cursor-not-allowed"
+                                        ? "text-[#404040] hover:text-black cursor-pointer"
+                                        : "text-gray-400 cursor-not-allowed"
                                         }`}
                                     title={!item.to ? "Próximamente" : undefined}
                                 >
@@ -164,6 +187,78 @@ export const NavigationHeaderSection = () => {
                         />
                     </div>
                 </nav>
+
+                {/* Mobile Navigation Menu */}
+                {isMobileMenuOpen && (
+                    <div className="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 lg:hidden flex flex-col p-4 z-40 animate-in slide-in-from-top-2 duration-200">
+                        {navigationItems.map((item, index) => (
+                            <div key={index} className="flex flex-col border-b border-gray-50 last:border-0">
+                                {item.hasDropdown ? (
+                                    <>
+                                        <button
+                                            onClick={() => handleDropdownToggle(item.label)}
+                                            className="flex items-center justify-between w-full py-4 [font-family:'Poppins',sans-serif] font-medium text-[#404040] text-[16px]"
+                                        >
+                                            {item.label}
+                                            <ChevronDownIcon
+                                                className={`w-5 h-5 text-[#404040] transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""
+                                                    }`}
+                                            />
+                                        </button>
+
+                                        {/* Mobile Dropdown Options */}
+                                        {openDropdown === item.label && item.dropdownItems && (
+                                            <div className="flex flex-col bg-gray-50 rounded-lg mb-2">
+                                                {item.dropdownItems.map((dropdownItem, dIndex) => (
+                                                    <button
+                                                        key={dIndex}
+                                                        onClick={() => handleItemClick(dropdownItem.to)}
+                                                        disabled={!dropdownItem.to}
+                                                        className={`text-left px-5 py-3 text-[14px] [font-family:'Poppins',sans-serif] ${dropdownItem.to
+                                                            ? "text-[#666] hover:text-[#34A4B3]"
+                                                            : "text-gray-400"
+                                                            }`}
+                                                    >
+                                                        {dropdownItem.label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <button
+                                        onClick={() => handleItemClick(item.to)}
+                                        className={`text-left py-4 [font-family:'Poppins',sans-serif] font-medium text-[16px] ${item.to
+                                            ? "text-[#404040]"
+                                            : "text-gray-400"
+                                            }`}
+                                    >
+                                        {item.label}
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+
+                        {/* Mobile User Profile Button */}
+                        <div className="mt-4 pt-4 border-t border-gray-100">
+                            <button
+                                onClick={() => handleItemClick("/dashboard")}
+                                className="flex items-center gap-3 w-full py-2"
+                            >
+                                <div className="w-[30px] h-[30px]">
+                                    <img
+                                        className="w-full h-full object-contain"
+                                        alt="User profile"
+                                        src="/assets/user_header.png"
+                                    />
+                                </div>
+                                <span className="[font-family:'Poppins',sans-serif] font-medium text-[#404040] text-[16px]">
+                                    Mi Perfil
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </header>
     );
