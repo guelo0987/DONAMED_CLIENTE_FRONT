@@ -3,8 +3,14 @@ import { Solicitudes } from "./Pages/Solicitudes/Solicitudes";
 import { ForgotPass } from "./Pages/Auth/ForgotPass";
 import { ResetPass } from "./Pages/Auth/ResetPass";
 import { HistorialSolicitudes } from "./Pages/Solicitudes/Historial_Solicitudes";
+import Dashboard from "./Pages/MiPerfil/Dashboard";
+import LandingPage from "./Pages/Landing/LandingPage";
 
 const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <LandingPage />,
+    },
     {
         path: "/solicitudes",
         element: <Solicitudes />,
@@ -22,8 +28,8 @@ const router = createBrowserRouter([
         element: <HistorialSolicitudes />,
     },
     {
-        path: "/*",
-        element: <Solicitudes />,
+        path: "/dashboard",
+        element: <Dashboard />,
     },
 ]);
 

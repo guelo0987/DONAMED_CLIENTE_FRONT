@@ -4,13 +4,13 @@ import { useState, useRef } from "react";
 
 interface DropdownItem {
     label: string;
-    to: string | null; // null means no navigation
+    to: string | null;
 }
 
 interface NavigationItem {
     label: string;
     hasDropdown: boolean;
-    to: string | null; // null means no navigation
+    to: string | null;
     dropdownItems?: DropdownItem[];
 }
 
@@ -18,7 +18,7 @@ const navigationItems: NavigationItem[] = [
     {
         label: "Consultas",
         hasDropdown: false,
-        to: null, // No existe aún
+        to: null,
     },
     {
         label: "Solicitudes",
@@ -32,21 +32,20 @@ const navigationItems: NavigationItem[] = [
     {
         label: "Ayuda",
         hasDropdown: true,
-        to: null, // No existe aún
+        to: null,
         dropdownItems: [
-            { label: "Preguntas Frecuentes", to: null }, // No existe aún
-            { label: "Contacto", to: null }, // No existe aún
+            { label: "Preguntas Frecuentes", to: null },
+            { label: "Contacto", to: null },
         ],
     },
 ];
 
-export const NavigationHeaderSection = () => {
+export const LandingHeader = () => {
     const navigate = useNavigate();
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleDropdownOpen = (label: string) => {
-        // Clear any pending close timeout
         if (closeTimeoutRef.current) {
             clearTimeout(closeTimeoutRef.current);
             closeTimeoutRef.current = null;
@@ -55,10 +54,9 @@ export const NavigationHeaderSection = () => {
     };
 
     const handleDropdownClose = () => {
-        // Add delay before closing to allow user to move mouse to dropdown
         closeTimeoutRef.current = setTimeout(() => {
             setOpenDropdown(null);
-        }, 300); // 300ms delay
+        }, 300);
     };
 
     const handleDropdownToggle = (label: string) => {
@@ -77,19 +75,19 @@ export const NavigationHeaderSection = () => {
     };
 
     return (
-        <header className="relative w-full bg-transparent py-8 z-50">
+        <header className="relative w-full bg-transparent py-6 z-50">
             <div className="flex items-center justify-between max-w-[1299px] mx-auto px-4">
-                {/* Logo - Clickable to go home */}
-                <Link to="/solicitudes">
+                {/* Logo */}
+                <Link to="/">
                     <img
-                        className="h-auto w-[200px] object-contain cursor-pointer"
+                        className="h-auto w-[180px] object-contain cursor-pointer"
                         alt="Donamed Logo"
                         src="/logos/donamed_logo_header.png"
                     />
                 </Link>
 
-                {/* Navigation & User Profile */}
-                <nav className="flex items-center gap-[60px]">
+                {/* Navigation & Auth Buttons */}
+                <nav className="flex items-center gap-[40px]">
                     {navigationItems.map((item, index) => (
                         <div
                             key={index}
@@ -101,16 +99,15 @@ export const NavigationHeaderSection = () => {
                                 <>
                                     <button
                                         onClick={() => handleDropdownToggle(item.label)}
-                                        className="[font-family:'Poppins',sans-serif] font-medium text-[#404040] text-[20px] leading-[30px] hover:text-black transition-colors flex items-center gap-[9px] cursor-pointer"
+                                        className="[font-family:'Poppins',sans-serif] font-medium text-[#404040] text-[18px] leading-[27px] hover:text-black transition-colors flex items-center gap-[9px] cursor-pointer"
                                     >
                                         {item.label}
                                         <ChevronDownIcon
-                                            className={`w-[20px] h-[11px] text-[#404040] transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""
+                                            className={`w-[18px] h-[10px] text-[#404040] transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""
                                                 }`}
                                         />
                                     </button>
 
-                                    {/* Dropdown Menu */}
                                     {openDropdown === item.label && item.dropdownItems && (
                                         <div
                                             className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-100 py-2 min-w-[220px] z-50"
@@ -139,7 +136,7 @@ export const NavigationHeaderSection = () => {
                             ) : (
                                 <span
                                     onClick={() => item.to && navigate(item.to)}
-                                    className={`[font-family:'Poppins',sans-serif] font-medium text-[20px] leading-[30px] transition-colors ${item.to
+                                    className={`[font-family:'Poppins',sans-serif] font-medium text-[18px] leading-[27px] transition-colors ${item.to
                                             ? "text-[#404040] hover:text-black cursor-pointer"
                                             : "text-gray-400 cursor-not-allowed"
                                         }`}
@@ -151,17 +148,23 @@ export const NavigationHeaderSection = () => {
                         </div>
                     ))}
 
-                    {/* User Profile Icon - Navigates to Dashboard */}
-                    <div
-                        className="w-[40px] h-[39px] flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => navigate("/dashboard")}
-                        title="Mi Perfil"
-                    >
-                        <img
-                            className="w-full h-full object-contain"
-                            alt="User profile"
-                            src="/assets/user_header.png"
-                        />
+                    {/* Auth Buttons */}
+                    <div className="flex items-center gap-4">
+                        {/* Iniciar Sesión */}
+                        <button
+                            onClick={() => navigate("/forgot-password")}
+                            className="bg-[#40C9DB] text-white px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#34A4B3] transition-colors"
+                        >
+                            Iniciar Sesión
+                        </button>
+
+                        {/* Crear Cuenta */}
+                        <button
+                            onClick={() => navigate("/forgot-password")}
+                            className="border-2 border-[#40C9DB] text-[#40C9DB] px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#40C9DB] hover:text-white transition-colors"
+                        >
+                            Crear Cuenta
+                        </button>
                     </div>
                 </nav>
             </div>
