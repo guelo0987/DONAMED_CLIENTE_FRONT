@@ -2,6 +2,8 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Solicitudes } from "./Pages/Solicitudes/Solicitudes";
 import { ForgotPass } from "./Pages/Auth/ForgotPass";
 import { ResetPass } from "./Pages/Auth/ResetPass";
+import { CreateAccount } from "./Pages/Auth/CreateAccount.tsx";
+import { Login } from "./Pages/Auth/Login.tsx";
 import { HistorialSolicitudes } from "./Pages/Solicitudes/Historial_Solicitudes";
 import Dashboard from "./Pages/MiPerfil/Dashboard";
 import LandingPage from "./Pages/Landing/LandingPage";
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
     {
         path: "/forgot-password",
         element: <ForgotPass />,
+    },
+    {
+        path: "/iniciar-sesion",
+        element: <Login />,
+    },
+    {
+        path: "/crear-cuenta",
+        element: <CreateAccount />,
     },
     {
         path: "/historial-solicitudes",
