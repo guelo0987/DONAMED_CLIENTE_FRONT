@@ -44,7 +44,7 @@ export const LandingHeader = () => {
     const navigate = useNavigate();
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Close mobile menu when route changes
     useEffect(() => {
@@ -174,14 +174,14 @@ export const LandingHeader = () => {
                     {/* Auth Buttons */}
                     <div className="flex items-center gap-4">
                         <button
-                            onClick={() => navigate("/dashboard")}
+                            onClick={() => navigate("/iniciar-sesion")}
                             className="bg-[#40C9DB] text-white px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#34A4B3] transition-colors"
                         >
                             Iniciar Sesión
                         </button>
 
                         <button
-                            onClick={() => navigate("/dashboard")}
+                            onClick={() => navigate("/crear-cuenta")}
                             className="border-2 border-[#40C9DB] text-[#40C9DB] px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#40C9DB] hover:text-white transition-colors"
                         >
                             Crear Cuenta
@@ -243,13 +243,13 @@ export const LandingHeader = () => {
                         {/* Mobile Auth Buttons */}
                         <div className="flex flex-col gap-3 mt-4 pt-2">
                             <button
-                                onClick={() => navigate("/dashboard")}
+                                onClick={() => navigate("/iniciar-sesion")}
                                 className="w-full bg-[#40C9DB] text-white px-6 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] active:bg-[#34A4B3]"
                             >
                                 Iniciar Sesión
                             </button>
                             <button
-                                onClick={() => navigate("/dashboard")}
+                                onClick={() => navigate("/crear-cuenta")}
                                 className="w-full border-2 border-[#40C9DB] text-[#40C9DB] px-6 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] active:bg-gray-50"
                             >
                                 Crear Cuenta
