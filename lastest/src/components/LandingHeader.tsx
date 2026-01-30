@@ -18,7 +18,7 @@ const navigationItems: NavigationItem[] = [
     {
         label: "Consultas",
         hasDropdown: false,
-        to: null,
+        to: "/consultas",
     },
     {
         label: "Solicitudes",
@@ -34,8 +34,8 @@ const navigationItems: NavigationItem[] = [
         hasDropdown: true,
         to: null,
         dropdownItems: [
-            { label: "Preguntas Frecuentes", to: null },
-            { label: "Contacto", to: null },
+            { label: "Preguntas Frecuentes", to: "/preguntas-frecuentes" },
+            { label: "Contacto", to: "/contacto" },
         ],
     },
 ];

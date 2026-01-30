@@ -34,8 +34,8 @@ const navigationItems: NavigationItem[] = [
         hasDropdown: true,
         to: null, // No existe aún
         dropdownItems: [
-            { label: "Preguntas Frecuentes", to: null }, // No existe aún
-            { label: "Contacto", to: null }, // No existe aún
+            { label: "Preguntas Frecuentes", to: "/preguntas-frecuentes" },
+            { label: "Contacto", to: "/contacto" },
         ],
     },
 ];

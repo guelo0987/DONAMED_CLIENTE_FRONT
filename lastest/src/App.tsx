@@ -9,6 +9,8 @@ import { HistorialSolicitudes } from "./Pages/Solicitudes/Historial_Solicitudes"
 import Dashboard from "./Pages/MiPerfil/Dashboard";
 import LandingPage from "./Pages/Landing/LandingPage";
 import { DetalleSolicitud } from "./Pages/Solicitudes/DetalleSolicitud";
+import { PreguntasFrecuentes } from "./Pages/Ayuda/PreguntasFrecuentes.tsx";
+import { Contacto } from "./Pages/Ayuda/Contacto.tsx";
 
 const router = createBrowserRouter([
     {
@@ -50,6 +52,14 @@ const router = createBrowserRouter([
     {
         path: "/detalle-solicitud",
         element: <DetalleSolicitud />,
+    },
+    {
+        path: "/preguntas-frecuentes",
+        element: <PreguntasFrecuentes />,
+    },
+    {
+        path: "/contacto",
+        element: <Contacto />,
     },
 ]);
 
