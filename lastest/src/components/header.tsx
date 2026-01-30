@@ -18,7 +18,7 @@ const navigationItems: NavigationItem[] = [
     {
         label: "Consultas",
         hasDropdown: false,
-        to: null, // No existe aún
+        to: "/consultas",
     },
     {
         label: "Solicitudes",

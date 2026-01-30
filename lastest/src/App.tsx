@@ -4,6 +4,7 @@ import { ForgotPass } from "./Pages/Auth/ForgotPass";
 import { ResetPass } from "./Pages/Auth/ResetPass";
 import { CreateAccount } from "./Pages/Auth/CreateAccount.tsx";
 import { Login } from "./Pages/Auth/Login.tsx";
+import { Consultas } from "./Pages/Consultas/Consultas.tsx";
 import { HistorialSolicitudes } from "./Pages/Solicitudes/Historial_Solicitudes";
 import Dashboard from "./Pages/MiPerfil/Dashboard";
 import LandingPage from "./Pages/Landing/LandingPage";
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     {
         path: "/solicitudes",
         element: <Solicitudes />,
+    },
+    {
+        path: "/consultas",
+        element: <Consultas />,
     },
     {
         path: "/reset-password",
