@@ -2,6 +2,9 @@ import { MainLayout } from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/buttons";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import { ConfirmationCard } from "../../components/ui/confirmation-card";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const HeroBannerSection = () => {
     return (
@@ -52,6 +55,10 @@ const requiredDocuments = [
 import { Paperclip, Plus, X } from "lucide-react";
 
 export const MedicationRequestFormSection = () => {
+    const navigate = useNavigate();
+    const [isConfirmSendOpen, setIsConfirmSendOpen] = useState(false);
+    const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+
     return (
         <div className="w-full max-w-[1500px] mx-auto px-4 py-8 md:py-12 relative">
             {/* 1. Datos de Solicitante */}
@@ -254,14 +261,42 @@ export const MedicationRequestFormSection = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-7 mt-8 mb-12">
-                <Button className="w-full sm:w-[173px] h-[51px] bg-white border-2 border-[#34A4B3] text-[#34A4B3] hover:bg-[#34A4B3] hover:text-white rounded-[14px] [font-family:'Poppins',sans-serif] font-medium text-[18px] transition-colors">
+                <Button
+                    onClick={() => navigate("/")}
+                    className="w-full sm:w-[173px] h-[51px] bg-white border-2 border-[#34A4B3] text-[#34A4B3] hover:bg-[#34A4B3] hover:text-white rounded-[14px] [font-family:'Poppins',sans-serif] font-medium text-[18px] transition-colors"
+                >
                     Cancelar
                 </Button>
 
-                <Button className="w-full sm:w-[173px] h-[51px] bg-[#34A4B3] hover:bg-[#2d8f9c] text-white rounded-[14px] [font-family:'Poppins',sans-serif] font-medium text-[18px] shadow-lg shadow-[#34A4B3]/20">
+                <Button
+                    onClick={() => setIsConfirmSendOpen(true)}
+                    className="w-full sm:w-[173px] h-[51px] bg-[#34A4B3] hover:bg-[#2d8f9c] text-white rounded-[14px] [font-family:'Poppins',sans-serif] font-medium text-[18px] shadow-lg shadow-[#34A4B3]/20"
+                >
                     Confirmar
                 </Button>
             </div>
+
+            <ConfirmationCard
+                open={isConfirmSendOpen}
+                title="¿Está seguro de que quiere"
+                highlight="enviar su solicitud?"
+                buttonLabel="Sí"
+                onButtonClick={() => {
+                    setIsConfirmSendOpen(false);
+                    setIsSuccessOpen(true);
+                }}
+                secondaryLabel="No"
+                onSecondaryClick={() => setIsConfirmSendOpen(false)}
+            />
+            <ConfirmationCard
+                open={isSuccessOpen}
+                inlineTitle
+                title="¡"
+                highlight="Su solicitud"
+                titleSuffix=" ha sido enviada!"
+                buttonLabel="Continuar"
+                onButtonClick={() => setIsSuccessOpen(false)}
+            />
         </div>
     );
 };
