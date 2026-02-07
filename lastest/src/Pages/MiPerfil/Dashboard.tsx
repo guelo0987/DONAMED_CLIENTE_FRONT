@@ -1,8 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { HistorialSolicitudesCard } from "../../components/HistorialSolicitudesCard";
+import { ConfirmationCard } from "../../components/ui/confirmation-card";
 
 const Dashboard = () => {
+    const navigate = useNavigate();
+    const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const requests = [
         { date: "12/03/2024", medication: "Medicamento A", status: "En Proceso" },
         { date: "12/03/2024", medication: "Medicamento A", status: "Validacion" },
@@ -43,14 +48,20 @@ const Dashboard = () => {
 
                             <div className="flex-1 lg:block"></div>
 
-                            <div className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                                <Link to="/" className="flex items-center gap-3 w-full">
+                            <button
+                                type="button"
+                                onClick={() => setIsLogoutOpen(true)}
+                                className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors cursor-pointer w-full text-left"
+                            >
                                     <img src="/assets/log_out_icon.png" alt="Logout" className="w-6 h-6 object-contain" />
                                     <span className="text-[#2D3748] text-base">Cerrar Sesión</span>
-                                </Link>
-                            </div>
+                            </button>
 
-                            <button className="w-full bg-[#1C5961] text-white py-3 px-6 rounded-[14px] text-base hover:bg-[#164950] transition-colors mt-4">
+                            <button
+                                type="button"
+                                onClick={() => setIsDeleteOpen(true)}
+                                className="w-full bg-[#1C5961] text-white py-3 px-6 rounded-[14px] text-base hover:bg-[#164950] transition-colors mt-4"
+                            >
                                 Eliminar Cuenta
                             </button>
                         </div>
@@ -146,6 +157,32 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+            <ConfirmationCard
+                open={isLogoutOpen}
+                title="¿Está seguro de que quiere"
+                highlight="cerrar sesión?"
+                buttonLabel="Sí"
+                onButtonClick={() => {
+                    setIsLogoutOpen(false);
+                    navigate("/");
+                }}
+                secondaryLabel="No"
+                onSecondaryClick={() => setIsLogoutOpen(false)}
+            />
+            <ConfirmationCard
+                open={isDeleteOpen}
+                title="¿Está seguro de que quiere"
+                highlight="eliminar su cuenta?"
+                description="¡Esto borrará tus datos"
+                descriptionHighlight="para siempre!"
+                buttonLabel="Sí"
+                onButtonClick={() => {
+                    setIsDeleteOpen(false);
+                    navigate("/");
+                }}
+                secondaryLabel="No"
+                onSecondaryClick={() => setIsDeleteOpen(false)}
+            />
         </MainLayout>
     );
 };

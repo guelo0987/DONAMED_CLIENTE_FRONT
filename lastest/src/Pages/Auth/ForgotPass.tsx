@@ -89,7 +89,7 @@ export const ForgotPass = () => {
                                 <p className="text-center text-[#404040] text-[11px] xl:text-[12px] font-medium pt-2">
                                     ¿Recordaste tu contraseña?{" "}
                                     <Link
-                                        to="/login"
+                                        to="/iniciar-sesion"
                                         className="text-[#34A4B3] hover:underline"
                                     >
                                         Iniciar Sesión
