@@ -40,8 +40,12 @@ const navigationItems: NavigationItem[] = [
     },
 ];
 
+import { useAuth } from "../hooks/useAuth";
+
 export const NavigationHeaderSection = () => {
     const navigate = useNavigate();
+    const { getUser } = useAuth();
+    const user = getUser();
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -176,14 +180,14 @@ export const NavigationHeaderSection = () => {
 
                     {/* User Profile Icon - Navigates to Dashboard */}
                     <div
-                        className="w-[40px] h-[39px] flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+                        className="w-[40px] h-[39px] flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-200 rounded-full overflow-hidden border border-gray-300"
                         onClick={() => navigate("/dashboard")}
                         title="Mi Perfil"
                     >
                         <img
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-cover"
                             alt="User profile"
-                            src="/assets/user_header.png"
+                            src={user?.foto_url || "/assets/user_header.png"}
                         />
                     </div>
                 </nav>
@@ -245,11 +249,11 @@ export const NavigationHeaderSection = () => {
                                 onClick={() => handleItemClick("/dashboard")}
                                 className="flex items-center gap-3 w-full py-2"
                             >
-                                <div className="w-[30px] h-[30px]">
+                                <div className="w-[30px] h-[30px] rounded-full overflow-hidden bg-gray-200 border border-gray-300">
                                     <img
-                                        className="w-full h-full object-contain"
+                                        className="w-full h-full object-cover"
                                         alt="User profile"
-                                        src="/assets/user_header.png"
+                                        src={user?.foto_url || "/assets/user_header.png"}
                                     />
                                 </div>
                                 <span className="[font-family:'Poppins',sans-serif] font-medium text-[#404040] text-[16px]">

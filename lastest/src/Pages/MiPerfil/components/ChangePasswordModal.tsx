@@ -1,0 +1,141 @@
+import { useState } from "react";
+import { useAuth } from "../../../hooks/useAuth";
+import { Loader2, Eye, EyeOff } from "lucide-react";
+
+interface ChangePasswordModalProps {
+    onClose: () => void;
+    onSuccess: () => void;
+}
+
+export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalProps) => {
+    const { changePassword, error, setError } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Form states
+    const [contrasenaActual, setContrasenaActual] = useState("");
+    const [nuevaContrasena, setNuevaContrasena] = useState("");
+    const [confirmarContrasena, setConfirmarContrasena] = useState("");
+
+    // Visibility toggles
+    const [showActual, setShowActual] = useState(false);
+    const [showNueva, setShowNueva] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
+
+    // Validation
+    const isValid = nuevaContrasena.length >= 8 && nuevaContrasena === confirmarContrasena && contrasenaActual.length > 0;
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (nuevaContrasena !== confirmarContrasena) {
+            setError("Las contraseñas nuevas no coinciden");
+            return;
+        }
+
+        setIsLoading(true);
+        const result = await changePassword(contrasenaActual, nuevaContrasena);
+
+        if (result) {
+            onSuccess();
+        }
+        setIsLoading(false);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {error && (
+                <div className="bg-red-50 text-red-600 p-4 rounded-[12px] border border-red-100 text-sm">
+                    {error}
+                </div>
+            )}
+
+            <div className="flex flex-col gap-2 relative">
+                <label className="text-sm font-medium text-gray-700">Contraseña Actual *</label>
+                <div className="relative">
+                    <input
+                        required
+                        type={showActual ? "text" : "password"}
+                        value={contrasenaActual}
+                        onChange={(e) => setContrasenaActual(e.target.value)}
+                        className="w-full px-4 py-3 rounded-lg border border-[#DCD7D7] focus:border-[#40C9DB] focus:ring-1 focus:ring-[#40C9DB] outline-none transition-all placeholder:text-gray-400 font-['Poppins']"
+                        placeholder="Ingresa tu contraseña actual"
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowActual(!showActual)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                        {showActual ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-2 relative">
+                <label className="text-sm font-medium text-gray-700">Nueva Contraseña *</label>
+                <div className="relative">
+                    <input
+                        required
+                        type={showNueva ? "text" : "password"}
+                        value={nuevaContrasena}
+                        onChange={(e) => setNuevaContrasena(e.target.value)}
+                        className="w-full px-4 py-3 rounded-lg border border-[#DCD7D7] focus:border-[#40C9DB] focus:ring-1 focus:ring-[#40C9DB] outline-none transition-all placeholder:text-gray-400 font-['Poppins']"
+                        placeholder="Al menos 8 caracteres"
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowNueva(!showNueva)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                        {showNueva ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                </div>
+                {nuevaContrasena.length > 0 && nuevaContrasena.length < 8 && (
+                    <span className="text-xs text-red-500 mt-1">La contraseña debe tener al menos 8 caracteres</span>
+                )}
+            </div>
+
+            <div className="flex flex-col gap-2 relative">
+                <label className="text-sm font-medium text-gray-700">Confirmar Nueva Contraseña *</label>
+                <div className="relative">
+                    <input
+                        required
+                        type={showConfirm ? "text" : "password"}
+                        value={confirmarContrasena}
+                        onChange={(e) => setConfirmarContrasena(e.target.value)}
+                        className={`w-full px-4 py-3 rounded-lg border focus:ring-1 outline-none transition-all placeholder:text-gray-400 font-['Poppins']
+                            ${confirmarContrasena.length > 0 && nuevaContrasena !== confirmarContrasena
+                                ? 'border-red-300 focus:border-red-500 focus:ring-red-500 bg-red-50'
+                                : 'border-[#DCD7D7] focus:border-[#40C9DB] focus:ring-[#40C9DB]'
+                            }`}
+                        placeholder="Repite tu nueva contraseña"
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowConfirm(!showConfirm)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                        {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                </div>
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
+                <button
+                    type="button"
+                    onClick={onClose}
+                    disabled={isLoading}
+                    className="px-6 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 font-['Poppins']"
+                >
+                    Cancelar
+                </button>
+                <button
+                    type="submit"
+                    disabled={isLoading || !isValid}
+                    className="px-6 py-2.5 rounded-lg bg-[#40C9DB] text-white font-medium hover:bg-[#34A4B3] transition-colors flex items-center justify-center min-w-[140px] disabled:opacity-50 disabled:cursor-not-allowed font-['Poppins']"
+                >
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Actualizar Contraseña"}
+                </button>
+            </div>
+        </form>
+    );
+};

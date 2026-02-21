@@ -40,8 +40,12 @@ const navigationItems: NavigationItem[] = [
     },
 ];
 
+import { useAuth } from "../hooks/useAuth";
+
 export const LandingHeader = () => {
     const navigate = useNavigate();
+    const { getUser } = useAuth();
+    const user = getUser();
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -171,22 +175,36 @@ export const LandingHeader = () => {
                         </div>
                     ))}
 
-                    {/* Auth Buttons */}
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => navigate("/iniciar-sesion")}
-                            className="bg-[#40C9DB] text-white px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#34A4B3] transition-colors"
+                    {/* Auth Buttons or User Profile */}
+                    {user ? (
+                        <div
+                            className="w-[40px] h-[39px] flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-200 rounded-full overflow-hidden border border-gray-300"
+                            onClick={() => navigate("/dashboard")}
+                            title="Mi Perfil"
                         >
-                            Iniciar Sesión
-                        </button>
+                            <img
+                                className="w-full h-full object-cover"
+                                alt="User profile"
+                                src={user.foto_url || "/assets/user_header.png"}
+                            />
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => navigate("/iniciar-sesion")}
+                                className="bg-[#40C9DB] text-white px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#34A4B3] transition-colors"
+                            >
+                                Iniciar Sesión
+                            </button>
 
-                        <button
-                            onClick={() => navigate("/crear-cuenta")}
-                            className="border-2 border-[#40C9DB] text-[#40C9DB] px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#40C9DB] hover:text-white transition-colors"
-                        >
-                            Crear Cuenta
-                        </button>
-                    </div>
+                            <button
+                                onClick={() => navigate("/crear-cuenta")}
+                                className="border-2 border-[#40C9DB] text-[#40C9DB] px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#40C9DB] hover:text-white transition-colors"
+                            >
+                                Crear Cuenta
+                            </button>
+                        </div>
+                    )}
                 </nav>
 
                 {/* Mobile Navigation Menu */}
@@ -240,20 +258,40 @@ export const LandingHeader = () => {
                             </div>
                         ))}
 
-                        {/* Mobile Auth Buttons */}
-                        <div className="flex flex-col gap-3 mt-4 pt-2">
-                            <button
-                                onClick={() => navigate("/iniciar-sesion")}
-                                className="w-full bg-[#40C9DB] text-white px-6 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] active:bg-[#34A4B3]"
-                            >
-                                Iniciar Sesión
-                            </button>
-                            <button
-                                onClick={() => navigate("/crear-cuenta")}
-                                className="w-full border-2 border-[#40C9DB] text-[#40C9DB] px-6 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] active:bg-gray-50"
-                            >
-                                Crear Cuenta
-                            </button>
+                        {/* Mobile Auth Buttons or User Profile */}
+                        <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-gray-100">
+                            {user ? (
+                                <button
+                                    onClick={() => handleItemClick("/dashboard")}
+                                    className="flex items-center gap-3 w-full py-2"
+                                >
+                                    <div className="w-[30px] h-[30px] rounded-full overflow-hidden bg-gray-200 border border-gray-300">
+                                        <img
+                                            className="w-full h-full object-cover"
+                                            alt="User profile"
+                                            src={user.foto_url || "/assets/user_header.png"}
+                                        />
+                                    </div>
+                                    <span className="[font-family:'Poppins',sans-serif] font-medium text-[#404040] text-[16px]">
+                                        Mi Perfil
+                                    </span>
+                                </button>
+                            ) : (
+                                <>
+                                    <button
+                                        onClick={() => navigate("/iniciar-sesion")}
+                                        className="w-full bg-[#40C9DB] text-white px-6 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] active:bg-[#34A4B3]"
+                                    >
+                                        Iniciar Sesión
+                                    </button>
+                                    <button
+                                        onClick={() => navigate("/crear-cuenta")}
+                                        className="w-full border-2 border-[#40C9DB] text-[#40C9DB] px-6 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] active:bg-gray-50"
+                                    >
+                                        Crear Cuenta
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
                 )}

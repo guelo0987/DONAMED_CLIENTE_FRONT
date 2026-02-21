@@ -1,11 +1,39 @@
 import { X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "../../components/ui/buttons";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import LandingPage from "../Landing/LandingPage";
+import { useAuth } from "../../hooks/useAuth";
+import { validarCorreo, validarContrasena } from "../../utils/validators";
 
 export const Login = () => {
+    const navigate = useNavigate();
+    const { login, isLoading, error, setError } = useAuth();
+    const [correo, setCorreo] = useState("");
+    const [contrasena, setContrasena] = useState("");
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+
+        if (!validarCorreo(correo)) {
+            setError("El formato del correo electrónico no es válido.");
+            return;
+        }
+
+        if (!validarContrasena(contrasena)) {
+            setError("La contraseña ingresada no es válida.");
+            return;
+        }
+
+        const success = await login({ correo, contrasena });
+        if (success) {
+            navigate("/dashboard"); // Ajustar la ruta si es necesario (ej: /, /home o /dashboard)
+        }
+    };
+
     return (
         <div className="relative min-h-screen">
             <LandingPage />
@@ -45,31 +73,17 @@ export const Login = () => {
                     </div>
 
                     <div className="w-full lg:w-[58%] h-full flex flex-col justify-center items-center relative px-12 md:px-14 xl:px-16 py-10 lg:pt-14 overflow-y-auto">
-                        <div className="w-full max-w-[620px] space-y-5 flex flex-col items-center text-center">
+                        <form onSubmit={handleLogin} className="w-full max-w-[620px] space-y-5 flex flex-col items-center text-center">
                             <div className="space-y-3 w-full">
                                 <h1 className="text-[#404040] text-[20px] md:text-[24px] xl:text-[26px] font-medium leading-[1.2] tracking-normal text-center">
                                     Iniciar Sesión
                                 </h1>
+                                {error && (
+                                    <p className="text-red-500 text-sm mt-2">{error}</p>
+                                )}
                             </div>
 
                             <div className="w-full max-w-[360px] mx-auto space-y-3.5 text-left">
-                                <div className="space-y-1.5">
-                                    <div className="flex items-center gap-2">
-                                        <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
-                                            Cédula
-                                        </Label>
-                                        <img
-                                            src="/assets/plus_icon.png"
-                                            alt="required"
-                                            className="w-2 h-2 lg:w-3 lg:h-3"
-                                        />
-                                    </div>
-                                    <Input
-                                        placeholder="Documento de Identidad"
-                                        className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
-                                    />
-                                </div>
-
                                 <div className="space-y-1.5">
                                     <div className="flex items-center gap-2">
                                         <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
@@ -83,6 +97,9 @@ export const Login = () => {
                                     </div>
                                     <Input
                                         type="email"
+                                        value={correo}
+                                        onChange={(e) => setCorreo(e.target.value)}
+                                        required
                                         placeholder="Dirección de correo electrónico"
                                         className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                     />
@@ -101,6 +118,9 @@ export const Login = () => {
                                     </div>
                                     <Input
                                         type="password"
+                                        value={contrasena}
+                                        onChange={(e) => setContrasena(e.target.value)}
+                                        required
                                         placeholder="Tu contraseña"
                                         className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                     />
@@ -110,10 +130,11 @@ export const Login = () => {
                             <div className="flex flex-col gap-3 w-full max-w-[360px] mx-auto">
                                 <div className="flex justify-center lg:justify-center">
                                     <Button
-                                        asChild
-                                        className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
+                                        type="submit"
+                                        disabled={isLoading}
+                                        className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] disabled:opacity-50 rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                     >
-                                        <Link to="/">Ingresar</Link>
+                                        {isLoading ? "Ingresando..." : "Ingresar"}
                                     </Button>
                                 </div>
 
@@ -137,7 +158,7 @@ export const Login = () => {
                                     </Link>
                                 </p>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
