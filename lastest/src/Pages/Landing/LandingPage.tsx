@@ -1,4 +1,4 @@
-import { LandingHeader } from "../../components/LandingHeader";
+import { NavigationHeaderSection as LandingHeader } from "../../components/header";
 import { FooterSection } from "../../components/footer";
 import {
     HeroSection,

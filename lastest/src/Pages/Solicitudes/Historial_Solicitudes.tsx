@@ -1,21 +1,40 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSolicitudes } from "../../hooks/useSolicitudes";
+import type { SolicitudResumen, EstadoSolicitud } from "../../types/solicitud";
+
+// Helper to translate backend states to human-readable badges
+const getStatusLabel = (estado: EstadoSolicitud) => {
+    const labels: Record<EstadoSolicitud, string> = {
+        PENDIENTE: "Pendiente",
+        EN_REVISION: "En Revisión",
+        APROBADA: "Aprobada",
+        RECHAZADA: "Rechazada",
+        DESPACHADA: "Despachada",
+        CANCELADA: "Cancelada",
+        INCOMPLETA: "Incompleta"
+    };
+    return labels[estado] || estado;
+};
 
 const RequestCard = ({
+    numerosolicitud,
     date,
     medication,
     statusLabel
 }: {
-    date: string,
-    medication: string,
-    statusLabel: string
+    numerosolicitud: number;
+    date: string;
+    medication: string;
+    statusLabel: string;
 }) => {
     const navigate = useNavigate();
 
     return (
         <div
-            onClick={() => navigate("/detalle-solicitud")}
+            onClick={() => navigate(`/detalle-solicitud/${numerosolicitud}`)}
             className="w-full bg-white rounded-[15px] shadow-sm border border-gray-100 p-4 mb-4 hover:shadow-md transition-shadow cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
         >
 
@@ -58,18 +77,18 @@ const RequestCard = ({
 
                 {/* Medicamento */}
                 <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-start">
-                    <span className="font-['Inter'] font-medium text-[#232323] text-[14px] sm:text-[16px] sm:hidden">Medicamento:</span>
+                    <span className="font-['Poppins'] font-medium text-[#232323] text-[14px] sm:text-[16px] sm:hidden">Medicamento:</span>
                     <div className="flex flex-col items-end sm:items-start text-right sm:text-left">
-                        <span className="font-['Inter'] font-medium text-[#232323] text-[16px] hidden sm:block">Medicamento</span>
+                        <span className="font-['Poppins'] font-medium text-[#232323] text-[16px] hidden sm:block">Medicamento</span>
                         <span className="font-['Poppins'] font-normal text-[#2D3748] text-[14px] sm:text-[16px]">{medication}</span>
                     </div>
                 </div>
 
                 {/* Estado */}
                 <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-start">
-                    <span className="font-['Inter'] font-medium text-[#232323] text-[14px] sm:text-[16px] sm:hidden">Estado:</span>
+                    <span className="font-['Poppins'] font-medium text-[#232323] text-[14px] sm:text-[16px] sm:hidden">Estado:</span>
                     <div className="flex flex-col items-end sm:items-start text-right sm:text-left">
-                        <span className="font-['Inter'] font-medium text-[#232323] text-[16px] hidden sm:block">Estado</span>
+                        <span className="font-['Poppins'] font-medium text-[#232323] text-[16px] hidden sm:block">Estado</span>
                         <span className="font-['Poppins'] font-normal text-[#2D3748] text-[14px] sm:text-[16px]">{statusLabel}</span>
                     </div>
                 </div>
@@ -84,16 +103,23 @@ const RequestCard = ({
 };
 
 export const HistorialSolicitudes = () => {
-    const recentRequests = [
-        { date: "23/08/2024", medication: "Medicamento A", status: "process", statusLabel: "En proceso" },
-        { date: "23/08/2024", medication: "Medicamento A", status: "process", statusLabel: "En proceso" },
-        { date: "23/08/2024", medication: "Medicamento A", status: "process", statusLabel: "En proceso" },
-    ];
+    const { fetchHistorial, isLoading, error } = useSolicitudes();
+    const [solicitudes, setSolicitudes] = useState<SolicitudResumen[]>([]);
 
-    const previousRequests = [
-        { date: "23/08/2024", medication: "Medicamento A", status: "processed", statusLabel: "Procesada" },
-        { date: "23/08/2024", medication: "Medicamento A", status: "processed", statusLabel: "Procesada" },
-    ];
+    useEffect(() => {
+        const loadHistory = async () => {
+            const data = await fetchHistorial();
+            if (data?.solicitudes) {
+                setSolicitudes(data.solicitudes);
+            }
+        };
+        loadHistory();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Opcional: Separar recentes vs anteriores bajo alguna logica del front. 
+    // Por el momento enviaremos todo en "Recientes" (ya vienen ordenadas desc por Fecha de creación)
+    const recentRequests = solicitudes;
 
     return (
         <MainLayout>
@@ -127,25 +153,36 @@ export const HistorialSolicitudes = () => {
                     {/* Recientes Section */}
                     <section className="mb-12">
                         <h2 className="font-['Poppins'] font-normal text-[#2D3748] text-[24px] sm:text-[30px] mb-6 border-b border-[#DCD7D7] pb-2">
-                            Recientes
+                            Mis Solicitudes
                         </h2>
-                        <div className="space-y-4">
-                            {recentRequests.map((req, idx) => (
-                                // @ts-ignore
-                                <RequestCard key={idx} {...req} />
-                            ))}
-                        </div>
-                    </section>
 
-                    {/* Anteriores Section */}
-                    <section>
-                        <h2 className="font-['Poppins'] font-normal text-[#2D3748] text-[24px] sm:text-[30px] mb-6 border-b border-[#DCD7D7] pb-2">
-                            Anteriores
-                        </h2>
+                        {isLoading && (
+                            <div className="flex justify-center items-center py-12">
+                                <Loader2 className="w-8 h-8 animate-spin text-[#40C9DB]" />
+                            </div>
+                        )}
+
+                        {error && !isLoading && (
+                            <div className="bg-red-50 text-red-600 p-4 rounded-lg text-center">
+                                {error}
+                            </div>
+                        )}
+
+                        {!isLoading && !error && recentRequests.length === 0 && (
+                            <div className="text-center py-12">
+                                <p className="text-gray-500 font-['Poppins'] text-lg">No tienes solicitudes registradas en este momento.</p>
+                            </div>
+                        )}
+
                         <div className="space-y-4">
-                            {previousRequests.map((req, idx) => (
-                                // @ts-ignore
-                                <RequestCard key={idx} {...req} />
+                            {recentRequests.map((req) => (
+                                <RequestCard
+                                    key={req.numerosolicitud}
+                                    numerosolicitud={req.numerosolicitud}
+                                    date={new Date(req.creada_en).toLocaleDateString('es-DO')}
+                                    medication={req.patologia} // Use pathology as the main subject string for generic lists
+                                    statusLabel={getStatusLabel(req.estado)}
+                                />
                             ))}
                         </div>
                     </section>

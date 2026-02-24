@@ -21,11 +21,7 @@ const Dashboard = () => {
     const [isDeactivateOpen, setIsDeactivateOpen] = useState(false);
     const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-    const requests = [
-        { date: "12/03/2024", medication: "Medicamento A", status: "En Proceso" },
-        { date: "12/03/2024", medication: "Medicamento A", status: "Validacion" },
-        { date: "12/03/2024", medication: "Medicamento A", status: "Procesada" },
-    ];
+
 
     useEffect(() => {
         const loadProfile = async () => {
@@ -44,6 +40,8 @@ const Dashboard = () => {
     const firstName = profile ? profile.persona.nombre : "";
     const lastName = profile ? profile.persona.apellidos : "";
     const avatar = profile?.foto_url || user?.foto_url || "/assets/imagen_usuario.png";
+    const joinDate = profile?.creado_en ? new Date(profile.creado_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : "Desconocido";
+    const altPhone = profile?.persona.telefono_alternativo || "No especificado";
 
     return (
         <MainLayout className="font-['Poppins']">
@@ -174,16 +172,16 @@ const Dashboard = () => {
                                 </div>
                                 <div className="w-full h-px bg-[#404040] opacity-50 mb-6"></div>
                                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-                                    <div className="w-[80px] h-[80px] rounded-[12px] overflow-hidden bg-[#C4C4C4] border-[0.5px] border-[#DCD7D7] flex-shrink-0">
-                                        <img src={avatar} alt="User" className="w-full h-full object-cover" />
-                                    </div>
                                     <div className="flex flex-col gap-2">
-                                        <h4 className="text-[#2D3748] text-xl sm:text-2xl font-normal">{name}</h4>
-                                        <div className="flex flex-col gap-1 text-[#2D3748] text-sm sm:text-base font-medium">
-                                            <p><span className="text-[#2D3748]">Nombre:</span> {firstName}</p>
-                                            <p><span className="text-[#2D3748]">Apellido:</span> {lastName}</p>
-                                            <p><span className="text-[#2D3748]">Teléfono:</span> {phone}</p>
-                                            <p><span className="text-[#2D3748]">Correo:</span> <span className="break-all">{email}</span></p>
+                                        <h4 className="text-[#2D3748] text-xl sm:text-2xl font-normal mb-2">{name}</h4>
+                                        <div className="flex flex-col gap-2 text-[#2D3748] text-sm sm:text-base font-medium">
+                                            <p><span className="text-[#2D3748] opacity-70">Nombre:</span> {firstName}</p>
+                                            <p><span className="text-[#2D3748] opacity-70">Apellido:</span> {lastName}</p>
+                                            <p><span className="text-[#2D3748] opacity-70">Cédula:</span> {profile?.cedula_usuario || ""}</p>
+                                            <p><span className="text-[#2D3748] opacity-70">Teléfono:</span> {phone}</p>
+                                            <p><span className="text-[#2D3748] opacity-70">Tel. Alternativo:</span> {altPhone}</p>
+                                            <p><span className="text-[#2D3748] opacity-70">Correo:</span> <span className="break-all">{email}</span></p>
+                                            <p><span className="text-[#2D3748] opacity-70 mt-2 block border-t border-gray-300/50 pt-2">Miembro desde: {joinDate}</span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -191,7 +189,7 @@ const Dashboard = () => {
 
                             {/* Historial de Solicitudes Card */}
                             <div className="w-full">
-                                <HistorialSolicitudesCard requests={requests} />
+                                <HistorialSolicitudesCard />
                             </div>
                         </div>
                     </div>

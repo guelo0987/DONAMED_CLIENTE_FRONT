@@ -1,4 +1,4 @@
-import React from "react";
+
 import { DetailCard } from "./detail-card";
 import { ReadOnlyInput } from "./readonly-input";
 

@@ -35,6 +35,7 @@ export interface UserProfile {
     codigo_rol: number;
     estado: string;
     foto_url: string | null;
+    creado_en?: string;
     persona: PersonaInfo;
     rol: RolInfo;
 }

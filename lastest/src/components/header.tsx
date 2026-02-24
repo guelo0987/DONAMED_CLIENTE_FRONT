@@ -1,16 +1,19 @@
-import { ChevronDownIcon, Menu, X } from "lucide-react";
+import { ChevronDownIcon, Menu, X, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+import { ConfirmationCard } from "./ui/confirmation-card";
 
 interface DropdownItem {
     label: string;
     to: string | null; // null means no navigation
+    requiresAuth?: boolean;
 }
 
 interface NavigationItem {
     label: string;
     hasDropdown: boolean;
     to: string | null; // null means no navigation
+    requiresAuth?: boolean;
     dropdownItems?: DropdownItem[];
 }
 
@@ -24,9 +27,10 @@ const navigationItems: NavigationItem[] = [
         label: "Solicitudes",
         hasDropdown: true,
         to: "/solicitudes",
+        requiresAuth: true,
         dropdownItems: [
-            { label: "Nueva Solicitud", to: "/solicitudes" },
-            { label: "Historial de Solicitudes", to: "/historial-solicitudes" },
+            { label: "Nueva Solicitud", to: "/solicitudes", requiresAuth: true },
+            { label: "Historial de Solicitudes", to: "/historial-solicitudes", requiresAuth: true },
         ],
     },
     {
@@ -48,6 +52,7 @@ export const NavigationHeaderSection = () => {
     const user = getUser();
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Close mobile menu when route changes
@@ -147,8 +152,17 @@ export const NavigationHeaderSection = () => {
                                             {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
                                                 <button
                                                     key={dropdownIndex}
-                                                    onClick={() => handleItemClick(dropdownItem.to)}
-                                                    disabled={!dropdownItem.to}
+                                                    onClick={(e) => {
+                                                        if (dropdownItem.requiresAuth && !user) {
+                                                            e.preventDefault();
+                                                            setShowAuthModal(true);
+                                                            setIsMobileMenuOpen(false);
+                                                            setOpenDropdown(null);
+                                                            return;
+                                                        }
+                                                        handleItemClick(dropdownItem.to);
+                                                    }}
+                                                    disabled={!dropdownItem.to && (!dropdownItem.requiresAuth || !!user)}
                                                     className={`block w-full text-left px-4 py-3 transition-colors [font-family:'Poppins',sans-serif] text-base ${dropdownItem.to
                                                         ? "text-[#404040] hover:bg-[#40C9DB]/10 hover:text-[#34A4B3] cursor-pointer"
                                                         : "text-gray-400 cursor-not-allowed"
@@ -165,7 +179,16 @@ export const NavigationHeaderSection = () => {
                                 </>
                             ) : (
                                 <span
-                                    onClick={() => item.to && navigate(item.to)}
+                                    onClick={(e) => {
+                                        if (item.requiresAuth && !user) {
+                                            e.preventDefault();
+                                            setShowAuthModal(true);
+                                            setIsMobileMenuOpen(false);
+                                            setOpenDropdown(null);
+                                            return;
+                                        }
+                                        if (item.to) navigate(item.to);
+                                    }}
                                     className={`[font-family:'Poppins',sans-serif] font-medium text-[20px] leading-[30px] transition-colors ${item.to
                                         ? "text-[#404040] hover:text-black cursor-pointer"
                                         : "text-gray-400 cursor-not-allowed"
@@ -178,18 +201,40 @@ export const NavigationHeaderSection = () => {
                         </div>
                     ))}
 
-                    {/* User Profile Icon - Navigates to Dashboard */}
-                    <div
-                        className="w-[40px] h-[39px] flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-200 rounded-full overflow-hidden border border-gray-300"
-                        onClick={() => navigate("/dashboard")}
-                        title="Mi Perfil"
-                    >
-                        <img
-                            className="w-full h-full object-cover"
-                            alt="User profile"
-                            src={user?.foto_url || "/assets/user_header.png"}
-                        />
-                    </div>
+                    {/* User Profile Icon or Auth Buttons */}
+                    {user ? (
+                        <div
+                            className="w-[40px] h-[39px] flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity bg-gray-200 rounded-full overflow-hidden border border-gray-300"
+                            onClick={() => navigate("/dashboard")}
+                            title="Mi Perfil"
+                        >
+                            {user.foto_url ? (
+                                <img
+                                    className="w-full h-full object-cover"
+                                    alt="User profile"
+                                    src={user.foto_url}
+                                />
+                            ) : (
+                                <User className="w-6 h-6 text-gray-500" />
+                            )}
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => navigate("/iniciar-sesion")}
+                                className="bg-[#40C9DB] text-white px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#34A4B3] transition-colors"
+                            >
+                                Iniciar Sesión
+                            </button>
+
+                            <button
+                                onClick={() => navigate("/crear-cuenta")}
+                                className="border-2 border-[#40C9DB] text-[#40C9DB] px-6 py-2 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] hover:bg-[#40C9DB] hover:text-white transition-colors"
+                            >
+                                Crear Cuenta
+                            </button>
+                        </div>
+                    )}
                 </nav>
 
                 {/* Mobile Navigation Menu */}
@@ -216,8 +261,17 @@ export const NavigationHeaderSection = () => {
                                                 {item.dropdownItems.map((dropdownItem, dIndex) => (
                                                     <button
                                                         key={dIndex}
-                                                        onClick={() => handleItemClick(dropdownItem.to)}
-                                                        disabled={!dropdownItem.to}
+                                                        onClick={(e) => {
+                                                            if (dropdownItem.requiresAuth && !user) {
+                                                                e.preventDefault();
+                                                                setShowAuthModal(true);
+                                                                setIsMobileMenuOpen(false);
+                                                                setOpenDropdown(null);
+                                                                return;
+                                                            }
+                                                            handleItemClick(dropdownItem.to);
+                                                        }}
+                                                        disabled={!dropdownItem.to && (!dropdownItem.requiresAuth || !!user)}
                                                         className={`text-left px-5 py-3 text-[14px] [font-family:'Poppins',sans-serif] ${dropdownItem.to
                                                             ? "text-[#666] hover:text-[#34A4B3]"
                                                             : "text-gray-400"
@@ -231,7 +285,16 @@ export const NavigationHeaderSection = () => {
                                     </>
                                 ) : (
                                     <button
-                                        onClick={() => handleItemClick(item.to)}
+                                        onClick={(e) => {
+                                            if (item.requiresAuth && !user) {
+                                                e.preventDefault();
+                                                setShowAuthModal(true);
+                                                setIsMobileMenuOpen(false);
+                                                setOpenDropdown(null);
+                                                return;
+                                            }
+                                            handleItemClick(item.to);
+                                        }}
                                         className={`text-left py-4 [font-family:'Poppins',sans-serif] font-medium text-[16px] ${item.to
                                             ? "text-[#404040]"
                                             : "text-gray-400"
@@ -243,27 +306,65 @@ export const NavigationHeaderSection = () => {
                             </div>
                         ))}
 
-                        {/* Mobile User Profile Button */}
-                        <div className="mt-4 pt-4 border-t border-gray-100">
-                            <button
-                                onClick={() => handleItemClick("/dashboard")}
-                                className="flex items-center gap-3 w-full py-2"
-                            >
-                                <div className="w-[30px] h-[30px] rounded-full overflow-hidden bg-gray-200 border border-gray-300">
-                                    <img
-                                        className="w-full h-full object-cover"
-                                        alt="User profile"
-                                        src={user?.foto_url || "/assets/user_header.png"}
-                                    />
-                                </div>
-                                <span className="[font-family:'Poppins',sans-serif] font-medium text-[#404040] text-[16px]">
-                                    Mi Perfil
-                                </span>
-                            </button>
+                        {/* Mobile Auth Buttons or User Profile */}
+                        <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-gray-100">
+                            {user ? (
+                                <button
+                                    onClick={() => handleItemClick("/dashboard")}
+                                    className="flex items-center gap-3 w-full py-2"
+                                >
+                                    <div className="w-[30px] h-[30px] rounded-full overflow-hidden bg-gray-200 border border-gray-300 flex items-center justify-center">
+                                        {user.foto_url ? (
+                                            <img
+                                                className="w-full h-full object-cover"
+                                                alt="User profile"
+                                                src={user.foto_url}
+                                            />
+                                        ) : (
+                                            <User className="w-5 h-5 text-gray-500" />
+                                        )}
+                                    </div>
+                                    <span className="[font-family:'Poppins',sans-serif] font-medium text-[#404040] text-[16px]">
+                                        Mi Perfil
+                                    </span>
+                                </button>
+                            ) : (
+                                <>
+                                    <button
+                                        onClick={() => navigate("/iniciar-sesion")}
+                                        className="w-full bg-[#40C9DB] text-white px-6 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] active:bg-[#34A4B3]"
+                                    >
+                                        Iniciar Sesión
+                                    </button>
+                                    <button
+                                        onClick={() => navigate("/crear-cuenta")}
+                                        className="w-full border-2 border-[#40C9DB] text-[#40C9DB] px-6 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-medium text-[16px] active:bg-gray-50"
+                                    >
+                                        Crear Cuenta
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
                 )}
             </div>
+
+            <ConfirmationCard
+                open={showAuthModal}
+                title="Acceso"
+                highlight="Requerido"
+                titleSuffix=""
+                inlineTitle={true}
+                description="Debe"
+                descriptionHighlight="iniciar sesión"
+                buttonLabel="Iniciar Sesión"
+                onButtonClick={() => {
+                    setShowAuthModal(false);
+                    navigate("/iniciar-sesion");
+                }}
+                secondaryLabel="Cerrar"
+                onSecondaryClick={() => setShowAuthModal(false)}
+            />
         </header>
     );
 };

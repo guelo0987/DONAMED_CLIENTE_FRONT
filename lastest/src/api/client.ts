@@ -26,10 +26,13 @@ apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Opcional: limpiar storage y redirigir a login
-            console.warn('Token expirado o inválido. Redirigir al login si es necesario.');
-            // localStorage.removeItem('token');
-            // window.location.href = '/login';
+            console.warn('Token expirado o inválido. Cerrando sesión automáticamente...');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            // Check to avoid infinite reload loops on login page
+            if (window.location.pathname !== '/iniciar-sesion') {
+                window.location.href = '/iniciar-sesion';
+            }
         }
         return Promise.reject(error);
     }
