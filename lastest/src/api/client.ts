@@ -10,12 +10,19 @@ export const apiClient = axios.create({
     },
 });
 
-// Interceptor para inyectar token en futuras peticiones
+// Interceptor para inyectar token en futuras peticiones y manejar FormData
 apiClient.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Si la data es FormData, debemos eliminar el Content-Type por defecto 
+    // para que el navegador genere uno con el 'boundary' correcto automáticamente.
+    if (config.data instanceof FormData && config.headers) {
+        delete config.headers['Content-Type'];
+    }
+
     return config;
 }, (error) => {
     return Promise.reject(error);

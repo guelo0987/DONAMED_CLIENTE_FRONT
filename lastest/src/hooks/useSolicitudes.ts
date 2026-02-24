@@ -20,7 +20,10 @@ export const useSolicitudes = () => {
             }
             throw new Error(response.message || 'Error al obtener historial');
         } catch (err: any) {
-            const msg = err.response?.data?.error?.message || err.message || 'Error desconocido';
+            const msg = err.response?.data?.error?.message
+                || err.response?.data?.message
+                || (err.message === "Network Error" ? "Fallo de conexión: Verifica tu señal de internet o asegúrate de que los archivos anexados no sean demasiado pesados." : err.message)
+                || 'Error desconocido';
             setError(msg);
             return null;
         } finally {
@@ -39,7 +42,10 @@ export const useSolicitudes = () => {
             }
             throw new Error(response.message || 'Error al cargar detalle');
         } catch (err: any) {
-            const msg = err.response?.data?.error?.message || err.message || 'Error cargando solicitud';
+            const msg = err.response?.data?.error?.message
+                || err.response?.data?.message
+                || (err.message === "Network Error" ? "Fallo de conexión: Verifica tu señal de internet o asegúrate de que los archivos anexados no sean demasiado pesados." : err.message)
+                || 'Error cargando solicitud';
             setError(msg);
             return null;
         } finally {
@@ -81,7 +87,10 @@ export const useSolicitudes = () => {
 
         } catch (err: any) {
             console.error("Error en cadena de Subida:", err);
-            const msg = err.response?.data?.error?.message || err.message || 'Ha ocurrido un error en la subida.';
+            const msg = err.response?.data?.error?.message
+                || err.response?.data?.message
+                || (err.message === "Network Error" ? "Fallo de conexión: Verifica tu señal de internet o asegúrate de que los archivos anexados no sean demasiado pesados." : err.message)
+                || 'Ha ocurrido un error en la subida.';
             setError(msg);
             return false;
         } finally {

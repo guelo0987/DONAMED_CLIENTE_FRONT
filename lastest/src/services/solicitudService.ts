@@ -16,8 +16,7 @@ export const solicitudService = {
     crearSolicitud: async (data: FormData): Promise<ApiResponse<SolicitudDetalle>> => {
         const response = await apiClient.post<ApiResponse<SolicitudDetalle>>(
             ENDPOINTS.SOLICITUDES.BASE,
-            data,
-            { headers: { 'Content-Type': 'multipart/form-data' } }
+            data
         );
         return response.data;
     },
@@ -95,8 +94,7 @@ export const solicitudService = {
     agregarDocumentos: async (idSolicitud: number, formData: FormData): Promise<ApiResponse<any>> => {
         const response = await apiClient.post<ApiResponse<any>>(
             ENDPOINTS.SOLICITUDES.DOCUMENTOS(idSolicitud),
-            formData,
-            { headers: { 'Content-Type': 'multipart/form-data' } }
+            formData
         );
         return response.data;
     },

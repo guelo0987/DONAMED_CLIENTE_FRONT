@@ -39,7 +39,7 @@ const Dashboard = () => {
     const phone = profile ? profile.persona.telefono : "";
     const firstName = profile ? profile.persona.nombre : "";
     const lastName = profile ? profile.persona.apellidos : "";
-    const avatar = profile?.foto_url || user?.foto_url || "/assets/imagen_usuario.png";
+    const avatar = profile?.foto_url || user?.foto_url || "/assets/user_header.png";
     const joinDate = profile?.creado_en ? new Date(profile.creado_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : "Desconocido";
     const altPhone = profile?.persona.telefono_alternativo || "No especificado";
 
@@ -135,7 +135,7 @@ const Dashboard = () => {
                             >
                                 {/* Avatar */}
                                 <div className="relative flex-shrink-0">
-                                    <div className="w-[100px] h-[100px] lg:w-[121px] lg:h-[121px] rounded-[12px] overflow-hidden bg-[#C4C4C4] border-[0.5px] border-[#DCD7D7]">
+                                    <div className="w-[100px] h-[100px] lg:w-[121px] lg:h-[121px] rounded-[12px] overflow-hidden  border-[0.5px] border-[#DCD7D7]">
                                         <img
                                             src={avatar}
                                             alt="User"

@@ -1,4 +1,4 @@
-import { ChevronDownIcon, Menu, X, User } from "lucide-react";
+import { ChevronDownIcon, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { ConfirmationCard } from "./ui/confirmation-card";
@@ -215,7 +215,11 @@ export const NavigationHeaderSection = () => {
                                     src={user.foto_url}
                                 />
                             ) : (
-                                <User className="w-6 h-6 text-gray-500" />
+                                <img
+                                    className="w-full h-full object-cover"
+                                    alt="User profile fallback"
+                                    src="/assets/user_header.png"
+                                />
                             )}
                         </div>
                     ) : (
@@ -321,7 +325,11 @@ export const NavigationHeaderSection = () => {
                                                 src={user.foto_url}
                                             />
                                         ) : (
-                                            <User className="w-5 h-5 text-gray-500" />
+                                            <img
+                                                className="w-full h-full object-cover"
+                                                alt="User profile fallback"
+                                                src="/assets/user_header.png"
+                                            />
                                         )}
                                     </div>
                                     <span className="[font-family:'Poppins',sans-serif] font-medium text-[#404040] text-[16px]">

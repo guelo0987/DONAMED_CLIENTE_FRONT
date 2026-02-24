@@ -8,18 +8,19 @@ import { Label } from "../../components/ui/label";
 import { useSolicitudes } from "../../hooks/useSolicitudes";
 import { useAuth } from "../../hooks/useAuth";
 import { ConfirmationCard } from "../../components/ui/confirmation-card";
+import { authService } from "../../services/authService";
 
 export type SolicitudFormMode = "create" | "edit";
 
 const REQUIRED_DOCUMENTS = [
-    "Copia de cédula de identidad (Copia de acta de nacimiento en caso de ser menor de edad)",
-    "En caso de ser menor de edad, copia de cédula de identidad del tutor",
-    "En caso de ser extranjero legal copia de pasaporte, copia de residencia dominicana",
-    "Copia de Carnet de Seguro médico (Si aplica)",
-    "Historial Clínico firmado y sellado por el medico tratante (Con un mínimo de 6 meses de vigencia)",
-    "Copia de Resultados de estudios y/o analíticas (Con un mínimo de 6 meses de vigencia)",
-    "Receta o indicación medica original (Con un mínimo de 3 meses de vigencia)",
-    "Carta de la administradora de Riesgo de Salud (ARS) (Si aplica)",
+    { label: "Copia de cédula de identidad (Copia de acta de nacimiento en caso de ser menor de edad)", required: true },
+    { label: "En caso de ser menor de edad, copia de cédula de identidad del tutor", required: false },
+    { label: "En caso de ser extranjero legal copia de pasaporte, copia de residencia dominicana", required: false },
+    { label: "Copia de Carnet de Seguro médico (Si aplica)", required: false },
+    { label: "Historial Clínico firmado y sellado por el medico tratante (Con un mínimo de 6 meses de vigencia)", required: true },
+    { label: "Copia de Resultados de estudios y/o analíticas (Con un mínimo de 6 meses de vigencia)", required: true },
+    { label: "Receta o indicación medica original (Con un mínimo de 3 meses de vigencia)", required: true },
+    { label: "Carta de la administradora de Riesgo de Salud (ARS) (Si aplica)", required: false },
 ];
 
 const INPUT_STYLE =
@@ -33,6 +34,47 @@ interface SolicitudFormProps {
     mode: SolicitudFormMode;
     className?: string;
 }
+
+const ErrorModal = ({ open, errorMsg, onClose }: { open: boolean, errorMsg: string, onClose: () => void }) => {
+    if (!open) return null;
+
+    // Determinar ícono y título inteligente en base al contenido del mensaje
+    let title = "Ocurrió un problema";
+    let desc = errorMsg;
+
+    if (errorMsg.includes("4.5MB") || errorMsg.includes("peso") || errorMsg.includes("pesados")) {
+        title = "Archivos Demasiado Pesados";
+    } else if (errorMsg.includes("conexión") || errorMsg.includes("Network")) {
+        title = "Fallo de Conexión";
+    } else if (errorMsg.includes("representante") || errorMsg.includes("Cédula")) {
+        title = "Representante Inválido";
+    } else if (errorMsg.includes("obligatorios") || errorMsg.includes("medicamento") || errorMsg.includes("adjuntar") || errorMsg.includes("seleccionar")) {
+        title = "Información Incompleta";
+    } else if (errorMsg.includes("formato")) {
+        title = "Formato no Permitido";
+    }
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4">
+            <div className="bg-white rounded-[24px] border border-[#E7E7E7] shadow-xl px-8 py-8 md:px-12 md:py-10 max-w-[420px] w-full flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+                <div className="w-[72px] h-[72px] bg-red-50 rounded-full flex items-center justify-center mb-5 ring-8 ring-red-50/50">
+                    <AlertCircle className="w-9 h-9 text-red-500" />
+                </div>
+                <h3 className="text-[#2D3748] text-[20px] md:text-[22px] font-semibold font-['Poppins'] mb-3">{title}</h3>
+                <p className="text-[#64748B] text-[14px] md:text-[15px] font-normal leading-relaxed font-['Poppins'] mb-8">
+                    {desc}
+                </p>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="w-full h-[48px] bg-red-500 hover:bg-red-600 rounded-[14px] text-white text-[16px] font-medium font-['Poppins'] transition-all shadow-md hover:shadow-lg focus:ring-4 focus:ring-red-500/20 outline-none"
+                >
+                    Entendido
+                </button>
+            </div>
+        </div>
+    );
+};
 
 export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
     const isEdit = mode === "edit";
@@ -65,7 +107,8 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
     const [hasRepresentative, setHasRepresentative] = useState(false);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-    // Manejo de Documentos Adjuntos
+    // Load authService (Eliminado el require)
+
     // File references associated with the REQUIRED_DOCUMENTS index
     const [files, setFiles] = useState<Record<number, File>>({});
     const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -99,10 +142,10 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
         if (file) {
             setError(null);
 
-            // Límite de 10MB
-            const MAX_SIZE = 10 * 1024 * 1024;
+            // Límite de 2.5MB por archivo para Serverless
+            const MAX_SIZE = 2.5 * 1024 * 1024;
             if (file.size > MAX_SIZE) {
-                setError(`El archivo '${file.name}' supera el límite máximo de 10MB.`);
+                setError(`El archivo '${file.name}' supera el límite máximo de 2.5MB.`);
                 if (fileInputRefs.current[index]) fileInputRefs.current[index]!.value = '';
                 return;
             }
@@ -154,6 +197,14 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
             return;
         }
 
+        // Límite sumado de 4.5MB por la restricción Serverless de Vercel/AWS (Max 4.5MB payload rules) 
+        const totalSize = uploadedFiles.reduce((acc, file) => acc + file.size, 0);
+        const MAX_TOTAL_SIZE = 4.5 * 1024 * 1024;
+        if (totalSize > MAX_TOTAL_SIZE) {
+            setError("El peso total de todos los documentos sumados excede los 4.5MB permitidos. Por favor comprima sus archivos (imágenes/PDF) antes de subir.");
+            return;
+        }
+
         // Construir FormData final para el backend
         const submissionData = new FormData();
         submissionData.append("codigotiposolicitud", formData.codigoTipoSolicitud);
@@ -165,6 +216,20 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                 setError("Debe proporcionar el nombre y la cédula del representante, o desmarcar la opción 'Aplica representante'.");
                 return;
             }
+
+            try {
+                // Verificar si la cédula del representante existe en el sistema
+                const verifyRes = await authService.verificarCedula(formData.cedulaRepresentante);
+                if (!verifyRes.success || (verifyRes.data && !verifyRes.data.exists)) {
+                    throw new Error("La cédula ingresada no se encuentra registrada como usuario en Donamed. El representante debe crear una cuenta.");
+                }
+                // Ajustar si la respuesta es distinta
+            } catch (err: any) {
+                const msg = err.response?.data?.error?.message || err.response?.data?.message || err.message || 'Error de red. No se pudo verificar la cédula.';
+                setError(`Error en representante: ${msg}`);
+                return;
+            }
+
             submissionData.append("cedularepresentante", formData.cedulaRepresentante);
             if (formData.relacionRepresentante) {
                 submissionData.append("relacion_solicitante", formData.relacionRepresentante);
@@ -254,12 +319,6 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                     Datos de Solicitante
                 </h2>
 
-                {error && (
-                    <div className="mb-8 p-4 bg-red-50 border-l-4 border-red-500 rounded-md flex items-center gap-3 max-w-[1500px]">
-                        <AlertCircle className="w-6 h-6 text-red-500" />
-                        <span className="text-red-700 font-['Poppins']">{error}</span>
-                    </div>
-                )}
 
                 <div className="flex flex-col lg:flex-row gap-12">
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6 md:gap-y-8">
@@ -401,13 +460,13 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                 </h2>
 
                 <div className="flex flex-col gap-4 md:gap-6">
-                    {REQUIRED_DOCUMENTS.map((text, index) => (
+                    {REQUIRED_DOCUMENTS.map((doc, index) => (
                         <div
                             key={`document-${index}`}
                             className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 bg-white rounded-lg border border-transparent hover:border-gray-100 transition-all"
                         >
-                            <Label className={`${LABEL_STYLE} text-[16px] md:text-[18px] lg:text-[20px] max-w-[700px] leading-snug`}>
-                                {text}
+                            <Label className={`${LABEL_STYLE} text-[16px] md:text-[18px] lg:text-[20px] max-w-[700px] leading-snug flex items-start gap-1`}>
+                                {doc.label} {doc.required ? <span className="text-red-500 font-bold">*</span> : <span className="text-gray-400 text-sm font-normal mt-1">(Opcional)</span>}
                             </Label>
                             <div
                                 onClick={() => triggerFileInput(index)}
@@ -474,6 +533,12 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                     setIsSuccessModalOpen(false);
                     navigate('/historial-solicitudes');
                 }}
+            />
+
+            <ErrorModal
+                open={!!error}
+                errorMsg={error || ""}
+                onClose={() => setError(null)}
             />
         </div>
     );

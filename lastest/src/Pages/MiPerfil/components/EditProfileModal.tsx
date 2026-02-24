@@ -121,7 +121,7 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
                 <div className="relative group">
                     <div className="w-[120px] h-[120px] rounded-full overflow-hidden bg-gray-100 border-[2px] border-gray-200 flex-shrink-0">
                         <img
-                            src={previewUrl || "/assets/imagen_usuario.png"}
+                            src={previewUrl || "/assets/user_header.png"}
                             alt="Preview"
                             className="w-full h-full object-cover"
                         />
