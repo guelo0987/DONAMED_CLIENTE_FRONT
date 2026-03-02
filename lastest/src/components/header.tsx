@@ -45,6 +45,7 @@ const navigationItems: NavigationItem[] = [
 ];
 
 import { useAuth } from "../hooks/useAuth";
+import { getStoragePublicUrl } from "../utils/storageUrl";
 
 export const NavigationHeaderSection = () => {
     const navigate = useNavigate();
@@ -212,7 +213,7 @@ export const NavigationHeaderSection = () => {
                                 <img
                                     className="w-full h-full object-cover"
                                     alt="User profile"
-                                    src={user.foto_url}
+                                    src={getStoragePublicUrl(user.foto_url) || user.foto_url}
                                 />
                             ) : (
                                 <img
@@ -322,7 +323,7 @@ export const NavigationHeaderSection = () => {
                                             <img
                                                 className="w-full h-full object-cover"
                                                 alt="User profile"
-                                                src={user.foto_url}
+                                                src={getStoragePublicUrl(user.foto_url) || user.foto_url}
                                             />
                                         ) : (
                                             <img

@@ -13,6 +13,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { ConfirmationCard } from "../../components/ui/confirmation-card";
 import type { SolicitudDetalle, EstadoSolicitud } from "../../types/solicitud";
 import type { UserProfile } from "../../types/user";
+import { getStoragePublicUrl } from "../../utils/storageUrl";
 
 type TabId = "informacion" | "datos-solicitante" | "editar";
 
@@ -329,7 +330,7 @@ export const DetalleSolicitud = () => {
                         <DetailCard title="Documentos Adjuntos">
                             <div className="flex flex-col gap-3">
                                 {solicitud.documentos.length > 0 ? solicitud.documentos.map(doc => (
-                                    <a key={doc.id} href={doc.url} target="_blank" rel="noreferrer"
+                                    <a key={doc.id} href={getStoragePublicUrl(doc.url) || doc.url} target="_blank" rel="noreferrer"
                                         className="inline-flex items-center justify-between w-full md:w-[500px] h-[50px] bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] px-4 cursor-pointer hover:bg-gray-50 hover:border-[#34A4B3] transition-colors">
                                         <span className="text-gray-600 truncate font-['Poppins'] text-sm">{doc.nombre}</span>
                                         <FileText className="w-5 h-5 text-[#34A4B3] flex-shrink-0" />
@@ -462,7 +463,7 @@ export const DetalleSolicitud = () => {
                                             <div className="flex items-center gap-3 flex-1 min-w-0">
                                                 <FileText className="w-5 h-5 text-[#34A4B3] flex-shrink-0" />
                                                 <div className="flex flex-col min-w-0">
-                                                    <a href={doc.url} target="_blank" rel="noreferrer"
+                                                    <a href={getStoragePublicUrl(doc.url) || doc.url} target="_blank" rel="noreferrer"
                                                         className="text-gray-700 truncate font-['Poppins'] text-sm hover:text-[#34A4B3] transition-colors">
                                                         {doc.nombre}
                                                     </a>

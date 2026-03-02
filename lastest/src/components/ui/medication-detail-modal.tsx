@@ -41,6 +41,9 @@ export const MedicationDetailModal = ({
                         src={image}
                         alt={name}
                         className="max-h-[360px] md:max-h-[460px] object-contain"
+                        onError={(e) => {
+                            e.currentTarget.src = "/assets/Rectangulo%20Medicamentos.png";
+                        }}
                     />
                 </div>
 

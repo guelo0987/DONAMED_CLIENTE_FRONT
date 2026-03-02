@@ -5,6 +5,7 @@ import { HistorialSolicitudesCard } from "../../components/HistorialSolicitudesC
 import { ConfirmationCard } from "../../components/ui/confirmation-card";
 import { useAuth } from "../../hooks/useAuth";
 import type { UserProfile } from "../../types/user";
+import { getStoragePublicUrl } from "../../utils/storageUrl";
 import { Modal } from "../../components/ui/modal";
 import { EditProfileModal } from "./components/EditProfileModal";
 import { ChangePasswordModal } from "./components/ChangePasswordModal";
@@ -39,7 +40,7 @@ const Dashboard = () => {
     const phone = profile ? profile.persona.telefono : "";
     const firstName = profile ? profile.persona.nombre : "";
     const lastName = profile ? profile.persona.apellidos : "";
-    const avatar = profile?.foto_url || user?.foto_url || "/assets/user_header.png";
+    const avatar = getStoragePublicUrl(profile?.foto_url || user?.foto_url) || "/assets/user_header.png";
     const joinDate = profile?.creado_en ? new Date(profile.creado_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : "Desconocido";
     const altPhone = profile?.persona.telefono_alternativo || "No especificado";
 

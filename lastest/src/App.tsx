@@ -1,4 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { AppLayout } from "./components/AppLayout";
 import { Solicitudes } from "./Pages/Solicitudes/Solicitudes";
 import { ForgotPass } from "./Pages/Auth/ForgotPass";
 import { ResetPass } from "./Pages/Auth/ResetPass";
@@ -14,52 +15,21 @@ import { Contacto } from "./Pages/Ayuda/Contacto.tsx";
 
 const router = createBrowserRouter([
     {
-        path: "/",
-        element: <LandingPage />,
-    },
-    {
-        path: "/solicitudes",
-        element: <Solicitudes />,
-    },
-    {
-        path: "/consultas",
-        element: <Consultas />,
-    },
-    {
-        path: "/reset-password",
-        element: <ResetPass />,
-    },
-    {
-        path: "/forgot-password",
-        element: <ForgotPass />,
-    },
-    {
-        path: "/iniciar-sesion",
-        element: <Login />,
-    },
-    {
-        path: "/crear-cuenta",
-        element: <CreateAccount />,
-    },
-    {
-        path: "/historial-solicitudes",
-        element: <HistorialSolicitudes />,
-    },
-    {
-        path: "/dashboard",
-        element: <Dashboard />,
-    },
-    {
-        path: "/detalle-solicitud/:id",
-        element: <DetalleSolicitud />,
-    },
-    {
-        path: "/preguntas-frecuentes",
-        element: <PreguntasFrecuentes />,
-    },
-    {
-        path: "/contacto",
-        element: <Contacto />,
+        element: <AppLayout />,
+        children: [
+            { path: "/", element: <LandingPage /> },
+            { path: "/solicitudes", element: <Solicitudes /> },
+            { path: "/consultas", element: <Consultas /> },
+            { path: "/reset-password", element: <ResetPass /> },
+            { path: "/forgot-password", element: <ForgotPass /> },
+            { path: "/iniciar-sesion", element: <Login /> },
+            { path: "/crear-cuenta", element: <CreateAccount /> },
+            { path: "/historial-solicitudes", element: <HistorialSolicitudes /> },
+            { path: "/dashboard", element: <Dashboard /> },
+            { path: "/detalle-solicitud/:id", element: <DetalleSolicitud /> },
+            { path: "/preguntas-frecuentes", element: <PreguntasFrecuentes /> },
+            { path: "/contacto", element: <Contacto /> },
+        ],
     },
 ]);
 

@@ -4,6 +4,7 @@ import type { UserProfile } from "../../../types/user";
 import { Camera, Trash2, Loader2, RefreshCw } from "lucide-react";
 import { geoService } from "../../../services/geoService";
 import type { Provincia, Ciudad } from "../../../types/geo";
+import { getStoragePublicUrl } from "../../../utils/storageUrl";
 
 interface EditProfileModalProps {
     profile: UserProfile;
@@ -33,7 +34,7 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
     // File handling
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(profile.foto_url);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(getStoragePublicUrl(profile.foto_url) || profile.foto_url);
     const [removePhoto, setRemovePhoto] = useState(false);
 
     useEffect(() => {
@@ -121,7 +122,7 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
                 <div className="relative group">
                     <div className="w-[120px] h-[120px] rounded-full overflow-hidden bg-gray-100 border-[2px] border-gray-200 flex-shrink-0">
                         <img
-                            src={previewUrl || "/assets/user_header.png"}
+                            src={getStoragePublicUrl(previewUrl) || previewUrl || "/assets/user_header.png"}
                             alt="Preview"
                             className="w-full h-full object-cover"
                         />
@@ -151,7 +152,7 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
                         <RefreshCw className="w-4 h-4" />
                         Cambiar foto
                     </button>
-                    {(previewUrl || profile.foto_url) && !removePhoto && (
+                    {(previewUrl || getStoragePublicUrl(profile.foto_url)) && !removePhoto && (
                         <button
                             type="button"
                             onClick={handleRemovePhoto}
