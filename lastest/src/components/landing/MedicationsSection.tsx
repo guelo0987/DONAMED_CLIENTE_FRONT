@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import { medicamentoService } from "../../services/medicamentoService";
+import { getStoragePublicUrl } from "../../utils/storageUrl";
+import type { MedicamentoListItem } from "../../types/medicamento";
+
+const PLACEHOLDER_IMAGE = "/assets/Rectangulo%20Medicamentos.png";
 
 interface MedicationCardProps {
     name: string;
     image: string;
-    isAvailable: boolean;
+    categories?: string;
     isCenter?: boolean;
+    onClick?: () => void;
 }
 
-export const MedicationCard = ({ name, image, isAvailable, isCenter = false }: MedicationCardProps) => {
+export const MedicationCard = ({ name, image, categories, isCenter = false, onClick }: MedicationCardProps) => {
     return (
         <div
             className={`
@@ -22,9 +30,9 @@ export const MedicationCard = ({ name, image, isAvailable, isCenter = false }: M
             {/* Availability Badge */}
             <div className={`absolute top-5 left-5 z-20 ${isCenter ? "scale-110 origin-top-left" : ""}`}>
                 <div className="inline-flex items-center gap-2 bg-[#DEDEDE] rounded-full px-3 py-1.5">
-                    <div className={`w-2 h-2 rounded-full ${isAvailable ? "bg-[#40C9DB]" : "bg-red-400"}`}></div>
+                    <div className="w-2 h-2 rounded-full bg-[#40C9DB]"></div>
                     <span className="text-[#2D3748] text-[12px] font-medium [font-family:'Poppins',sans-serif]">
-                        {isAvailable ? "Disponible" : "No Disponible"}
+                        Disponible
                     </span>
                 </div>
             </div>
@@ -40,6 +48,7 @@ export const MedicationCard = ({ name, image, isAvailable, isCenter = false }: M
                             object-contain drop-shadow-lg transition-all duration-300
                             ${isCenter ? "h-[220px]" : "h-[180px]"}
                         `}
+                        onError={(e) => { e.currentTarget.src = PLACEHOLDER_IMAGE; }}
                     />
                 </div>
 
@@ -56,19 +65,26 @@ export const MedicationCard = ({ name, image, isAvailable, isCenter = false }: M
                 </div>
             </div>
 
-            {/* Name */}
-            <div className="px-4 mt-2 mb-6">
+            {/* Name & Categories */}
+            <div className="px-4 mt-2 mb-6 text-center">
                 <p className={`
-                    text-center text-[#404040] font-medium leading-[30px] [font-family:'Poppins',sans-serif]
+                    text-[#404040] font-medium leading-[30px] [font-family:'Poppins',sans-serif]
                     ${isCenter ? "text-[22px] lg:text-[24px]" : "text-[18px] lg:text-[20px]"}
                 `}>
                     {name}
                 </p>
+                {categories && (
+                    <p className="text-[#A0AEC0] text-[12px] lg:text-[13px] [font-family:'Poppins',sans-serif] mt-1">
+                        {categories}
+                    </p>
+                )}
             </div>
 
             {/* Details Button */}
             <div className="mt-auto px-4 w-full flex justify-center">
-                <button className={`
+                <button
+                    onClick={onClick}
+                    className={`
                     border-2 border-[#34A4B3] text-[#34A4B3] border-solid rounded-[20px] [font-family:'Poppins',sans-serif] font-medium hover:bg-[#34A4B3] hover:text-white transition-colors
                     ${isCenter ? "w-[75%] py-3 text-[18px]" : "w-[70%] py-2.5 text-[16px]"}
                 `}>
@@ -80,25 +96,27 @@ export const MedicationCard = ({ name, image, isAvailable, isCenter = false }: M
 };
 
 export const MedicationsSection = () => {
-    const [activeSlide, setActiveSlide] = useState(1); // Default to center slide active
+    const navigate = useNavigate();
+    const [medicamentos, setMedicamentos] = useState<MedicamentoListItem[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const medications = [
-        {
-            name: "FloxidCare 500mg",
-            image: "/medicines/floxid_cure.png",
-            isAvailable: true,
-        },
-        {
-            name: "Tecentriq 1200mg",
-            image: "/medicines/tecentriq.png",
-            isAvailable: true,
-        },
-        {
-            name: "Herceptin 150 mg",
-            image: "/medicines/herceptin.png",
-            isAvailable: true,
-        },
-    ];
+    useEffect(() => {
+        const fetchMeds = async () => {
+            try {
+                const res = await medicamentoService.buscarMedicamentos({ limit: 3 });
+                setMedicamentos(res.data?.medicamentos ?? []);
+            } catch {
+                setMedicamentos([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchMeds();
+    }, []);
+
+    const handleVerDetalles = (med: MedicamentoListItem) => {
+        navigate(`/consultas?q=${encodeURIComponent(med.nombre)}`);
+    };
 
     return (
         <section className="w-full py-16 px-4 bg-white overflow-hidden">
@@ -116,27 +134,40 @@ export const MedicationsSection = () => {
                 </p>
 
                 {/* Medication Cards */}
-                <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 mb-12 lg:h-[500px] items-end pb-4">
-                    {medications.map((med, index) => (
-                        <MedicationCard
-                            key={index}
-                            {...med}
-                            isCenter={index === 1}
-                        />
-                    ))}
-                </div>
+                {loading ? (
+                    <div className="flex justify-center py-16">
+                        <Loader2 className="w-10 h-10 text-[#34A4B3] animate-spin" />
+                    </div>
+                ) : medicamentos.length === 0 ? (
+                    <div className="text-center py-16 text-[#718096] [font-family:'Poppins',sans-serif]">
+                        No hay medicamentos disponibles en este momento.
+                    </div>
+                ) : (
+                    <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 mb-12 lg:h-[500px] items-end pb-4">
+                        {medicamentos.map((med, index) => (
+                            <MedicationCard
+                                key={med.codigo}
+                                name={med.nombre}
+                                image={getStoragePublicUrl(med.foto_url) || PLACEHOLDER_IMAGE}
+                                categories={med.categorias?.join(", ") || undefined}
+                                isCenter={index === 1 || medicamentos.length === 1}
+                                onClick={() => handleVerDetalles(med)}
+                            />
+                        ))}
+                    </div>
+                )}
 
-                {/* Pagination Dots */}
-                <div className="flex items-center justify-center gap-2">
-                    {[0, 1, 2, 3].map((dot) => (
-                        <button
-                            key={dot}
-                            onClick={() => setActiveSlide(dot)}
-                            className={`w-3 h-3 rounded-full transition-colors ${activeSlide === dot ? "bg-[#40C9DB]" : "bg-[#D9D9D9]"
-                                }`}
-                        />
-                    ))}
-                </div>
+                {/* Pagination Dots - only show when we have results */}
+                {medicamentos.length > 0 && (
+                    <div className="flex items-center justify-center gap-2">
+                        {medicamentos.map((_, dot) => (
+                            <div
+                                key={dot}
+                                className={`w-3 h-3 rounded-full transition-colors ${dot === (medicamentos.length > 1 ? 1 : 0) ? "bg-[#40C9DB]" : "bg-[#D9D9D9]"}`}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     );

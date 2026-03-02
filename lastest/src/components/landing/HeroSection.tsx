@@ -1,6 +1,96 @@
-import { ArrowRight, Search, ChevronDown } from "lucide-react";
+import { ArrowRight, Search, ChevronDown, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { medicamentoService } from "../../services/medicamentoService";
+import { getStoragePublicUrl } from "../../utils/storageUrl";
+import type { MedicamentoListItem, CategoriaItem } from "../../types/medicamento";
+
+const PLACEHOLDER_IMAGE = "/assets/Rectangulo%20Medicamentos.png";
 
 export const HeroSection = () => {
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<MedicamentoListItem[]>([]);
+    const [categorias, setCategorias] = useState<CategoriaItem[]>([]);
+    const [categoriaFilter, setCategoriaFilter] = useState<string>("");
+    const [searching, setSearching] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Load categories on mount
+    useEffect(() => {
+        medicamentoService.listarCategorias()
+            .then((res) => setCategorias(res.data ?? []))
+            .catch(() => setCategorias([]));
+    }, []);
+
+    // Debounced search as user types
+    const searchMeds = useCallback(async (query: string) => {
+        if (!query.trim()) {
+            setSearchResults([]);
+            setShowDropdown(false);
+            return;
+        }
+        setSearching(true);
+        try {
+            const res = await medicamentoService.buscarMedicamentos({
+                q: query.trim(),
+                limit: 6,
+            });
+            const results = res.data?.medicamentos ?? [];
+            setSearchResults(results);
+            setShowDropdown(results.length > 0);
+        } catch {
+            setSearchResults([]);
+            setShowDropdown(false);
+        } finally {
+            setSearching(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        if (!searchQuery.trim()) {
+            setSearchResults([]);
+            setShowDropdown(false);
+            return;
+        }
+        debounceRef.current = setTimeout(() => searchMeds(searchQuery), 400);
+        return () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        };
+    }, [searchQuery, searchMeds]);
+
+    // Close dropdown on click outside
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target as Node) &&
+                inputRef.current &&
+                !inputRef.current.contains(e.target as Node)
+            ) {
+                setShowDropdown(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleResultClick = (med: MedicamentoListItem) => {
+        setShowDropdown(false);
+        navigate(`/consultas?q=${encodeURIComponent(med.nombre)}`);
+    };
+
+    const handleBuscar = () => {
+        const params = new URLSearchParams();
+        if (searchQuery.trim()) params.set("q", searchQuery.trim());
+        if (categoriaFilter) params.set("categoria", categoriaFilter);
+        navigate(`/consultas${params.toString() ? `?${params.toString()}` : ""}`);
+    };
+
     return (
         <section className="relative w-full max-w-[1440px] mx-auto px-4 lg:px-20 pb-12 lg:pb-24 overflow-hidden lg:overflow-visible">
             <div className="flex flex-col lg:flex-row items-center justify-between min-h-[auto] lg:min-h-[640px] relative">
@@ -24,7 +114,10 @@ export const HeroSection = () => {
                         </p>
 
                         {/* CTA Button */}
-                        <button className="bg-[#34A4B3] text-white px-8 py-3 lg:px-9 lg:py-4 rounded-[8px] flex items-center gap-3 [font-family:'Poppins',sans-serif] font-medium text-[15px] lg:text-[16px] hover:bg-[#2D8A96] transition-colors shadow-[0px_4px_33px_rgba(64,201,219,0.25)] mb-8 lg:mb-12">
+                        <button
+                            onClick={() => navigate("/consultas")}
+                            className="bg-[#34A4B3] text-white px-8 py-3 lg:px-9 lg:py-4 rounded-[8px] flex items-center gap-3 [font-family:'Poppins',sans-serif] font-medium text-[15px] lg:text-[16px] hover:bg-[#2D8A96] transition-colors shadow-[0px_4px_33px_rgba(64,201,219,0.25)] mb-8 lg:mb-12"
+                        >
                             Encuentra lo que necesitas
                             <ArrowRight className="w-5 h-5" />
                         </button>
@@ -116,24 +209,82 @@ export const HeroSection = () => {
                     </p>
 
                     <div className="flex flex-col lg:flex-row gap-4 items-center">
-                        <div className="flex-[2] w-full">
+                        {/* Search Input with Dropdown */}
+                        <div className="flex-[2] w-full relative">
                             <input
+                                ref={inputRef}
                                 type="text"
                                 placeholder="Nombre del Medicamento"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onFocus={() => {
+                                    if (searchResults.length > 0) setShowDropdown(true);
+                                }}
                                 className="w-full bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 text-[#4A5568] placeholder:text-[#A0AEC0] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
                             />
+
+                            {/* Live Search Dropdown */}
+                            {showDropdown && (
+                                <div
+                                    ref={dropdownRef}
+                                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-[16px] shadow-[0px_12px_40px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden z-50 max-h-[320px] overflow-y-auto animate-in fade-in slide-in-from-top-2"
+                                >
+                                    {searchResults.map((med) => (
+                                        <button
+                                            key={med.codigo}
+                                            onClick={() => handleResultClick(med)}
+                                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#F0FDFF] transition-colors text-left border-b border-gray-50 last:border-b-0"
+                                        >
+                                            <div className="w-10 h-10 rounded-[8px] bg-[#F3F4F6] flex-shrink-0 overflow-hidden flex items-center justify-center">
+                                                <img
+                                                    src={getStoragePublicUrl(med.foto_url) || PLACEHOLDER_IMAGE}
+                                                    alt={med.nombre}
+                                                    className="w-8 h-8 object-contain"
+                                                    onError={(e) => { e.currentTarget.src = PLACEHOLDER_IMAGE; }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col min-w-0">
+                                                <span className="text-[#2D3748] text-[14px] font-medium [font-family:'Poppins',sans-serif] truncate">
+                                                    {med.nombre}
+                                                </span>
+                                                <span className="text-[#A0AEC0] text-[12px] [font-family:'Poppins',sans-serif] truncate">
+                                                    {med.categorias?.join(", ") || "Sin categoría"}
+                                                </span>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Searching indicator */}
+                            {searching && (
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                    <Loader2 className="w-4 h-4 text-[#40C9DB] animate-spin" />
+                                </div>
+                            )}
                         </div>
 
+                        {/* Category filter */}
                         <div className="flex-[1] w-full relative">
-                            <select className="w-full bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 text-[#4A5568] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 appearance-none cursor-pointer pr-12 transition-all">
-                                <option>Filtros</option>
-                                <option>Disponible</option>
-                                <option>No Disponible</option>
+                            <select
+                                value={categoriaFilter}
+                                onChange={(e) => setCategoriaFilter(e.target.value)}
+                                className="w-full bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 text-[#4A5568] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 appearance-none cursor-pointer pr-12 transition-all"
+                            >
+                                <option value="">Todas las categorías</option>
+                                {categorias.map((c) => (
+                                    <option key={c.id} value={c.id.toString()}>
+                                        {c.nombre}
+                                    </option>
+                                ))}
                             </select>
                             <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 lg:w-5 lg:h-5 text-[#718096] pointer-events-none" />
                         </div>
 
-                        <button className="bg-[#34A4B3] text-white px-8 lg:px-12 py-3 lg:py-4 rounded-full flex items-center justify-center gap-3 [font-family:'Poppins',sans-serif] font-semibold text-[15px] lg:text-[16px] hover:bg-[#2B93A1] transition-all transform hover:scale-[1.02] shadow-lg shadow-[#34A4B3]/30 w-full lg:w-auto min-w-[150px]">
+                        <button
+                            onClick={handleBuscar}
+                            className="bg-[#34A4B3] text-white px-8 lg:px-12 py-3 lg:py-4 rounded-full flex items-center justify-center gap-3 [font-family:'Poppins',sans-serif] font-semibold text-[15px] lg:text-[16px] hover:bg-[#2B93A1] transition-all transform hover:scale-[1.02] shadow-lg shadow-[#34A4B3]/30 w-full lg:w-auto min-w-[150px]"
+                        >
                             <Search className="w-4 h-4 lg:w-5 lg:h-5" />
                             Buscar
                         </button>

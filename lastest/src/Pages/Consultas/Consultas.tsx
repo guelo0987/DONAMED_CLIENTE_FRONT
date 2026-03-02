@@ -3,6 +3,7 @@ import { MainLayout } from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/buttons";
 import { MedicationDetailModal } from "../../components/ui/medication-detail-modal";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { medicamentoService } from "../../services/medicamentoService";
 import type { MedicamentoListItem, MedicamentoDetalle, CategoriaItem } from "../../types/medicamento";
 import { getStoragePublicUrl } from "../../utils/storageUrl";
@@ -11,11 +12,12 @@ import { getStoragePublicUrl } from "../../utils/storageUrl";
 const PLACEHOLDER_IMAGE = "/assets/Rectangulo%20Medicamentos.png";
 
 export const Consultas = () => {
+    const [searchParams] = useSearchParams();
     const [medicamentos, setMedicamentos] = useState<MedicamentoListItem[]>([]);
     const [categorias, setCategorias] = useState<CategoriaItem[]>([]);
     const [selectedMedicamento, setSelectedMedicamento] = useState<MedicamentoDetalle | null>(null);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [categoriaFilter, setCategoriaFilter] = useState<string>("");
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+    const [categoriaFilter, setCategoriaFilter] = useState<string>(searchParams.get("categoria") || "");
     const [loading, setLoading] = useState(false);
     const [loadingDetailFor, setLoadingDetailFor] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
