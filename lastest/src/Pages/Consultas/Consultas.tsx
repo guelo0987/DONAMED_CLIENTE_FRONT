@@ -197,11 +197,14 @@ export const Consultas = () => {
                 onClose={() => setSelectedMedicamento(null)}
                 name={selectedMedicamento?.nombre ?? ""}
                 image={getStoragePublicUrl(selectedMedicamento?.foto_url) ?? PLACEHOLDER_IMAGE}
-                subtitle={selectedMedicamento?.compuesto_principal ?? undefined}
-                treatment={selectedMedicamento?.via_administracion ?? undefined}
+                compuesto={selectedMedicamento?.compuesto_principal ?? undefined}
+                viaAdministracion={selectedMedicamento?.via_administracion ?? undefined}
+                formaFarmaceutica={selectedMedicamento?.forma_farmaceutica ?? undefined}
                 itemCode={selectedMedicamento?.codigo}
-                category={selectedMedicamento?.categorias?.join(", ")}
+                categorias={selectedMedicamento?.categorias}
+                enfermedades={selectedMedicamento?.enfermedades}
                 description={selectedMedicamento?.descripcion ?? undefined}
+                proveedor={selectedMedicamento?.proveedor}
             />
         </MainLayout>
     );

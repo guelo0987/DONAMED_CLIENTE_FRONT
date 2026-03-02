@@ -39,7 +39,6 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, onCl
 
             {/* Image Container & Shelf */}
             <div className={`relative w-full flex flex-col items-center mb-2 ${isCenter ? "mt-14" : "mt-10"}`}>
-                {/* Medicine Image */}
                 <div className="relative z-10 w-full flex justify-center px-8">
                     <img
                         src={image}
@@ -52,15 +51,12 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, onCl
                     />
                 </div>
 
-                {/* Shelf Image (Rectangle) */}
+                {/* Shelf Image */}
                 <div className="relative z-0 -mt-8 w-full flex justify-center">
                     <img
                         src="/assets/rectangle_landing.png"
                         alt=""
-                        className={`
-                            object-contain opacity-90
-                            ${isCenter ? "w-[80%]" : "w-[75%]"}
-                        `}
+                        className={`object-contain opacity-90 ${isCenter ? "w-[80%]" : "w-[75%]"}`}
                     />
                 </div>
             </div>
@@ -157,7 +153,7 @@ export const MedicationsSection = () => {
                     </div>
                 )}
 
-                {/* Pagination Dots - only show when we have results */}
+                {/* Pagination Dots */}
                 {medicamentos.length > 0 && (
                     <div className="flex items-center justify-center gap-2">
                         {medicamentos.map((_, dot) => (
