@@ -1,11 +1,34 @@
 import { X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "../../components/ui/buttons";
+import { ConfirmationCard } from "../../components/ui/confirmation-card";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import LandingPage from "../Landing/LandingPage";
+import { useAuth } from "../../hooks/useAuth";
+import { validarCorreo } from "../../utils/validators";
 
 export const ForgotPass = () => {
+    const { recuperarContrasena, isLoading, error, setError } = useAuth();
+    const [correo, setCorreo] = useState("");
+    const [showConfirmation, setShowConfirmation] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+
+        if (!validarCorreo(correo)) {
+            setError("El formato del correo electrónico no es válido.");
+            return;
+        }
+
+        const success = await recuperarContrasena(correo);
+        if (success) {
+            setShowConfirmation(true);
+        }
+    };
+
     return (
         <div className="relative min-h-screen">
             <LandingPage />
@@ -60,7 +83,10 @@ export const ForgotPass = () => {
                             </div>
 
                             {/* Form */}
-                            <div className="w-full max-w-[360px] mx-auto space-y-4 mt-4">
+                            <form onSubmit={handleSubmit} className="w-full max-w-[360px] mx-auto space-y-4 mt-4">
+                                {error && (
+                                    <p className="text-red-500 text-sm">{error}</p>
+                                )}
                                 <div className="space-y-1.5 text-left">
                                     <div className="flex items-center gap-2">
                                         <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
@@ -73,16 +99,22 @@ export const ForgotPass = () => {
                                         />
                                     </div>
                                     <Input
+                                        type="email"
+                                        value={correo}
+                                        onChange={(e) => setCorreo(e.target.value)}
                                         placeholder="Dirección de correo electrónico"
                                         className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
+                                        required
                                     />
                                 </div>
 
                                 <div className="flex justify-center pt-2">
                                     <Button
-                                        className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
+                                        type="submit"
+                                        disabled={isLoading}
+                                        className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] disabled:opacity-50 rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                     >
-                                        Siguiente
+                                        {isLoading ? "Enviando..." : "Siguiente"}
                                     </Button>
                                 </div>
 
@@ -95,8 +127,18 @@ export const ForgotPass = () => {
                                         Iniciar Sesión
                                     </Link>
                                 </p>
-                            </div>
+                            </form>
                         </div>
+
+                        <ConfirmationCard
+                            open={showConfirmation}
+                            inlineTitle
+                            title="Revisa tu correo "
+                            highlight="electrónico"
+                            description="Te hemos enviado un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada y sigue las instrucciones."
+                            buttonLabel="Ir al inicio de sesión"
+                            to="/iniciar-sesion"
+                        />
                     </div>
                 </div>
             </div>

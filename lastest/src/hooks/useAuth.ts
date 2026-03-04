@@ -37,6 +37,11 @@ export const useAuth = () => {
         return /verificar|verifica|verificación|correo.*verif|email.*verif/i.test(lower);
     };
 
+    const isRecoverPasswordSuccessMessage = (msg: string) => {
+        const lower = msg?.toLowerCase() || '';
+        return /revisa tu correo|revisa.*correo|enviamos.*enlace|correo enviado|enlace.*correo|restablecer|recuperar.*contraseña/i.test(lower);
+    };
+
     const register = async (data: RegisterData) => {
         setIsLoading(true);
         setError(null);
@@ -57,6 +62,32 @@ export const useAuth = () => {
             const axiosError = err as { response?: { data?: { message?: string, error?: { message?: string } } }, message?: string };
             const errorMsg = axiosError.response?.data?.error?.message || axiosError.response?.data?.message || axiosError.message || 'Error de conexión';
             if (isVerificationMessage(errorMsg)) {
+                return true;
+            }
+            setError(errorMsg);
+        } finally {
+            setIsLoading(false);
+        }
+        return null;
+    };
+
+    const recuperarContrasena = async (correo: string) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await authService.recuperarContrasena(correo);
+            if (response.success) {
+                return true;
+            }
+            const msg = response.message || 'Error al recuperar contraseña';
+            if (isRecoverPasswordSuccessMessage(msg)) {
+                return true;
+            }
+            setError(msg);
+        } catch (err: unknown) {
+            const axiosError = err as { response?: { data?: { message?: string, error?: { message?: string } } }, message?: string };
+            const errorMsg = axiosError.response?.data?.error?.message || axiosError.response?.data?.message || axiosError.message || 'Error de conexión';
+            if (isRecoverPasswordSuccessMessage(errorMsg)) {
                 return true;
             }
             setError(errorMsg);
@@ -227,6 +258,7 @@ export const useAuth = () => {
     return {
         login,
         register,
+        recuperarContrasena,
         checkCedulaAndEmail,
         fetchProfile,
         updateProfile,
