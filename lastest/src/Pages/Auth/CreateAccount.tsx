@@ -424,7 +424,8 @@ export const CreateAccount = () => {
                             open={showConfirmation}
                             title="Su cuenta se ha creado"
                             highlight="satisfactoriamente"
-                            buttonLabel="Continuar"
+                            description="Revisa tu correo electrónico y haz clic en el enlace para verificar tu cuenta. Luego podrás iniciar sesión."
+                            buttonLabel="Ir al inicio de sesión"
                             to="/iniciar-sesion"
                         />
                     </div>

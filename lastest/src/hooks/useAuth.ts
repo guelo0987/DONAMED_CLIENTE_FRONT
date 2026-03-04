@@ -32,6 +32,11 @@ export const useAuth = () => {
         return null;
     };
 
+    const isVerificationMessage = (msg: string) => {
+        const lower = msg?.toLowerCase() || '';
+        return /verificar|verifica|verificación|correo.*verif|email.*verif/i.test(lower);
+    };
+
     const register = async (data: RegisterData) => {
         setIsLoading(true);
         setError(null);
@@ -42,12 +47,19 @@ export const useAuth = () => {
                 localStorage.setItem('user', JSON.stringify(response.data.usuario));
                 return response.data;
             } else {
-                setError(response.message || 'Error en el registro');
+                const msg = response.message || 'Error en el registro';
+                if (isVerificationMessage(msg)) {
+                    return true;
+                }
+                setError(msg);
             }
         } catch (err: unknown) {
             const axiosError = err as { response?: { data?: { message?: string, error?: { message?: string } } }, message?: string };
-            const errorMsg = axiosError.response?.data?.error?.message || axiosError.response?.data?.message;
-            setError(errorMsg || axiosError.message || 'Error de conexión');
+            const errorMsg = axiosError.response?.data?.error?.message || axiosError.response?.data?.message || axiosError.message || 'Error de conexión';
+            if (isVerificationMessage(errorMsg)) {
+                return true;
+            }
+            setError(errorMsg);
         } finally {
             setIsLoading(false);
         }
