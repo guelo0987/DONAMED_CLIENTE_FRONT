@@ -3,6 +3,8 @@ import { AppLayout } from "./components/AppLayout";
 import { Solicitudes } from "./Pages/Solicitudes/Solicitudes";
 import { ForgotPass } from "./Pages/Auth/ForgotPass";
 import { ResetPass } from "./Pages/Auth/ResetPass";
+import { VerificarEmail } from "./Pages/Auth/VerificarEmail";
+import { RestablecerContrasena } from "./Pages/Auth/RestablecerContrasena";
 import { CreateAccount } from "./Pages/Auth/CreateAccount.tsx";
 import { Login } from "./Pages/Auth/Login.tsx";
 import { Consultas } from "./Pages/Consultas/Consultas.tsx";
@@ -21,6 +23,8 @@ const router = createBrowserRouter([
             { path: "/solicitudes", element: <Solicitudes /> },
             { path: "/consultas", element: <Consultas /> },
             { path: "/reset-password", element: <ResetPass /> },
+            { path: "/restablecer-contrasena", element: <RestablecerContrasena /> },
+            { path: "/verificar-email", element: <VerificarEmail /> },
             { path: "/forgot-password", element: <ForgotPass /> },
             { path: "/iniciar-sesion", element: <Login /> },
             { path: "/crear-cuenta", element: <CreateAccount /> },

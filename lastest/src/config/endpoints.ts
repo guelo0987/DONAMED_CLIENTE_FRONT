@@ -5,6 +5,9 @@ export const ENDPOINTS = {
         VERIFY_CEDULA: '/api/v1/auth/verificar-cedula',
         VERIFY_EMAIL: '/api/v1/auth/verificar-correo',
         RECOVER_PASSWORD: '/api/v1/auth/recuperar-contrasena',
+        VERIFICAR_EMAIL: '/api/v1/auth/verificar-email',
+        REENVIAR_VERIFICACION: '/api/v1/auth/reenviar-verificacion',
+        RESTABLECER_CONTRASENA: '/api/v1/auth/restablecer-contrasena',
     },
     GEO: {
         PROVINCIAS: '/api/v1/geo/provincias',

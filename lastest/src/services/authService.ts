@@ -26,5 +26,25 @@ export const authService = {
     recuperarContrasena: async (correo: string): Promise<ApiResponse> => {
         const response = await apiClient.post<ApiResponse>(ENDPOINTS.AUTH.RECOVER_PASSWORD, { correo });
         return response.data;
-    }
+    },
+
+    verificarEmail: async (token: string): Promise<ApiResponse> => {
+        const response = await apiClient.get<ApiResponse>(ENDPOINTS.AUTH.VERIFICAR_EMAIL, {
+            params: { token },
+        });
+        return response.data;
+    },
+
+    reenviarVerificacion: async (correo: string): Promise<ApiResponse> => {
+        const response = await apiClient.post<ApiResponse>(ENDPOINTS.AUTH.REENVIAR_VERIFICACION, { correo });
+        return response.data;
+    },
+
+    restablecerContrasena: async (token: string, nuevaContrasena: string): Promise<ApiResponse> => {
+        const response = await apiClient.post<ApiResponse>(ENDPOINTS.AUTH.RESTABLECER_CONTRASENA, {
+            token,
+            nuevaContrasena,
+        });
+        return response.data;
+    },
 };
