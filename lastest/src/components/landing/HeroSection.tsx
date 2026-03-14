@@ -15,7 +15,9 @@ export const HeroSection = () => {
     const [categoriaFilter, setCategoriaFilter] = useState<string>("");
     const [searching, setSearching] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const categoryDropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -66,13 +68,21 @@ export const HeroSection = () => {
     // Close dropdown on click outside
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
+            const target = e.target as Node;
             if (
                 dropdownRef.current &&
-                !dropdownRef.current.contains(e.target as Node) &&
+                !dropdownRef.current.contains(target) &&
                 inputRef.current &&
-                !inputRef.current.contains(e.target as Node)
+                !inputRef.current.contains(target)
             ) {
                 setShowDropdown(false);
+            }
+
+            if (
+                categoryDropdownRef.current &&
+                !categoryDropdownRef.current.contains(target)
+            ) {
+                setShowCategoryDropdown(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -258,20 +268,47 @@ export const HeroSection = () => {
                         </div>
 
                         {/* Category filter */}
-                        <div className="flex-[1] w-full relative">
-                            <select
-                                value={categoriaFilter}
-                                onChange={(e) => setCategoriaFilter(e.target.value)}
-                                className="w-full bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 text-[#4A5568] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 appearance-none cursor-pointer pr-12 transition-all"
+                        <div className="flex-[1] w-full relative" ref={categoryDropdownRef}>
+                            <button
+                                type="button"
+                                onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                                className="w-full bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 flex items-center justify-between text-[#4A5568] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] hover:bg-[#E2E8F0] transition-all"
                             >
-                                <option value="">Todas las categorías</option>
-                                {categorias.map((c) => (
-                                    <option key={c.id} value={c.id.toString()}>
-                                        {c.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                            <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 lg:w-5 lg:h-5 text-[#718096] pointer-events-none" />
+                                <span className="truncate pr-2">
+                                    {categoriaFilter 
+                                        ? categorias.find(c => c.id.toString() === categoriaFilter)?.nombre 
+                                        : "Todas las categorías"}
+                                </span>
+                                <ChevronDown className={`w-4 h-4 lg:w-5 lg:h-5 text-[#718096] transition-transform ${showCategoryDropdown ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {showCategoryDropdown && (
+                                <div className="absolute top-full left-0 right-0 mt-2 bg-[#5BB0C0] rounded-[16px] shadow-xl overflow-hidden z-50 py-1 border border-[#4DA0B0] animate-in fade-in slide-in-from-top-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setCategoriaFilter("");
+                                            setShowCategoryDropdown(false);
+                                        }}
+                                        className="w-full px-6 py-3 text-left text-white text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] hover:bg-black/10 transition-colors border-b border-white/20 last:border-b-0"
+                                    >
+                                        Todas las categorías
+                                    </button>
+                                    {categorias.map((c) => (
+                                        <button
+                                            key={c.id}
+                                            type="button"
+                                            onClick={() => {
+                                                setCategoriaFilter(c.id.toString());
+                                                setShowCategoryDropdown(false);
+                                            }}
+                                            className="w-full px-6 py-3 text-left text-white text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] hover:bg-black/10 transition-colors border-b border-white/20 last:border-b-0"
+                                        >
+                                            {c.nombre}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         <button

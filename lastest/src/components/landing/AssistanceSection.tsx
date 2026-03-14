@@ -37,7 +37,7 @@ export const AssistanceSection = () => {
 
                             {/* Phone Button */}
                             <a
-                                href="tel:+18298291829"
+                                
                                 className="inline-block bg-[#34A4B3] text-white px-8 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-normal text-[18px] lg:text-[22px] hover:bg-[#2D8A96] transition-colors shadow-[0px_4px_33px_rgba(255,255,255,0.16)]"
                             >
                                 +1 829-829-1829
