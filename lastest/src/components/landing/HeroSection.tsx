@@ -144,21 +144,14 @@ export const HeroSection = () => {
                             className="absolute right-[17%] top-[17%] w-[68%] h-[68%] object-contain z-[1]"
                         />
 
-                        {/* Doctors Layer 1: Bodies inside circle (Masked) */}
-                        <div className="absolute right-[17%] top-[17%] w-[68%] h-[68%] rounded-full overflow-hidden z-[2] flex items-end justify-center">
+                        {/* Doctors Layer - Unified Image */}
+                        <div className="absolute right-[-23%] top-[-17%] w-[140%] h-auto z-[3] pointer-events-none">
                             <img
-                                src="/banners/medicos_2_banner.png"
-                                alt="Médicos Cuerpo"
-                                className="w-[115%] max-w-none h-auto object-cover translate-y-[2%] translate-x-[0%]"
+                                src="/banners/medicos_principal.png"
+                                alt="Médicos"
+                                className="w-full h-auto object-contain"
                             />
                         </div>
-
-                        {/* Doctors Layer 2: Full Image / Heads Pop-out (Overlay) */}
-                        <img
-                            src="/banners/medicos_banner.png"
-                            alt="Médicos Completo"
-                            className="absolute right-[10%] top-[-8%] w-[80%] h-auto object-contain z-[3]"
-                        />
 
                         {/* Glass Card: Donaciones Seguras */}
                         <div className="absolute top-[18%] left-[5%] lg:left-[12%] bg-white/95 backdrop-blur-[20px] rounded-[12px] px-3 py-2 lg:px-5 lg:py-3 shadow-[0px_10px_30px_rgba(0,0,0,0.08)] z-[4] flex items-center gap-2 lg:gap-3 border border-white/50 animate-fade-in-up scale-90 lg:scale-100 origin-left">
@@ -202,7 +195,7 @@ export const HeroSection = () => {
             </div>
 
             {/* Search Section - Overlapping Visuals or Stacked */}
-            <div className="relative z-40 -mt-16 sm:-mt-24 lg:-mt-24 w-full max-w-[900px] mx-auto lg:ml-0 px-4 lg:px-0">
+            <div className="relative z-40 -mt-1 sm:-mt-2 lg:-mt-24 w-full max-w-[900px] mx-auto lg:ml-0 px-4 lg:px-0">
                 <div className="bg-white backdrop-blur-[20px] rounded-[20px] lg:rounded-[24px] shadow-[0px_20px_50px_rgba(0,0,0,0.08)] p-6 border border-gray-50/50">
                     <p className="text-[#404040] font-semibold text-[14px] lg:text-[16px] mb-4 [font-family:'Poppins',sans-serif] ml-2 text-center lg:text-left">
                         Encuentra medicamentos disponibles
