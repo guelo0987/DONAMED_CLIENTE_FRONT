@@ -9,7 +9,7 @@ export const AssistanceModal = ({ open, onClose }: AssistanceModalProps) => {
     if (!open) return null;
 
     return (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-6 md:p-10">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-6 md:p-10">
             <div className="relative w-full max-w-[940px] h-[62vh] bg-white rounded-[26px] shadow-2xl overflow-hidden flex flex-col md:flex-row mx-auto">
                 <button
                     onClick={onClose}

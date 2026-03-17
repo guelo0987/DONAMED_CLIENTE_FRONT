@@ -169,7 +169,7 @@ export const MedicationsSection = () => {
     };
 
     return (
-        <section className="relative z-0 w-full py-16 px-4 bg-white overflow-hidden">
+        <section className="relative w-full py-16 px-4 bg-white overflow-hidden">
             <div className="max-w-[1440px] mx-auto">
                 {/* Title */}
                 <h2 className="text-center text-[32px] lg:text-[50px] font-bold mb-3 [font-family:'Merienda',cursive]">

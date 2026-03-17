@@ -109,7 +109,7 @@ export const CreateAccount = () => {
     return (
         <div className="relative min-h-screen">
             <LandingPage />
-            <div className="fixed inset-0 z-50 w-full flex items-center justify-center p-5 sm:p-6 md:p-8 bg-black/40 backdrop-blur-[2px] font-['Poppins']">
+            <div className="fixed inset-0 z-[100] w-full flex items-center justify-center p-5 sm:p-6 md:p-8 bg-black/40 backdrop-blur-[2px] font-['Poppins']">
                 <div className="relative w-full max-w-[1200px] h-[88vh] lg:h-[86vh] bg-white rounded-[24px] lg:rounded-[38px] shadow-2xl overflow-hidden flex flex-col lg:flex-row">
                     <Link
                         to="/"
@@ -234,7 +234,6 @@ export const CreateAccount = () => {
                                             options={[
                                                 { value: "F", label: "Femenino" },
                                                 { value: "M", label: "Masculino" },
-                                                { value: "O", label: "Otro" },
                                             ]}
                                             buttonClassName="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium focus:border-[#40C9DB] focus:ring-2 focus:ring-[#40C9DB]/20 transition-all px-3"
                                         />
