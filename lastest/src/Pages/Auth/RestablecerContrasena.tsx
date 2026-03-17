@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/buttons";
@@ -20,6 +20,8 @@ export const RestablecerContrasena = () => {
     const [confirmarContrasena, setConfirmarContrasena] = useState("");
     const [errorForm, setErrorForm] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [showNuevaContrasena, setShowNuevaContrasena] = useState(false);
+    const [showConfirmarContrasena, setShowConfirmarContrasena] = useState(false);
 
     useEffect(() => {
         if (!token) {
@@ -133,13 +135,23 @@ export const RestablecerContrasena = () => {
                                                     className="w-2 h-2 lg:w-3 lg:h-3"
                                                 />
                                             </div>
-                                            <Input
-                                                type="password"
-                                                value={nuevaContrasena}
-                                                onChange={(e) => setNuevaContrasena(e.target.value)}
-                                                placeholder="Nueva Contraseña"
-                                                className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
-                                            />
+                                            <div className="relative">
+                                                <Input
+                                                    type={showNuevaContrasena ? "text" : "password"}
+                                                    value={nuevaContrasena}
+                                                    onChange={(e) => setNuevaContrasena(e.target.value)}
+                                                    placeholder="Nueva Contraseña"
+                                                    className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowNuevaContrasena((prev) => !prev)}
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
+                                                    aria-label={showNuevaContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                                >
+                                                    {showNuevaContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <div className="space-y-1.5 text-left">
@@ -153,13 +165,23 @@ export const RestablecerContrasena = () => {
                                                     className="w-2 h-2 lg:w-3 lg:h-3"
                                                 />
                                             </div>
-                                            <Input
-                                                type="password"
-                                                value={confirmarContrasena}
-                                                onChange={(e) => setConfirmarContrasena(e.target.value)}
-                                                placeholder="Confirmar Contraseña"
-                                                className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
-                                            />
+                                            <div className="relative">
+                                                <Input
+                                                    type={showConfirmarContrasena ? "text" : "password"}
+                                                    value={confirmarContrasena}
+                                                    onChange={(e) => setConfirmarContrasena(e.target.value)}
+                                                    placeholder="Confirmar Contraseña"
+                                                    className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowConfirmarContrasena((prev) => !prev)}
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
+                                                    aria-label={showConfirmarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                                >
+                                                    {showConfirmarContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
+                                                </button>
+                                            </div>
                                         </div>
 
                                         {errorForm && (

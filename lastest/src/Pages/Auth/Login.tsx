@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "../../components/ui/buttons";
@@ -13,6 +13,7 @@ export const Login = () => {
     const { login, isLoading, error, setError } = useAuth();
     const [correo, setCorreo] = useState("");
     const [contrasena, setContrasena] = useState("");
+    const [showContrasena, setShowContrasena] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -116,14 +117,24 @@ export const Login = () => {
                                             className="w-2 h-2 lg:w-3 lg:h-3"
                                         />
                                     </div>
-                                    <Input
-                                        type="password"
-                                        value={contrasena}
-                                        onChange={(e) => setContrasena(e.target.value)}
-                                        required
-                                        placeholder="Tu contraseña"
-                                        className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
-                                    />
+                                    <div className="relative">
+                                        <Input
+                                            type={showContrasena ? "text" : "password"}
+                                            value={contrasena}
+                                            onChange={(e) => setContrasena(e.target.value)}
+                                            required
+                                            placeholder="Tu contraseña"
+                                            className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowContrasena((prev) => !prev)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
+                                            aria-label={showContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        >
+                                            {showContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

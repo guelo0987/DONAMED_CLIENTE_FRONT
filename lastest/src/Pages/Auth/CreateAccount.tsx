@@ -1,8 +1,9 @@
-import { Calendar, ChevronDown, X } from "lucide-react";
+import { Calendar, Check, Eye, EyeOff, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/buttons";
 import { ConfirmationCard } from "../../components/ui/confirmation-card";
+import { DropdownSelect } from "../../components/ui/dropdown-select";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import LandingPage from "../Landing/LandingPage";
@@ -31,6 +32,8 @@ export const CreateAccount = () => {
         contrasena: ""
     });
     const [confirmarContrasena, setConfirmarContrasena] = useState("");
+    const [showContrasena, setShowContrasena] = useState(false);
+    const [showConfirmarContrasena, setShowConfirmarContrasena] = useState(false);
 
     const [provincias, setProvincias] = useState<Provincia[]>([]);
     const [ciudades, setCiudades] = useState<Ciudad[]>([]);
@@ -224,21 +227,17 @@ export const CreateAccount = () => {
                                             <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Sexo</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
-                                        <div className="relative">
-                                            <select
-                                                name="sexo"
-                                                value={formData.sexo}
-                                                onChange={handleChange}
-                                                required
-                                                className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium focus:border-[#40C9DB] transition-all px-3 pr-9 appearance-none"
-                                            >
-                                                <option value="">Sexo</option>
-                                                <option value="F">Femenino</option>
-                                                <option value="M">Masculino</option>
-                                                <option value="O">Otro</option>
-                                            </select>
-                                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9A9A9A] pointer-events-none" />
-                                        </div>
+                                        <DropdownSelect
+                                            value={formData.sexo}
+                                            onChange={(value) => setFormData((prev) => ({ ...prev, sexo: value }))}
+                                            placeholder="Sexo"
+                                            options={[
+                                                { value: "F", label: "Femenino" },
+                                                { value: "M", label: "Masculino" },
+                                                { value: "O", label: "Otro" },
+                                            ]}
+                                            buttonClassName="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium focus:border-[#40C9DB] focus:ring-2 focus:ring-[#40C9DB]/20 transition-all px-3"
+                                        />
                                     </div>
                                 </div>
 
@@ -248,24 +247,19 @@ export const CreateAccount = () => {
                                             <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Provincia</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
-                                        <div className="relative">
-                                            <select
-                                                name="codigoprovincia"
-                                                value={formData.codigoprovincia}
-                                                onChange={handleChange}
-                                                required
-                                                disabled={isLoadingGeo}
-                                                className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium focus:border-[#40C9DB] transition-all px-3 pr-9 appearance-none"
-                                            >
-                                                <option value="" disabled>Provincia (Ej: Distrito Nacional)</option>
-                                                {provincias.map((prov) => (
-                                                    <option key={prov.codigoprovincia} value={prov.codigoprovincia}>
-                                                        {prov.nombre}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9A9A9A] pointer-events-none" />
-                                        </div>
+                                        <DropdownSelect
+                                            value={formData.codigoprovincia}
+                                            onChange={(value) =>
+                                                setFormData((prev) => ({ ...prev, codigoprovincia: value, codigociudad: "" }))
+                                            }
+                                            placeholder="Provincia (Ej: Distrito Nacional)"
+                                            options={provincias.map((prov) => ({
+                                                value: prov.codigoprovincia,
+                                                label: prov.nombre,
+                                            }))}
+                                            disabled={isLoadingGeo}
+                                            buttonClassName="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium focus:border-[#40C9DB] focus:ring-2 focus:ring-[#40C9DB]/20 transition-all px-3"
+                                        />
                                     </div>
 
                                     <div className="space-y-1.5">
@@ -273,27 +267,19 @@ export const CreateAccount = () => {
                                             <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Ciudad</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
-                                        <div className="relative">
-                                            <select
-                                                name="codigociudad"
-                                                value={formData.codigociudad}
-                                                onChange={handleChange}
-                                                required
-                                                disabled={isLoadingGeo || !formData.codigoprovincia}
-                                                className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium focus:border-[#40C9DB] transition-all px-3 pr-9 appearance-none"
-                                            >
-                                                <option value="" disabled>Ciudad (Ej: Santo Domingo)</option>
-                                                {ciudades
-                                                    .filter(c => c.codigoprovincia === formData.codigoprovincia)
-                                                    .map(ciudad => (
-                                                        <option key={ciudad.codigociudad} value={ciudad.codigociudad}>
-                                                            {ciudad.nombre}
-                                                        </option>
-                                                    ))
-                                                }
-                                            </select>
-                                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9A9A9A] pointer-events-none" />
-                                        </div>
+                                        <DropdownSelect
+                                            value={formData.codigociudad}
+                                            onChange={(value) => setFormData((prev) => ({ ...prev, codigociudad: value }))}
+                                            placeholder="Ciudad (Ej: Santo Domingo)"
+                                            options={ciudades
+                                                .filter((c) => c.codigoprovincia === formData.codigoprovincia)
+                                                .map((ciudad) => ({
+                                                    value: ciudad.codigociudad,
+                                                    label: ciudad.nombre,
+                                                }))}
+                                            disabled={isLoadingGeo || !formData.codigoprovincia}
+                                            buttonClassName="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium focus:border-[#40C9DB] focus:ring-2 focus:ring-[#40C9DB]/20 transition-all px-3"
+                                        />
                                     </div>
                                 </div>
 
@@ -364,15 +350,25 @@ export const CreateAccount = () => {
                                             <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Contraseña</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
-                                        <Input
-                                            type="password"
-                                            name="contrasena"
-                                            value={formData.contrasena}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="Tu contraseña"
-                                            className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
-                                        />
+                                        <div className="relative">
+                                            <Input
+                                                type={showContrasena ? "text" : "password"}
+                                                name="contrasena"
+                                                value={formData.contrasena}
+                                                onChange={handleChange}
+                                                required
+                                                placeholder="Tu contraseña"
+                                                className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowContrasena((prev) => !prev)}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
+                                                aria-label={showContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                            >
+                                                {showContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div className="space-y-1.5">
@@ -380,14 +376,24 @@ export const CreateAccount = () => {
                                             <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Confirmar Contraseña</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
-                                        <Input
-                                            type="password"
-                                            value={confirmarContrasena}
-                                            onChange={(e) => setConfirmarContrasena(e.target.value)}
-                                            required
-                                            placeholder="Confirmar tu contraseña"
-                                            className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
-                                        />
+                                        <div className="relative">
+                                            <Input
+                                                type={showConfirmarContrasena ? "text" : "password"}
+                                                value={confirmarContrasena}
+                                                onChange={(e) => setConfirmarContrasena(e.target.value)}
+                                                required
+                                                placeholder="Confirmar tu contraseña"
+                                                className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowConfirmarContrasena((prev) => !prev)}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
+                                                aria-label={showConfirmarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                            >
+                                                {showConfirmarContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -396,8 +402,11 @@ export const CreateAccount = () => {
                                         <input
                                             type="checkbox"
                                             required
-                                            className="h-4 w-4 border-[#DCD7D7] text-[#34A4B3] focus:ring-[#34A4B3]"
+                                            className="peer sr-only"
                                         />
+                                        <span className="h-4 w-4 rounded-[4px] border border-[#DCD7D7] bg-white flex items-center justify-center transition-colors text-transparent peer-checked:bg-[#34A4B3] peer-checked:border-[#34A4B3] peer-checked:text-white">
+                                            <Check className="w-3 h-3" strokeWidth={3.2} />
+                                        </span>
                                         <span>
                                             Acepto los <Link to="/" className="text-[#34A4B3] hover:underline">términos y condiciones</Link>
                                         </span>
