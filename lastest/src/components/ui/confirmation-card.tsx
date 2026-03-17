@@ -81,7 +81,7 @@ export const ConfirmationCard = ({
 
     return (
         <div
-            className={`fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 ${overlayClassName}`}
+            className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 ${overlayClassName}`}
         >
             <div
                 className={`bg-white rounded-[20px] border border-[#E7E7E7] shadow-lg px-10 py-8 text-center ${className}`}

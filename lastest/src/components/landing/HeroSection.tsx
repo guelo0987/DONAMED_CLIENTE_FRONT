@@ -94,7 +94,7 @@ export const HeroSection = () => {
     };
 
     return (
-        <section className="relative z-[80] w-full max-w-[1440px] mx-auto px-4 lg:px-20 pb-12 lg:pb-24 overflow-visible">
+        <section className="relative z-10 w-full max-w-[1440px] mx-auto px-4 lg:px-20 pb-12 lg:pb-24 overflow-visible">
             <div className="flex flex-col lg:flex-row items-center justify-between min-h-[auto] lg:min-h-[640px] relative">
 
                 {/* Left Content */}
@@ -197,7 +197,7 @@ export const HeroSection = () => {
             </div>
 
             {/* Search Section - Overlapping Visuals or Stacked */}
-            <div className="relative z-[120] -mt-16 sm:-mt-24 lg:-mt-24 w-full max-w-[900px] mx-auto lg:ml-0 px-4 lg:px-0">
+            <div className="relative z-20 -mt-16 sm:-mt-24 lg:-mt-24 w-full max-w-[900px] mx-auto lg:ml-0 px-4 lg:px-0">
                 <div className="bg-white backdrop-blur-[20px] rounded-[20px] lg:rounded-[24px] shadow-[0px_20px_50px_rgba(0,0,0,0.08)] p-6 border border-gray-50/50">
                     <p className="text-[#404040] font-semibold text-[14px] lg:text-[16px] mb-4 [font-family:'Poppins',sans-serif] ml-2 text-center lg:text-left">
                         Encuentra medicamentos disponibles
