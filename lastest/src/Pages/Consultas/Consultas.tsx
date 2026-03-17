@@ -1,7 +1,8 @@
-import { ChevronDown, Loader2, Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/buttons";
 import { MedicationDetailModal } from "../../components/ui/medication-detail-modal";
+import { DropdownSelect } from "../../components/ui/dropdown-select";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { medicamentoService } from "../../services/medicamentoService";
@@ -100,19 +101,13 @@ export const Consultas = () => {
                                         />
                                     </div>
                                     <div className="flex-[1] w-full relative">
-                                        <select
+                                        <DropdownSelect
                                             value={categoriaFilter}
-                                            onChange={(e) => setCategoriaFilter(e.target.value)}
-                                            className="w-full bg-[#F3F4F6] rounded-full px-6 lg:px-7 py-3 lg:py-3.5 text-[#4A5568] text-[13px] lg:text-[14px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 appearance-none cursor-pointer pr-12 transition-all"
-                                        >
-                                            <option value="">Todas las categorías</option>
-                                            {categorias.map((c) => (
-                                                <option key={c.id} value={c.id.toString()}>
-                                                    {c.nombre}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 lg:w-5 lg:h-5 text-[#718096] pointer-events-none" />
+                                            onChange={setCategoriaFilter}
+                                            options={categorias.map((c) => ({ value: c.id.toString(), label: c.nombre }))}
+                                            placeholder="Todas las categorías"
+                                            buttonClassName="bg-[#F3F4F6] rounded-full px-6 lg:px-7 py-3 lg:py-3.5 text-[#4A5568] text-[13px] lg:text-[14px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
+                                        />
                                     </div>
                                     <button
                                         type="submit"
