@@ -3,6 +3,7 @@ import type { ChangeEvent } from "react";
 import { Paperclip, Plus, X, Loader2, AlertCircle, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/buttons";
+import { DropdownSelect } from "../../components/ui/dropdown-select";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { useSolicitudes } from "../../hooks/useSolicitudes";
@@ -324,20 +325,18 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6 md:gap-y-8">
                         <div className="space-y-2 md:space-y-3 lg:col-span-2">
                             <Label className={LABEL_STYLE}>Tipo de Solicitud *</Label>
-                            <select
-                                name="codigoTipoSolicitud"
+                            <DropdownSelect
                                 value={formData.codigoTipoSolicitud}
-                                onChange={handleInputChange}
-                                className={`${INPUT_STYLE} w-full appearance-none outline-none focus:border-[#34A4B3] hover:border-[#34A4B3]/50 transition-colors bg-white ${!formData.codigoTipoSolicitud ? "text-gray-400" : "text-[#111827]"
-                                    }`}
-                                required
-                            >
-                                <option value="" disabled hidden>Seleccione el tipo de solicitud</option>
-                                <option value="PRIMERA_SOLICITUD">Primera Solicitud</option>
-                                <option value="RENOVACION">Renovación</option>
-                                <option value="CAMBIO">Cambio</option>
-                                <option value="INCLUSIÓN">Inclusión</option>
-                            </select>
+                                onChange={(value) => setFormData((prev) => ({ ...prev, codigoTipoSolicitud: value }))}
+                                placeholder="Seleccione el tipo de solicitud"
+                                options={[
+                                    { value: "PRIMERA_SOLICITUD", label: "Primera Solicitud" },
+                                    { value: "RENOVACION", label: "Renovación" },
+                                    { value: "CAMBIO", label: "Cambio" },
+                                    { value: "INCLUSIÓN", label: "Inclusión" },
+                                ]}
+                                buttonClassName={`${INPUT_STYLE} w-full outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all ${!formData.codigoTipoSolicitud ? "text-gray-400" : "text-[#111827]"}`}
+                            />
                         </div>
                         <div className="space-y-2 md:space-y-3">
                             <Label className={LABEL_STYLE}>Nombre del Solicitante</Label>

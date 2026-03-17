@@ -63,7 +63,7 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
                     <button
                         type="button"
                         onClick={() => setShowActual(!showActual)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c]"
                     >
                         {showActual ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -84,7 +84,7 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
                     <button
                         type="button"
                         onClick={() => setShowNueva(!showNueva)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c]"
                     >
                         {showNueva ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -112,7 +112,7 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
                     <button
                         type="button"
                         onClick={() => setShowConfirm(!showConfirm)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c]"
                     >
                         {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>

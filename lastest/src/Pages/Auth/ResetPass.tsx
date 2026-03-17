@@ -1,11 +1,15 @@
-import { X } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "../../components/ui/buttons";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import LandingPage from "../Landing/LandingPage";
 
 export const ResetPass = () => {
+    const [showNuevaContrasena, setShowNuevaContrasena] = useState(false);
+    const [showConfirmarContrasena, setShowConfirmarContrasena] = useState(false);
+
     return (
         <div className="relative min-h-screen">
             <LandingPage />
@@ -73,11 +77,21 @@ export const ResetPass = () => {
                                             className="w-2 h-2 lg:w-3 lg:h-3"
                                         />
                                     </div>
-                                    <Input
-                                        type="password"
-                                        placeholder="Nueva Contraseña"
-                                        className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
-                                    />
+                                    <div className="relative">
+                                        <Input
+                                            type={showNuevaContrasena ? "text" : "password"}
+                                            placeholder="Nueva Contraseña"
+                                            className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowNuevaContrasena((prev) => !prev)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
+                                            aria-label={showNuevaContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        >
+                                            {showNuevaContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Repeat Password */}
@@ -92,11 +106,21 @@ export const ResetPass = () => {
                                             className="w-2 h-2 lg:w-3 lg:h-3"
                                         />
                                     </div>
-                                    <Input
-                                        type="password"
-                                        placeholder="Repita la Contraseña"
-                                        className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
-                                    />
+                                    <div className="relative">
+                                        <Input
+                                            type={showConfirmarContrasena ? "text" : "password"}
+                                            placeholder="Repita la Contraseña"
+                                            className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmarContrasena((prev) => !prev)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
+                                            aria-label={showConfirmarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                        >
+                                            {showConfirmarContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="flex justify-center pt-2">

@@ -1,7 +1,8 @@
-import { ArrowRight, Search, ChevronDown, Loader2 } from "lucide-react";
+import { ArrowRight, Search, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { medicamentoService } from "../../services/medicamentoService";
+import { DropdownSelect } from "../ui/dropdown-select";
 import { getStoragePublicUrl } from "../../utils/storageUrl";
 import type { MedicamentoListItem, CategoriaItem } from "../../types/medicamento";
 
@@ -15,9 +16,7 @@ export const HeroSection = () => {
     const [categoriaFilter, setCategoriaFilter] = useState<string>("");
     const [searching, setSearching] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
-    const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const categoryDropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -77,13 +76,6 @@ export const HeroSection = () => {
             ) {
                 setShowDropdown(false);
             }
-
-            if (
-                categoryDropdownRef.current &&
-                !categoryDropdownRef.current.contains(target)
-            ) {
-                setShowCategoryDropdown(false);
-            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -102,7 +94,7 @@ export const HeroSection = () => {
     };
 
     return (
-        <section className="relative w-full max-w-[1440px] mx-auto px-4 lg:px-20 pb-12 lg:pb-24 overflow-hidden lg:overflow-visible">
+        <section className="relative z-[80] w-full max-w-[1440px] mx-auto px-4 lg:px-20 pb-12 lg:pb-24 overflow-visible">
             <div className="flex flex-col lg:flex-row items-center justify-between min-h-[auto] lg:min-h-[640px] relative">
 
                 {/* Left Content */}
@@ -205,7 +197,7 @@ export const HeroSection = () => {
             </div>
 
             {/* Search Section - Overlapping Visuals or Stacked */}
-            <div className="relative z-40 -mt-1 sm:-mt-2 lg:-mt-24 w-full max-w-[900px] mx-auto lg:ml-0 px-4 lg:px-0">
+            <div className="relative z-[120] -mt-16 sm:-mt-24 lg:-mt-24 w-full max-w-[900px] mx-auto lg:ml-0 px-4 lg:px-0">
                 <div className="bg-white backdrop-blur-[20px] rounded-[20px] lg:rounded-[24px] shadow-[0px_20px_50px_rgba(0,0,0,0.08)] p-6 border border-gray-50/50">
                     <p className="text-[#404040] font-semibold text-[14px] lg:text-[16px] mb-4 [font-family:'Poppins',sans-serif] ml-2 text-center lg:text-left">
                         Encuentra medicamentos disponibles
@@ -268,47 +260,15 @@ export const HeroSection = () => {
                         </div>
 
                         {/* Category filter */}
-                        <div className="flex-[1] w-full relative" ref={categoryDropdownRef}>
-                            <button
-                                type="button"
-                                onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-                                className="w-full bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 flex items-center justify-between text-[#4A5568] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] hover:bg-[#E2E8F0] transition-all"
-                            >
-                                <span className="truncate pr-2">
-                                    {categoriaFilter 
-                                        ? categorias.find(c => c.id.toString() === categoriaFilter)?.nombre 
-                                        : "Todas las categorías"}
-                                </span>
-                                <ChevronDown className={`w-4 h-4 lg:w-5 lg:h-5 text-[#718096] transition-transform ${showCategoryDropdown ? 'rotate-180' : ''}`} />
-                            </button>
-
-                            {showCategoryDropdown && (
-                                <div className="absolute top-full left-0 right-0 mt-2 bg-[#5BB0C0] rounded-[16px] shadow-xl overflow-hidden z-50 py-1 border border-[#4DA0B0] animate-in fade-in slide-in-from-top-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setCategoriaFilter("");
-                                            setShowCategoryDropdown(false);
-                                        }}
-                                        className="w-full px-6 py-3 text-left text-white text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] hover:bg-black/10 transition-colors border-b border-white/20 last:border-b-0"
-                                    >
-                                        Todas las categorías
-                                    </button>
-                                    {categorias.map((c) => (
-                                        <button
-                                            key={c.id}
-                                            type="button"
-                                            onClick={() => {
-                                                setCategoriaFilter(c.id.toString());
-                                                setShowCategoryDropdown(false);
-                                            }}
-                                            className="w-full px-6 py-3 text-left text-white text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] hover:bg-black/10 transition-colors border-b border-white/20 last:border-b-0"
-                                        >
-                                            {c.nombre}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
+                        <div className="flex-[1] w-full relative">
+                            <DropdownSelect
+                                value={categoriaFilter}
+                                onChange={setCategoriaFilter}
+                                options={categorias.map((c) => ({ value: c.id.toString(), label: c.nombre }))}
+                                placeholder="Todas las categorías"
+                                openUpward
+                                buttonClassName="bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 text-[#4A5568] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
+                            />
                         </div>
 
                         <button

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import type { UserProfile } from "../../../types/user";
 import { Camera, Trash2, Loader2, RefreshCw } from "lucide-react";
+import { DropdownSelect } from "../../../components/ui/dropdown-select";
 import { geoService } from "../../../services/geoService";
 import type { Provincia, Ciudad } from "../../../types/geo";
 import { getStoragePublicUrl } from "../../../utils/storageUrl";
@@ -222,26 +223,14 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
                         Provincia
                         {isLoadingGeo && <Loader2 className="w-4 h-4 animate-spin text-[#40C9DB]" />}
                     </label>
-                    <div className="relative">
-                        <select
-                            required
-                            name="codigoprovincia"
-                            value={formData.codigoprovincia}
-                            onChange={(e) => setFormData({ ...formData, codigoprovincia: e.target.value, codigociudad: "" })}
-                            disabled={isLoadingGeo || provincias.length === 0}
-                            className="w-full h-[52px] bg-white border border-[#DCD7D7] rounded-[10px] px-4 text-[#A0AEC0] text-sm md:text-base outline-none focus:border-[#40C9DB] appearance-none disabled:bg-gray-50 disabled:cursor-not-allowed"
-                        >
-                            <option value="">Selecciona una provincia</option>
-                            {provincias.map((prov) => (
-                                <option key={prov.codigoprovincia} value={prov.codigoprovincia}>
-                                    {prov.nombre}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="absolute top-1/2 right-4 transform -translate-y-1/2 pointer-events-none">
-                            <span className="text-[#A0AEC0]">▼</span>
-                        </div>
-                    </div>
+                    <DropdownSelect
+                        value={formData.codigoprovincia}
+                        onChange={(value) => setFormData({ ...formData, codigoprovincia: value, codigociudad: "" })}
+                        options={provincias.map((prov) => ({ value: prov.codigoprovincia, label: prov.nombre }))}
+                        placeholder="Selecciona una provincia"
+                        disabled={isLoadingGeo || provincias.length === 0}
+                        buttonClassName="w-full h-[52px] bg-[#F3F4F6] rounded-[10px] px-4 text-[#4A5568] text-sm md:text-base outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
+                    />
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -249,26 +238,14 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
                         Ciudad
                         {isLoadingGeo && <Loader2 className="w-4 h-4 animate-spin text-[#40C9DB]" />}
                     </label>
-                    <div className="relative">
-                        <select
-                            required
-                            name="codigociudad"
-                            value={formData.codigociudad}
-                            onChange={(e) => setFormData({ ...formData, codigociudad: e.target.value })}
-                            disabled={isLoadingGeo || ciudades.length === 0 || !formData.codigoprovincia}
-                            className="w-full h-[52px] bg-white border border-[#DCD7D7] rounded-[10px] px-4 text-[#A0AEC0] text-sm md:text-base outline-none focus:border-[#40C9DB] appearance-none disabled:bg-gray-50 disabled:cursor-not-allowed"
-                        >
-                            <option value="">Selecciona tu ciudad</option>
-                            {ciudadesFiltradas.map((ciudad) => (
-                                <option key={ciudad.codigociudad} value={ciudad.codigociudad}>
-                                    {ciudad.nombre}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="absolute top-1/2 right-4 transform -translate-y-1/2 pointer-events-none">
-                            <span className="text-[#A0AEC0]">▼</span>
-                        </div>
-                    </div>
+                    <DropdownSelect
+                        value={formData.codigociudad}
+                        onChange={(value) => setFormData({ ...formData, codigociudad: value })}
+                        options={ciudadesFiltradas.map((ciudad) => ({ value: ciudad.codigociudad, label: ciudad.nombre }))}
+                        placeholder="Selecciona tu ciudad"
+                        disabled={isLoadingGeo || ciudades.length === 0 || !formData.codigoprovincia}
+                        buttonClassName="w-full h-[52px] bg-[#F3F4F6] rounded-[10px] px-4 text-[#4A5568] text-sm md:text-base outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
+                    />
                 </div>
             </div>
 
