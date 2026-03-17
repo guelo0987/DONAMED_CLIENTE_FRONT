@@ -1,7 +1,8 @@
-import { ArrowRight, Search, ChevronDown, Loader2 } from "lucide-react";
+import { ArrowRight, Search, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { medicamentoService } from "../../services/medicamentoService";
+import { DropdownSelect } from "../ui/dropdown-select";
 import { getStoragePublicUrl } from "../../utils/storageUrl";
 import type { MedicamentoListItem, CategoriaItem } from "../../types/medicamento";
 
@@ -92,7 +93,7 @@ export const HeroSection = () => {
     };
 
     return (
-        <section className="relative w-full max-w-[1440px] mx-auto px-4 lg:px-20 pb-12 lg:pb-24 overflow-hidden lg:overflow-visible">
+        <section className="relative z-[80] w-full max-w-[1440px] mx-auto px-4 lg:px-20 pb-12 lg:pb-24 overflow-visible">
             <div className="flex flex-col lg:flex-row items-center justify-between min-h-[auto] lg:min-h-[640px] relative">
 
                 {/* Left Content */}
@@ -202,7 +203,7 @@ export const HeroSection = () => {
             </div>
 
             {/* Search Section - Overlapping Visuals or Stacked */}
-            <div className="relative z-40 -mt-16 sm:-mt-24 lg:-mt-24 w-full max-w-[900px] mx-auto lg:ml-0 px-4 lg:px-0">
+            <div className="relative z-[120] -mt-16 sm:-mt-24 lg:-mt-24 w-full max-w-[900px] mx-auto lg:ml-0 px-4 lg:px-0">
                 <div className="bg-white backdrop-blur-[20px] rounded-[20px] lg:rounded-[24px] shadow-[0px_20px_50px_rgba(0,0,0,0.08)] p-6 border border-gray-50/50">
                     <p className="text-[#404040] font-semibold text-[14px] lg:text-[16px] mb-4 [font-family:'Poppins',sans-serif] ml-2 text-center lg:text-left">
                         Encuentra medicamentos disponibles
@@ -266,19 +267,14 @@ export const HeroSection = () => {
 
                         {/* Category filter */}
                         <div className="flex-[1] w-full relative">
-                            <select
+                            <DropdownSelect
                                 value={categoriaFilter}
-                                onChange={(e) => setCategoriaFilter(e.target.value)}
-                                className="w-full bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 text-[#4A5568] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 appearance-none cursor-pointer pr-12 transition-all"
-                            >
-                                <option value="">Todas las categorías</option>
-                                {categorias.map((c) => (
-                                    <option key={c.id} value={c.id.toString()}>
-                                        {c.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                            <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 lg:w-5 lg:h-5 text-[#718096] pointer-events-none" />
+                                onChange={setCategoriaFilter}
+                                options={categorias.map((c) => ({ value: c.id.toString(), label: c.nombre }))}
+                                placeholder="Todas las categorías"
+                                openUpward
+                                buttonClassName="bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 text-[#4A5568] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
+                            />
                         </div>
 
                         <button
