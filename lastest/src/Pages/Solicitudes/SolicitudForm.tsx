@@ -25,11 +25,11 @@ const REQUIRED_DOCUMENTS = [
 ];
 
 const INPUT_STYLE =
-    "h-[50px] md:h-[58px] bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] md:rounded-[14px] px-6 text-[16px] font-['Poppins']";
+    "h-[38px] md:h-[42px] bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] md:rounded-[12px] px-4 text-[13px] md:text-[14px] font-['Poppins'] transition-all focus:border-[#40C9DB] focus:ring-2 focus:ring-[#40C9DB]/20";
 const LABEL_STYLE =
-    "font-['Poppins'] font-medium text-[#404040] text-[18px] md:text-[20px]";
+    "font-['Poppins'] font-medium text-[#404040] text-[13px] md:text-[14px]";
 const SECTION_TITLE_STYLE =
-    "font-['Poppins'] font-semibold text-[#404040] text-[24px] md:text-[32px]";
+    "font-['Poppins'] font-semibold text-[#2D3748] text-[18px] md:text-[22px]";
 
 interface SolicitudFormProps {
     mode: SolicitudFormMode;
@@ -313,18 +313,23 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
         };
 
     return (
-        <div className={`w-full ${isEdit ? "" : "max-w-[1500px]"} mx-auto px-4 ${isEdit ? "py-0" : "py-8 md:py-12"} relative ${className}`}>
+        <div className={`w-full ${isEdit ? "" : "max-w-[1060px]"} mx-auto px-4 md:px-5 ${isEdit ? "py-0" : "py-3 md:py-5"} relative ${className}`}>
             {/* 1. Datos de Solicitante */}
-            <section className={isEdit ? "mb-8" : "mb-12 md:mb-16"}>
-                <h2 className={`${SECTION_TITLE_STYLE} mb-6 md:mb-8 text-center md:text-left`}>
-                    Datos de Solicitante
-                </h2>
+            <section className={isEdit ? "mb-7" : "mb-9 md:mb-12"}>
+                <div className="mb-4 md:mb-5 pb-2 border-b border-[#E8EDF3]">
+                    <h2 className={`${SECTION_TITLE_STYLE} text-center md:text-left`}>
+                        Datos de Solicitante
+                    </h2>
+                </div>
 
 
-                <div className="flex flex-col lg:flex-row gap-12">
-                    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6 md:gap-y-8">
+                <div className="flex flex-col lg:flex-row gap-6 md:gap-7">
+                    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-x-6 md:gap-x-7 gap-y-3.5 md:gap-y-4">
                         <div className="space-y-2 md:space-y-3 lg:col-span-2">
-                            <Label className={LABEL_STYLE}>Tipo de Solicitud *</Label>
+                            <div className="flex items-center gap-2">
+                                <Label className={LABEL_STYLE}>Tipo de Solicitud</Label>
+                                <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
+                            </div>
                             <DropdownSelect
                                 value={formData.codigoTipoSolicitud}
                                 onChange={(value) => setFormData((prev) => ({ ...prev, codigoTipoSolicitud: value }))}
@@ -360,15 +365,24 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                         </div>
 
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Centro Medico *</Label>
+                            <div className="flex items-center gap-2">
+                                <Label className={LABEL_STYLE}>Centro Medico</Label>
+                                <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
+                            </div>
                             <Input required name="centroMedico" value={formData.centroMedico} onChange={handleInputChange} placeholder={placeholders.solicitante.centroMedico} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Patología *</Label>
+                            <div className="flex items-center gap-2">
+                                <Label className={LABEL_STYLE}>Patología</Label>
+                                <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
+                            </div>
                             <Input required name="patologia" value={formData.patologia} onChange={handleInputChange} placeholder={placeholders.solicitante.patologia} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-4 lg:col-span-2">
-                            <Label className={LABEL_STYLE}>Medicamentos *</Label>
+                            <div className="flex items-center gap-2">
+                                <Label className={LABEL_STYLE}>Medicamentos</Label>
+                                <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
+                            </div>
                             {medications.map((item, index) => (
                                 <div key={item.id} className="flex items-center gap-3">
                                     <Input
@@ -380,7 +394,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                                     <button
                                         type="button"
                                         onClick={() => (index === 0 ? addMedication() : removeMedication(item.id))}
-                                        className="h-[50px] w-[50px] md:h-[58px] md:w-[58px] flex items-center justify-center bg-[#E2E8F0] rounded-[10px] md:rounded-[14px] cursor-pointer hover:bg-[#cbd5e1] transition-colors flex-shrink-0"
+                                        className="h-[38px] w-[38px] md:h-[42px] md:w-[42px] flex items-center justify-center bg-[#E2E8F0] rounded-[10px] md:rounded-[12px] cursor-pointer hover:bg-[#cbd5e1] transition-colors flex-shrink-0"
                                         aria-label={index === 0 ? "Añadir medicamento" : "Quitar medicamento"}
                                     >
                                         {index === 0 ? (
@@ -399,35 +413,42 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
             </section>
 
             {/* 2. Datos de Representante */}
-            <section className={isEdit ? "mb-8" : "mb-12 md:mb-16"}>
-                <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6 md:mb-8">
-                    <h2 className={`${SECTION_TITLE_STYLE} text-center md:text-left mb-0`}>
+            <section className={isEdit ? "mb-7" : "mb-9 md:mb-12"}>
+                <div className="mb-4 md:mb-5 pb-2 border-b border-[#E8EDF3]">
+                    <h2 className={`${SECTION_TITLE_STYLE} text-center md:text-left`}>
                         Datos de Representante
                     </h2>
+                </div>
 
-                    <label className="flex items-center justify-center md:justify-start gap-2 cursor-pointer md:ml-4 bg-gray-50 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors w-fit mx-auto md:mx-0">
+                <div className="mb-5">
+                    <label className="w-full max-w-[900px] flex items-start gap-3 cursor-pointer bg-[#F8FAFC] px-4 py-3 rounded-[12px] border border-[#DCE5EE] hover:bg-[#F3F7FB] transition-colors">
                         <input
                             type="checkbox"
                             checked={hasRepresentative}
                             onChange={(e) => setHasRepresentative(e.target.checked)}
-                            className="w-5 h-5 accent-[#34A4B3] border-gray-300 rounded cursor-pointer"
+                            className="mt-0.5 w-4 h-4 accent-[#34A4B3] border-gray-300 rounded cursor-pointer"
                         />
-                        <span className="font-['Poppins'] text-[#404040] font-medium text-[15px]">
-                            ¿El paciente es menor de edad / Aplica representante?
+                        <span className="flex flex-col">
+                            <span className="font-['Poppins'] text-[#2D3748] font-medium text-[13px] md:text-[14px] leading-snug">
+                                ¿El paciente es menor de edad / aplica representante?
+                            </span>
+                            <span className="font-['Poppins'] text-[#718096] text-[11px] md:text-[12px]">
+                                Activa esta opción para registrar los datos del representante legal.
+                            </span>
                         </span>
                     </label>
                 </div>
 
                 {hasRepresentative && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-[10px] p-4 mb-6 max-w-[900px]">
-                        <p className="text-blue-700 font-['Poppins'] text-[14px]">
+                    <div className="bg-blue-50 border border-blue-200 rounded-[10px] p-3.5 mb-5 w-full">
+                        <p className="text-blue-700 font-['Poppins'] text-[12px] md:text-[13px]">
                             <strong className="font-semibold">Importante:</strong> Su representante legal debe tener una cuenta creada en DONAMED. Ingrese con exactitud la <strong>Cédula</strong> con la que se registró en la plataforma para poder ser asociado correctamente a la solicitud.
                         </p>
                     </div>
                 )}
 
                 {hasRepresentative && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6 md:gap-y-8 max-w-[900px] animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4 md:gap-y-5 w-full animate-in fade-in slide-in-from-top-4 duration-300">
                         <div className="space-y-2 md:space-y-3">
                             <Label className={LABEL_STYLE}>Nombre del Representante</Label>
                             <Input name="nombreRepresentante" value={formData.nombreRepresentante} onChange={handleInputChange} placeholder={placeholders.representante.nombre} className={INPUT_STYLE} />
@@ -453,34 +474,36 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
             </section>
 
             {/* 3. Documentos Requeridos */}
-            <section className={isEdit ? "mb-8" : "mb-12 md:mb-16"}>
-                <h2 className={`${SECTION_TITLE_STYLE} mb-6 md:mb-8 text-center md:text-left`}>
-                    Documentos Requeridos
-                </h2>
+            <section className={isEdit ? "mb-7" : "mb-9 md:mb-12"}>
+                <div className="mb-4 md:mb-5 pb-2 border-b border-[#E8EDF3]">
+                    <h2 className={`${SECTION_TITLE_STYLE} text-center md:text-left`}>
+                        Documentos Requeridos
+                    </h2>
+                </div>
 
-                <div className="flex flex-col gap-4 md:gap-6">
+                <div className="flex flex-col gap-3 md:gap-4">
                     {REQUIRED_DOCUMENTS.map((doc, index) => (
                         <div
                             key={`document-${index}`}
-                            className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 bg-white rounded-lg border border-transparent hover:border-gray-100 transition-all"
+                            className="flex flex-col gap-2.5 py-2.5 border-b border-[#F0F3F7] last:border-b-0 md:grid md:grid-cols-[minmax(0,1fr)_minmax(260px,320px)] md:items-center md:gap-4"
                         >
-                            <Label className={`${LABEL_STYLE} text-[16px] md:text-[18px] lg:text-[20px] max-w-[700px] leading-snug flex items-start gap-1`}>
-                                {doc.label} {doc.required ? <span className="text-red-500 font-bold">*</span> : <span className="text-gray-400 text-sm font-normal mt-1">(Opcional)</span>}
+                            <Label className={`${LABEL_STYLE} text-[13px] md:text-[14px] lg:text-[15px] max-w-[700px] leading-snug flex items-start gap-1`}>
+                                {doc.label} {doc.required ? <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3 mt-1" /> : <span className="text-gray-400 text-sm font-normal mt-1">(Opcional)</span>}
                             </Label>
                             <div
                                 onClick={() => triggerFileInput(index)}
-                                className={`w-full md:w-[300px] lg:w-[400px] h-[50px] rounded-[10px] border flex items-center justify-between px-4 cursor-pointer transition-colors group ${files[index]
+                                className={`w-full md:w-full md:max-w-[320px] h-[42px] rounded-[10px] border flex items-center justify-between px-3.5 cursor-pointer transition-colors group ${files[index]
                                     ? 'bg-[#E6F4F1] border-[#34A4B3]'
-                                    : 'bg-[#F8F7F7] border-[#DCD7D7] hover:bg-gray-50'
+                                    : 'bg-[#F8F7F7] border-[#DCD7D7] hover:bg-gray-50 hover:border-[#C7D2DF]'
                                     }`}
                             >
-                                <span className={`text-sm truncate font-['Poppins'] ${files[index] ? 'text-[#34A4B3] font-medium' : 'text-gray-400 group-hover:text-gray-500'}`}>
+                                <span className={`text-[12px] md:text-[13px] truncate font-['Poppins'] ${files[index] ? 'text-[#34A4B3] font-medium' : 'text-gray-400 group-hover:text-gray-500'}`}>
                                     {files[index] ? files[index].name : 'Seleccionar archivo...'}
                                 </span>
                                 {files[index] ? (
-                                    <FileText className="w-5 h-5 text-[#34A4B3] flex-shrink-0" />
+                                    <FileText className="w-4 h-4 text-[#34A4B3] flex-shrink-0" />
                                 ) : (
-                                    <Paperclip className="w-5 h-5 text-[#555555] flex-shrink-0" />
+                                    <Paperclip className="w-4 h-4 text-[#555555] flex-shrink-0" />
                                 )}
                             </div>
 
@@ -498,12 +521,12 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
             </section>
 
             {/* Botones de acción */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-7 mt-8 mb-12">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 mt-5 mb-10">
                 <Button
                     type="button"
                     onClick={() => navigate('/historial-solicitudes')}
                     disabled={isSubmitLoading}
-                    className="w-full sm:w-[173px] h-[51px] bg-white border-2 border-[#34A4B3] text-[#34A4B3] hover:bg-[#34A4B3] hover:text-white rounded-[14px] font-['Poppins'] font-medium text-[18px] transition-colors disabled:opacity-50"
+                    className="w-full sm:w-[160px] h-[44px] bg-white border-2 border-[#34A4B3] text-[#34A4B3] hover:bg-[#34A4B3] hover:text-white rounded-[12px] font-['Poppins'] font-medium text-[15px] transition-colors shadow-sm disabled:opacity-50"
                 >
                     Cancelar
                 </Button>
@@ -511,7 +534,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitLoading}
-                    className="w-full sm:w-[173px] h-[51px] bg-[#34A4B3] hover:bg-[#2d8f9c] text-white rounded-[14px] font-['Poppins'] font-medium text-[18px] shadow-lg shadow-[#34A4B3]/20 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full sm:w-[160px] h-[44px] bg-[#34A4B3] hover:bg-[#2d8f9c] text-white rounded-[12px] font-['Poppins'] font-medium text-[15px] shadow-md shadow-[#34A4B3]/25 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                     {isSubmitLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin text-white" />
