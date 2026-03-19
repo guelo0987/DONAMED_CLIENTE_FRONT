@@ -31,23 +31,26 @@ export const MedicationDetailModal = ({
 }: MedicationDetailModalProps) => {
     if (!open) return null;
 
+    const categoriasTexto = categorias?.filter(Boolean).join(", ");
+    const enfermedadesTexto = enfermedades?.filter(Boolean).join(", ");
+
     return (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4">
-            <div className="relative w-full max-w-[980px] max-h-[85vh] bg-white rounded-[26px] shadow-2xl overflow-hidden flex flex-col md:flex-row">
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/45 backdrop-blur-sm p-4">
+            <div className="relative w-full max-w-[1040px] bg-white rounded-[24px] shadow-[0px_18px_50px_rgba(0,0,0,0.16)] border border-white/60 overflow-hidden flex flex-col md:flex-row">
                 <button
                     onClick={onClose}
-                    className="absolute top-5 right-5 z-10 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    className="absolute top-5 right-5 z-20 p-2 rounded-full bg-white/90 hover:bg-white transition-colors border border-gray-100 shadow-sm"
                     aria-label="Cerrar"
                 >
-                    <X className="w-5 h-5 text-[#5F6368]" />
+                    <X className="w-6 h-6 text-[#5F6368]" />
                 </button>
 
                 {/* Image Side */}
-                <div className="w-full md:w-[42%] bg-[#40C9DB] flex items-center justify-center p-4 min-h-[200px]">
+                <div className="w-full md:w-[40%] bg-gradient-to-b from-[#50C7D4] to-[#3FB8C7] flex items-center justify-center p-6 md:p-8 min-h-[280px]">
                     <img
                         src={image}
                         alt={name}
-                        className="max-h-[300px] md:max-h-[420px] object-contain"
+                        className="max-h-[280px] md:max-h-[360px] object-contain drop-shadow-[0_12px_20px_rgba(0,0,0,0.18)]"
                         onError={(e) => {
                             e.currentTarget.src = "/assets/Rectangulo%20Medicamentos.png";
                         }}
@@ -55,95 +58,90 @@ export const MedicationDetailModal = ({
                 </div>
 
                 {/* Info Side */}
-                <div className="w-full md:w-[58%] px-6 md:px-10 py-8 overflow-y-auto flex flex-col">
+                <div className="w-full md:w-[60%] px-7 md:px-10 py-8 md:py-9 overflow-y-auto flex flex-col">
                     {/* Name */}
-                    <h2 className="text-[#2D3748] text-[26px] md:text-[30px] font-semibold mb-1 leading-tight">
+                    <h2 className="text-[#2D3748] text-[28px] md:text-[36px] font-semibold mb-2 leading-[1.1]">
                         {name}
                     </h2>
 
-                    {/* Compuesto Principal */}
                     {compuesto && (
-                        <p className="text-[#34A4B3] text-[14px] md:text-[15px] font-medium mb-4">
+                        <p className="text-[#34A4B3] text-[20px] md:text-[24px] font-semibold mb-2 leading-[1.2]">
                             {compuesto}
                         </p>
                     )}
 
-                    {/* Código */}
                     {itemCode && (
-                        <p className="text-[#A0AEC0] text-[12px] md:text-[13px] mb-4 [font-family:'Poppins',sans-serif]">
+                        <p className="text-[#7A8597] text-[14px] md:text-[16px] font-medium mb-5">
                             Código: {itemCode}
                         </p>
                     )}
 
-                    {/* Info Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                        {formaFarmaceutica && (
-                            <div className="bg-[#F7FAFB] rounded-[12px] px-4 py-3 border border-[#E2E8F0]">
-                                <p className="text-[#A0AEC0] text-[11px] font-medium uppercase tracking-wide mb-0.5">Forma Farmacéutica</p>
-                                <p className="text-[#2D3748] text-[14px] font-medium">💊 {formaFarmaceutica}</p>
-                            </div>
-                        )}
-                        {viaAdministracion && (
-                            <div className="bg-[#F7FAFB] rounded-[12px] px-4 py-3 border border-[#E2E8F0]">
-                                <p className="text-[#A0AEC0] text-[11px] font-medium uppercase tracking-wide mb-0.5">Vía de Administración</p>
-                                <p className="text-[#2D3748] text-[14px] font-medium">💉 {viaAdministracion}</p>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Categories */}
-                    {categorias && categorias.length > 0 && (
-                        <div className="mb-3">
-                            <p className="text-[#A0AEC0] text-[11px] font-medium uppercase tracking-wide mb-1.5">Categorías</p>
-                            <div className="flex flex-wrap gap-1.5">
-                                {categorias.map((cat, i) => (
-                                    <span
-                                        key={i}
-                                        className="inline-flex items-center bg-[#F0FDFF] text-[#2D8A96] text-[12px] font-medium px-3 py-1 rounded-full border border-[#40C9DB]/20"
-                                    >
-                                        {cat}
-                                    </span>
-                                ))}
-                            </div>
+                    {(formaFarmaceutica || viaAdministracion) && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 mb-5">
+                            {formaFarmaceutica && (
+                                <div>
+                                    <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
+                                        Forma Farmacéutica
+                                    </p>
+                                    <p className="text-[#2D3748] text-[14px] md:text-[15px] font-medium">
+                                        {formaFarmaceutica}
+                                    </p>
+                                </div>
+                            )}
+                            {viaAdministracion && (
+                                <div>
+                                    <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
+                                        Vía de Administración
+                                    </p>
+                                    <p className="text-[#2D3748] text-[14px] md:text-[15px] font-medium">
+                                        {viaAdministracion}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     )}
 
-                    {/* Enfermedades */}
-                    {enfermedades && enfermedades.length > 0 && (
-                        <div className="mb-3">
-                            <p className="text-[#A0AEC0] text-[11px] font-medium uppercase tracking-wide mb-1.5">Indicado para</p>
-                            <div className="flex flex-wrap gap-1.5">
-                                {enfermedades.map((enf, i) => (
-                                    <span
-                                        key={i}
-                                        className="inline-flex items-center bg-[#FFF8F0] text-[#B87333] text-[12px] font-medium px-3 py-1 rounded-full border border-[#B87333]/20"
-                                    >
-                                        {enf}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    <hr className="my-3 border-[#E5E7EB]" />
-
-                    {/* Description */}
-                    {description && (
-                        <div className="mb-3">
-                            <p className="text-[#A0AEC0] text-[11px] font-medium uppercase tracking-wide mb-1.5">Descripción</p>
-                            <p className="text-[#4A5568] text-[14px] md:text-[15px] leading-relaxed">
-                                {description}
+                    {categoriasTexto && (
+                        <div className="mb-4">
+                            <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
+                                Categorías
+                            </p>
+                            <p className="text-[#2D3748] text-[14px] md:text-[15px] font-medium">
+                                {categoriasTexto}
                             </p>
                         </div>
                     )}
 
-                    {/* Proveedor */}
-                    {proveedor && (
-                        <div className="mt-auto pt-3 border-t border-[#E5E7EB]">
-                            <p className="text-[#A0AEC0] text-[11px] font-medium uppercase tracking-wide mb-1">Proveedor</p>
-                            <p className="text-[#2D3748] text-[14px] font-medium">{proveedor.nombre}</p>
-
+                    {enfermedadesTexto && (
+                        <div className="mb-4">
+                            <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
+                                Indicado para
+                            </p>
+                            <p className="text-[#2D3748] text-[14px] md:text-[15px] font-medium">
+                                {enfermedadesTexto}
+                            </p>
                         </div>
+                    )}
+
+                    <hr className="my-3 border-[#DCE1E7]" />
+
+                    <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-2">
+                        Descripción
+                    </p>
+                    <p className="text-[#4A5568] text-[13px] md:text-[14px] leading-[1.65] mb-5">
+                        {description || "No hay descripción disponible para este medicamento."}
+                    </p>
+
+                    {proveedor?.nombre && (
+                        <>
+                            <hr className="my-3 border-[#DCE1E7]" />
+                            <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
+                                Proveedor
+                            </p>
+                            <p className="text-[#2D3748] text-[14px] md:text-[15px] font-semibold">
+                                {proveedor.nombre}
+                            </p>
+                        </>
                     )}
                 </div>
             </div>
