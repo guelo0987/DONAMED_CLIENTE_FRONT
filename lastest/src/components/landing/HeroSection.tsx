@@ -93,14 +93,14 @@ export const HeroSection = () => {
     };
 
     return (
-        <section className="relative z-[80] w-full max-w-[1440px] mx-auto px-4 lg:px-20 pb-12 lg:pb-24 overflow-visible">
-            <div className="flex flex-col lg:flex-row items-center justify-between min-h-[auto] lg:min-h-[640px] relative">
+        <section className="relative z-[80] w-full max-w-[1060px] mx-auto px-4 sm:px-5 md:px-6 lg:px-7 pb-10 lg:pb-16 overflow-visible">
+            <div className="flex flex-col lg:flex-row items-center justify-between min-h-[auto] lg:min-h-[560px] relative">
 
                 {/* Left Content */}
-                <div className="flex-1 w-full max-w-[650px] z-20 pt-8 lg:pt-8 flex flex-col items-start text-center lg:text-left pointer-events-none mb-8 lg:mb-0">
+                <div className="flex-1 w-full max-w-[560px] z-20 pt-6 lg:pt-6 flex flex-col items-start text-center lg:text-left pointer-events-none mb-6 lg:mb-0">
                     <div className="pointer-events-auto w-full flex flex-col items-center lg:items-start">
                         {/* Title */}
-                        <h1 className="text-[36px] sm:text-[42px] lg:text-[72px] leading-[1.1] mb-4 lg:mb-6">
+                        <h1 className="text-[32px] sm:text-[38px] lg:text-[56px] leading-[1.1] mb-3 lg:mb-5">
                             <span className="[font-family:'Merienda',cursive] italic text-[#40C9DB] font-bold">Transforma</span>{" "}
                             <span className="[font-family:'Poppins',sans-serif] font-bold text-[#404040]">tu ayuda</span>
                             <br />
@@ -108,7 +108,7 @@ export const HeroSection = () => {
                         </h1>
 
                         {/* Description */}
-                        <p className="text-[#4A5568] text-[14px] lg:text-[18px] leading-[1.6] mb-8 max-w-[500px] [font-family:'Poppins',sans-serif] font-normal mx-auto lg:mx-0">
+                        <p className="text-[#4A5568] text-[13px] lg:text-[16px] leading-[1.6] mb-6 max-w-[460px] [font-family:'Poppins',sans-serif] font-normal mx-auto lg:mx-0">
                             El acceso a medicamentos de alto costo es esencial para
                             garantizar la salud y el bienestar de todos. Cada donación de
                             medicamentos puede cambiar una vida.
@@ -117,19 +117,19 @@ export const HeroSection = () => {
                         {/* CTA Button */}
                         <button
                             onClick={() => navigate("/consultas")}
-                            className="bg-[#34A4B3] text-white px-8 py-3 lg:px-9 lg:py-4 rounded-[8px] flex items-center gap-3 [font-family:'Poppins',sans-serif] font-medium text-[15px] lg:text-[16px] hover:bg-[#2D8A96] transition-colors shadow-[0px_4px_33px_rgba(64,201,219,0.25)] mb-8 lg:mb-12"
+                            className="bg-[#34A4B3] text-white px-7 py-2.5 lg:px-8 lg:py-3 rounded-[8px] flex items-center gap-2.5 [font-family:'Poppins',sans-serif] font-medium text-[14px] lg:text-[15px] hover:bg-[#2D8A96] transition-colors shadow-[0px_4px_33px_rgba(64,201,219,0.25)] mb-7 lg:mb-10"
                         >
                             Encuentra lo que necesitas
-                            <ArrowRight className="w-5 h-5" />
+                            <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5" />
                         </button>
                     </div>
                 </div>
 
                 {/* Right Content - Visual Composition */}
-                <div className="relative flex-1 w-full max-w-[380px] sm:max-w-[500px] lg:max-w-[800px] aspect-square lg:h-[700px] flex items-center justify-center lg:justify-end lg:mr-[-50px] mt-0 lg:mt-[50px]">
+                <div className="relative flex-1 w-full max-w-[360px] sm:max-w-[460px] lg:max-w-[620px] aspect-square lg:h-[560px] flex items-center justify-center lg:justify-end lg:mr-[-20px] mt-0 lg:mt-[20px]">
 
                     {/* Main Visual Container - Responsive Scaling */}
-                    <div className="relative w-full h-full lg:w-[650px] lg:h-[650px] lg:translate-y-[20px] lg:translate-x-[20px]">
+                    <div className="relative w-full h-full lg:w-[560px] lg:h-[560px] lg:translate-y-[10px] lg:translate-x-[10px]">
 
                         {/* Grey Ring - Background */}
                         <img
@@ -203,13 +203,13 @@ export const HeroSection = () => {
             </div>
 
             {/* Search Section - Overlapping Visuals or Stacked */}
-            <div className="relative z-[120] -mt-16 sm:-mt-24 lg:-mt-24 w-full max-w-[900px] mx-auto lg:ml-0 px-4 lg:px-0">
-                <div className="bg-white backdrop-blur-[20px] rounded-[20px] lg:rounded-[24px] shadow-[0px_20px_50px_rgba(0,0,0,0.08)] p-6 border border-gray-50/50">
-                    <p className="text-[#404040] font-semibold text-[14px] lg:text-[16px] mb-4 [font-family:'Poppins',sans-serif] ml-2 text-center lg:text-left">
+            <div className="relative z-[120] -mt-12 sm:-mt-16 lg:-mt-16 w-full max-w-[860px] mx-auto lg:ml-0 px-2 sm:px-3 lg:px-0">
+                <div className="bg-white backdrop-blur-[20px] rounded-[18px] lg:rounded-[22px] shadow-[0px_20px_50px_rgba(0,0,0,0.08)] p-5 lg:p-6 border border-gray-50/50">
+                    <p className="text-[#404040] font-semibold text-[13px] lg:text-[15px] mb-3.5 [font-family:'Poppins',sans-serif] ml-1.5 text-center lg:text-left">
                         Encuentra medicamentos disponibles
                     </p>
 
-                    <div className="flex flex-col lg:flex-row gap-4 items-center">
+                    <div className="flex flex-col lg:flex-row gap-3.5 items-center">
                         {/* Search Input with Dropdown */}
                         <div className="flex-[2] w-full relative">
                             <input
@@ -221,7 +221,7 @@ export const HeroSection = () => {
                                 onFocus={() => {
                                     if (searchResults.length > 0) setShowDropdown(true);
                                 }}
-                                className="w-full bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 text-[#4A5568] placeholder:text-[#A0AEC0] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
+                                className="w-full bg-[#F3F4F6] rounded-full px-5 lg:px-7 py-2.5 lg:py-3.5 text-[#4A5568] placeholder:text-[#A0AEC0] text-[13px] lg:text-[14px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
                             />
 
                             {/* Live Search Dropdown */}
@@ -273,13 +273,13 @@ export const HeroSection = () => {
                                 options={categorias.map((c) => ({ value: c.id.toString(), label: c.nombre }))}
                                 placeholder="Todas las categorías"
                                 openUpward
-                                buttonClassName="bg-[#F3F4F6] rounded-full px-6 lg:px-8 py-3 lg:py-4 text-[#4A5568] text-[14px] lg:text-[15px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
+                                buttonClassName="bg-[#F3F4F6] rounded-full px-5 lg:px-7 py-2.5 lg:py-3.5 text-[#4A5568] text-[13px] lg:text-[14px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
                             />
                         </div>
 
                         <button
                             onClick={handleBuscar}
-                            className="bg-[#34A4B3] text-white px-8 lg:px-12 py-3 lg:py-4 rounded-full flex items-center justify-center gap-3 [font-family:'Poppins',sans-serif] font-semibold text-[15px] lg:text-[16px] hover:bg-[#2B93A1] transition-all transform hover:scale-[1.02] shadow-lg shadow-[#34A4B3]/30 w-full lg:w-auto min-w-[150px]"
+                            className="bg-[#34A4B3] text-white px-7 lg:px-10 py-2.5 lg:py-3.5 rounded-full flex items-center justify-center gap-2.5 [font-family:'Poppins',sans-serif] font-semibold text-[14px] lg:text-[15px] hover:bg-[#2B93A1] transition-all transform hover:scale-[1.02] shadow-lg shadow-[#34A4B3]/30 w-full lg:w-auto min-w-[135px]"
                         >
                             <Search className="w-4 h-4 lg:w-5 lg:h-5" />
                             Buscar

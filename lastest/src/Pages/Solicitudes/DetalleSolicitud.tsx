@@ -21,9 +21,9 @@ const MAX_DOC_SIZE_MB = 10;
 const MAX_DOC_SIZE_BYTES = MAX_DOC_SIZE_MB * 1024 * 1024;
 
 const INPUT_STYLE =
-    "h-[50px] md:h-[58px] bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] md:rounded-[14px] px-6 text-[16px] font-['Poppins']";
+    "h-[46px] md:h-[50px] bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] md:rounded-[12px] px-5 text-[14px] md:text-[15px] font-['Poppins']";
 const LABEL_STYLE =
-    "font-['Poppins'] font-medium text-[#404040] text-[16px] md:text-[18px]";
+    "font-['Poppins'] font-medium text-[#404040] text-[14px] md:text-[15px]";
 
 const STATUS_COLORS: Record<EstadoSolicitud, string> = {
     PENDIENTE: "bg-[#EAB308]",
@@ -204,11 +204,11 @@ export const DetalleSolicitud = () => {
 
     // Tabs dinámicos
     const tabsConfig = [
-        { id: "informacion" as TabId, label: "Información de Solicitud", icon: <Info className="w-5 h-5" /> },
-        { id: "datos-solicitante" as TabId, label: "Datos de Solicitante", icon: <FileText className="w-5 h-5" /> }
+        { id: "informacion" as TabId, label: "Información de Solicitud", icon: <Info className="w-4 h-4" /> },
+        { id: "datos-solicitante" as TabId, label: "Datos de Solicitante", icon: <FileText className="w-4 h-4" /> }
     ];
     if (solicitud?.estado === 'PENDIENTE') {
-        tabsConfig.push({ id: "editar" as TabId, label: "Editar Solicitud", icon: <Edit className="w-5 h-5" /> });
+        tabsConfig.push({ id: "editar" as TabId, label: "Editar Solicitud", icon: <Edit className="w-4 h-4" /> });
     }
 
     if (isLoading && !solicitud) {
@@ -225,7 +225,7 @@ export const DetalleSolicitud = () => {
     if (error && !solicitud) {
         return (
             <MainLayout>
-                <div className="w-full max-w-[1400px] mx-auto px-4 py-12 text-center">
+                <div className="w-full max-w-[1060px] mx-auto px-4 sm:px-5 md:px-6 lg:px-7 py-10 text-center">
                     <h2 className="text-2xl text-red-600 font-bold mb-4">Error</h2>
                     <p className="text-gray-600 mb-6">{error || "No se encontró la solicitud"}</p>
                     <button onClick={() => navigate('/historial-solicitudes')} className="bg-[#34A4B3] text-white px-6 py-2 rounded-lg font-['Poppins']">Volver al Historial</button>
@@ -244,23 +244,23 @@ export const DetalleSolicitud = () => {
 
     return (
         <MainLayout>
-            <div className="max-w-[1400px] mx-auto px-4 py-8 lg:py-12 w-full">
+            <div className="max-w-[1060px] mx-auto px-4 sm:px-5 md:px-6 lg:px-7 py-6 lg:py-8 w-full">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                    <div className="flex flex-col gap-3">
-                        <button onClick={() => navigate('/historial-solicitudes')} className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors w-fit mb-2">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6">
+                    <div className="flex flex-col gap-2.5">
+                        <button onClick={() => navigate('/historial-solicitudes')} className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors w-fit mb-1">
                             <ArrowLeft className="w-4 h-4" />
                             <span className="font-['Poppins'] text-sm">Volver al historial</span>
                         </button>
-                        <div className="w-fit flex items-center gap-2 bg-[#F3F4F6] px-4 py-1.5 rounded-full">
-                            <div className={`w-3 h-3 rounded-full ${STATUS_COLORS[solicitud.estado]}`}></div>
-                            <span className="font-['Poppins'] font-medium text-[#4B5563] text-sm">{STATUS_LABELS[solicitud.estado]}</span>
+                        <div className="w-fit flex items-center gap-2 bg-[#F3F4F6] px-3.5 py-1.5 rounded-full">
+                            <div className={`w-2.5 h-2.5 rounded-full ${STATUS_COLORS[solicitud.estado]}`}></div>
+                            <span className="font-['Poppins'] font-medium text-[#4B5563] text-[13px]">{STATUS_LABELS[solicitud.estado]}</span>
                         </div>
-                        <h1 className="font-['Poppins'] font-medium text-[#2D3748] text-[28px] md:text-[32px]">Detalles de Solicitud</h1>
+                        <h1 className="font-['Poppins'] font-medium text-[#2D3748] text-[24px] md:text-[28px]">Detalles de Solicitud</h1>
                     </div>
                     {solicitud.estado === 'PENDIENTE' && (
-                        <button onClick={() => setIsCancelModalOpen(true)} className="bg-[#34A4B3] hover:bg-[#2B93A1] text-white px-6 py-3 rounded-[10px] font-['Poppins'] font-medium transition-colors w-full md:w-auto">
+                        <button onClick={() => setIsCancelModalOpen(true)} className="bg-[#34A4B3] hover:bg-[#2B93A1] text-white px-5 py-2.5 rounded-[10px] font-['Poppins'] text-[14px] font-medium transition-colors w-full md:w-auto">
                             Cancelar Solicitud
                         </button>
                     )}
@@ -268,13 +268,13 @@ export const DetalleSolicitud = () => {
 
                 {/* Aviso PENDIENTE */}
                 {solicitud.estado === 'PENDIENTE' && (
-                    <div className="flex items-start gap-3 bg-[#FEF9C3] border border-[#EAB308]/30 rounded-[12px] p-4 mb-8">
-                        <AlertTriangle className="w-5 h-5 text-[#CA8A04] flex-shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-3 bg-[#FEF9C3] border border-[#EAB308]/30 rounded-[12px] p-3.5 mb-6">
+                        <AlertTriangle className="w-4.5 h-4.5 text-[#CA8A04] flex-shrink-0 mt-0.5" />
                         <div className="font-['Poppins']">
-                            <p className="text-[#854D0E] font-medium text-sm">
+                            <p className="text-[#854D0E] font-medium text-[13px]">
                                 Esta solicitud está pendiente de confirmación.
                             </p>
-                            <p className="text-[#A16207] text-[13px] mt-1">
+                            <p className="text-[#A16207] text-[12px] mt-1">
                                 Mientras esté en estado <strong>Pendiente</strong>, puede editar los datos, documentos y medicamentos en la pestaña "Editar Solicitud". Al confirmar, será enviada para revisión por el administrador.
                             </p>
                         </div>
@@ -282,21 +282,21 @@ export const DetalleSolicitud = () => {
                 )}
 
                 {/* Tabs */}
-                <div className="bg-white rounded-[15px] p-2 mb-8 flex flex-col md:flex-row gap-2 shadow-sm border border-gray-100 overflow-x-auto">
+                <div className="bg-white rounded-[12px] p-1.5 mb-6 flex flex-col md:flex-row gap-1.5 shadow-sm border border-gray-100 overflow-x-auto">
                     {tabsConfig.map(({ id, label, icon }) => (
                         <button key={id} type="button" onClick={() => setActiveTab(id)}
-                            className={`flex items-center justify-center gap-3 px-8 py-3 rounded-[10px] min-w-fit transition-colors w-full md:w-auto ${activeTab === id ? "bg-[#F3F4F6] text-[#2D3748]" : "hover:bg-gray-50 text-[#9CA3AF]"}`}>
+                            className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-[10px] min-w-fit transition-colors w-full md:w-auto ${activeTab === id ? "bg-[#F3F4F6] text-[#2D3748]" : "hover:bg-gray-50 text-[#9CA3AF]"}`}>
                             {icon}
-                            <span className={`font-['Poppins'] text-[15px] ${activeTab === id ? "font-semibold" : "font-medium"}`}>{label}</span>
+                            <span className={`font-['Poppins'] text-[14px] ${activeTab === id ? "font-semibold" : "font-medium"}`}>{label}</span>
                         </button>
                     ))}
                 </div>
 
                 {/* ====== TAB: Información ====== */}
                 {activeTab === "informacion" && (
-                    <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-5">
                         <DetailCard title="Información de Solicitud">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                 <ReadOnlyInput label="Tipo de Solicitud" value={solicitud.tipoSolicitud.descripcion} />
                                 <ReadOnlyInput label="Estado" value={STATUS_LABELS[solicitud.estado]} />
                                 <ReadOnlyInput label="Fecha de Creación" value={solicitud.creada_en ? new Date(solicitud.creada_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"} />
@@ -307,7 +307,7 @@ export const DetalleSolicitud = () => {
                         </DetailCard>
                         {solicitud.almacen_retiro && (
                             <DetailCard title="Lugar de Retiro Asignado">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                     <ReadOnlyInput label="Almacén" value={solicitud.almacen_retiro.nombre} />
                                     <ReadOnlyInput label="Dirección" value={solicitud.almacen_retiro.direccion} />
                                     <ReadOnlyInput label="Teléfono" value={solicitud.almacen_retiro.telefono} />
@@ -315,7 +315,7 @@ export const DetalleSolicitud = () => {
                                 </div>
                             </DetailCard>
                         )}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                             <DetailCard title="Medicamentos Solicitados" className="h-full">
                                 <div className="flex flex-col gap-4">
                                     {solicitud.medicamento_solicitado.length > 0 ? solicitud.medicamento_solicitado.map(med => (
@@ -331,9 +331,9 @@ export const DetalleSolicitud = () => {
                             <div className="flex flex-col gap-3">
                                 {solicitud.documentos.length > 0 ? solicitud.documentos.map(doc => (
                                     <a key={doc.id} href={getStoragePublicUrl(doc.url) || doc.url} target="_blank" rel="noreferrer"
-                                        className="inline-flex items-center justify-between w-full md:w-[500px] h-[50px] bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] px-4 cursor-pointer hover:bg-gray-50 hover:border-[#34A4B3] transition-colors">
+                                        className="inline-flex items-center justify-between w-full h-[46px] bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] px-4 cursor-pointer hover:bg-gray-50 hover:border-[#34A4B3] transition-colors">
                                         <span className="text-gray-600 truncate font-['Poppins'] text-sm">{doc.nombre}</span>
-                                        <FileText className="w-5 h-5 text-[#34A4B3] flex-shrink-0" />
+                                        <FileText className="w-4.5 h-4.5 text-[#34A4B3] flex-shrink-0" />
                                     </a>
                                 )) : <p className="text-gray-500 italic font-['Poppins']">No hay documentos adjuntos.</p>}
                             </div>
@@ -343,9 +343,9 @@ export const DetalleSolicitud = () => {
 
                 {/* ====== TAB: Datos de Solicitante ====== */}
                 {activeTab === "datos-solicitante" && (
-                    <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-5">
                         <DetailCard title="Datos del Solicitante">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                 <ReadOnlyInput label="Nombre del Solicitante" value={solicitanteNombre} />
                                 <ReadOnlyInput label="Cédula" value={solicitanteCedula} />
                                 <div className="md:col-span-2"><ReadOnlyInput label="Dirección" value={solicitanteDireccion} /></div>
@@ -355,7 +355,7 @@ export const DetalleSolicitud = () => {
                         </DetailCard>
                         {solicitud.representante && (
                             <DetailCard title="Datos de Representante">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                     <ReadOnlyInput label="Nombre del Representante" value={`${solicitud.representante.nombre} ${solicitud.representante.apellidos}`} />
                                     <ReadOnlyInput label="Cédula" value={solicitud.representante.cedula} />
                                     <ReadOnlyInput label="Teléfono" value={solicitud.representante.telefono} />
@@ -368,10 +368,10 @@ export const DetalleSolicitud = () => {
 
                 {/* ====== TAB: Editar Solicitud ====== */}
                 {activeTab === "editar" && solicitud.estado === 'PENDIENTE' && (
-                    <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-5">
                         {/* Datos del Solicitante (read-only) */}
                         <DetailCard title="Datos de Solicitante">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                 <ReadOnlyInput label="Nombre del Solicitante" value={solicitanteNombre} />
                                 <ReadOnlyInput label="Cédula" value={solicitanteCedula} />
                                 <div className="md:col-span-2"><ReadOnlyInput label="Dirección" value={solicitanteDireccion} /></div>
@@ -382,7 +382,7 @@ export const DetalleSolicitud = () => {
 
                         {/* Campos editables */}
                         <DetailCard title="Información de la Solicitud">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                 <div className="space-y-2">
                                     <Label className={LABEL_STYLE}>Centro Médico</Label>
                                     <Input name="centroMedico" value={editForm.centroMedico} onChange={handleEditChange} className={INPUT_STYLE} />
@@ -433,11 +433,11 @@ export const DetalleSolicitud = () => {
                         {/* Representante */}
                         <DetailCard title="Datos de Representante">
                             <div className="bg-blue-50 border border-blue-200 rounded-[10px] p-3 mb-5">
-                                <p className="text-blue-700 font-['Poppins'] text-[13px]">
+                                <p className="text-blue-700 font-['Poppins'] text-[12px]">
                                     <strong>Nota:</strong> El representante legal debe tener una cuenta creada en DONAMED. Ingrese la cédula con la que se registró.
                                 </p>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                 <div className="space-y-2">
                                     <Label className={LABEL_STYLE}>Cédula del Representante</Label>
                                     <Input name="cedularepresentante" value={editForm.cedularepresentante} onChange={handleEditChange} placeholder="Cédula registrada en DONAMED" className={INPUT_STYLE} />
@@ -461,7 +461,7 @@ export const DetalleSolicitud = () => {
                                     {solicitud.documentos.map(doc => (
                                         <div key={doc.id} className="flex items-center justify-between w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] px-4 py-3 group">
                                             <div className="flex items-center gap-3 flex-1 min-w-0">
-                                                <FileText className="w-5 h-5 text-[#34A4B3] flex-shrink-0" />
+                                                <FileText className="w-4.5 h-4.5 text-[#34A4B3] flex-shrink-0" />
                                                 <div className="flex flex-col min-w-0">
                                                     <a href={getStoragePublicUrl(doc.url) || doc.url} target="_blank" rel="noreferrer"
                                                         className="text-gray-700 truncate font-['Poppins'] text-sm hover:text-[#34A4B3] transition-colors">
@@ -492,7 +492,7 @@ export const DetalleSolicitud = () => {
                                     {newFiles.map((file, index) => (
                                         <div key={`new-${index}`} className="flex items-center justify-between w-full bg-[#E6F4F1] border border-[#34A4B3]/30 rounded-[10px] px-4 py-3">
                                             <div className="flex items-center gap-3 flex-1 min-w-0">
-                                                <Paperclip className="w-5 h-5 text-[#34A4B3] flex-shrink-0" />
+                                                <Paperclip className="w-4.5 h-4.5 text-[#34A4B3] flex-shrink-0" />
                                                 <div className="flex flex-col min-w-0">
                                                     <span className="text-gray-700 truncate font-['Poppins'] text-sm">{file.name}</span>
                                                     <span className="text-gray-400 font-['Poppins'] text-[11px]">{formatFileSize(file.size)}</span>
@@ -537,11 +537,11 @@ export const DetalleSolicitud = () => {
                         )}
 
                         {/* Botones */}
-                        <div className="flex justify-center gap-6 mt-4 mb-8">
+                        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mt-3 mb-6">
                             <Button
                                 type="button"
                                 onClick={() => setActiveTab("informacion")}
-                                className="w-[160px] h-[48px] bg-white border-2 border-[#34A4B3] text-[#34A4B3] hover:bg-[#34A4B3] hover:text-white rounded-[12px] text-[14px] font-medium font-['Poppins'] transition-all"
+                                className="w-full sm:w-[150px] h-[44px] bg-white border-2 border-[#34A4B3] text-[#34A4B3] hover:bg-[#34A4B3] hover:text-white rounded-[12px] text-[13px] font-medium font-['Poppins'] transition-all"
                             >
                                 Cancelar
                             </Button>
@@ -549,7 +549,7 @@ export const DetalleSolicitud = () => {
                                 type="button"
                                 onClick={handleGuardarYConfirmar}
                                 disabled={isSubmitting}
-                                className="w-[160px] h-[48px] bg-[#34A4B3] hover:bg-[#2B93A1] rounded-[12px] text-white text-[14px] font-medium font-['Poppins'] shadow-lg shadow-[#34A4B3]/20 transition-all disabled:opacity-50"
+                                className="w-full sm:w-[150px] h-[44px] bg-[#34A4B3] hover:bg-[#2B93A1] rounded-[12px] text-white text-[13px] font-medium font-['Poppins'] shadow-lg shadow-[#34A4B3]/20 transition-all disabled:opacity-50"
                             >
                                 {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Confirmar"}
                             </Button>

@@ -20,10 +20,10 @@ interface MedicationCardProps {
 export const MedicationCard = ({ name, image, categories, isCenter = false, position = 0, onSelect, onClick }: MedicationCardProps) => {
     const cardTransform =
         position === 0
-            ? "translate3d(0, -12px, 0) scale(1.04)"
+            ? "translate3d(0, -10px, 0) scale(1.03)"
             : position === -1
-                ? "translate3d(-36px, 0, 0) scale(0.96)"
-                : "translate3d(36px, 0, 0) scale(0.96)";
+                ? "translate3d(-28px, 0, 0) scale(0.95)"
+                : "translate3d(28px, 0, 0) scale(0.95)";
 
     return (
         <div
@@ -31,8 +31,8 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, posi
                 bg-white rounded-[13px] shadow-[0px_3.5px_21px_-0.8px_rgba(0,0,0,0.2)]
                 relative flex flex-col items-center pb-8 transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform cursor-pointer
                 ${isCenter
-                    ? "w-[290px] lg:w-[320px] min-h-[400px] z-20 opacity-100 shadow-[0px_18px_42px_rgba(0,0,0,0.22)]"
-                    : "w-[290px] lg:w-[320px] min-h-[400px] z-10 opacity-100 shadow-[0px_8px_20px_rgba(0,0,0,0.12)]"
+                    ? "w-[250px] lg:w-[280px] min-h-[355px] z-20 opacity-100 shadow-[0px_18px_42px_rgba(0,0,0,0.22)]"
+                    : "w-[250px] lg:w-[280px] min-h-[355px] z-10 opacity-100 shadow-[0px_8px_20px_rgba(0,0,0,0.12)]"
                 }
             `}
             onClick={onSelect}
@@ -59,7 +59,7 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, posi
                         alt={name}
                         className={`
                             object-contain drop-shadow-lg transition-all duration-300
-                            h-[180px] translate-y-7
+                            h-[160px] translate-y-6
                         `}
                         onError={(e) => { e.currentTarget.src = PLACEHOLDER_IMAGE; }}
                     />
@@ -78,8 +78,8 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, posi
             {/* Name & Categories */}
             <div className="px-4 mt-2 mb-6 text-center">
                 <p className={`
-                    text-[#404040] font-medium leading-[30px] [font-family:'Poppins',sans-serif]
-                    text-[18px] lg:text-[20px]
+                    text-[#404040] font-medium leading-[26px] [font-family:'Poppins',sans-serif]
+                    text-[16px] lg:text-[18px]
                 `}>
                     {name}
                 </p>
@@ -99,7 +99,7 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, posi
                     }}
                     className={`
                     border-2 border-[#34A4B3] text-[#34A4B3] border-solid rounded-[20px] [font-family:'Poppins',sans-serif] font-medium hover:bg-[#34A4B3] hover:text-white transition-colors
-                    w-[128px] py-2 text-[14px]
+                    w-[118px] py-2 text-[13px]
                 `}>
                     Ver detalles
                 </button>
@@ -169,32 +169,32 @@ export const MedicationsSection = () => {
     };
 
     return (
-        <section className="relative z-0 w-full py-16 px-4 bg-white overflow-hidden">
-            <div className="max-w-[1440px] mx-auto">
+        <section className="relative z-0 w-full py-12 lg:py-14 px-4 sm:px-5 md:px-6 lg:px-7 bg-white overflow-hidden">
+            <div className="max-w-[1060px] mx-auto">
                 {/* Title */}
-                <h2 className="text-center text-[32px] lg:text-[50px] font-bold mb-3 [font-family:'Merienda',cursive]">
+                <h2 className="text-center text-[29px] lg:text-[40px] font-bold mb-3 [font-family:'Merienda',cursive]">
                     <span className="text-[#40C9DB]">Medicamentos </span>
                     <span className="text-[#404040]">Disponibles</span>
                 </h2>
 
                 {/* Subtitle */}
-                <p className="text-center text-[#2D3748] text-[13px] lg:text-[15px] max-w-[850px] mx-auto mb-16 [font-family:'Poppins',sans-serif]">
+                <p className="text-center text-[#2D3748] text-[13px] lg:text-[14px] max-w-[760px] mx-auto mb-7 lg:mb-8 [font-family:'Poppins',sans-serif]">
                     "Cada donación de medicamentos es una oportunidad de vida. Juntos, podemos hacer la diferencia
                     en la salud de quienes más lo necesitan."
                 </p>
 
                 {/* Medication Cards */}
                 {loading ? (
-                    <div className="flex justify-center py-16">
+                    <div className="flex justify-center py-12">
                         <Loader2 className="w-10 h-10 text-[#34A4B3] animate-spin" />
                     </div>
                 ) : medicamentos.length === 0 ? (
-                    <div className="text-center py-16 text-[#718096] [font-family:'Poppins',sans-serif]">
+                    <div className="text-center py-12 text-[#718096] [font-family:'Poppins',sans-serif]">
                         No hay medicamentos disponibles en este momento.
                     </div>
                 ) : (
                     <div
-                        className="flex justify-center gap-8 lg:gap-10 mb-12 lg:h-[500px] items-end pb-4"
+                        className="flex justify-center gap-6 lg:gap-8 mb-10 lg:h-[460px] items-end pb-3"
                         style={{ perspective: "1200px" }}
                     >
                         {getOrderedIndices().map((medIndex, slot) => {
