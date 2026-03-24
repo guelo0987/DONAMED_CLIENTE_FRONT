@@ -73,7 +73,7 @@ const RequestItem = ({ solicitud }: { solicitud: SolicitudResumen }) => {
     return (
         <div
             onClick={() => navigate(`/detalle-solicitud/${solicitud.numerosolicitud}`)}
-            className="bg-white rounded-[15px] p-4 flex items-center gap-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+            className="bg-white rounded-[15px] p-3.5 md:p-4 flex flex-col md:flex-row md:items-center gap-3 md:gap-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
         >
             {/* Medicine Icon */}
             <div className="w-[46px] h-[45px] bg-[#34A4B3]/20 rounded-[15px] flex items-center justify-center flex-shrink-0">
@@ -95,7 +95,7 @@ const RequestItem = ({ solicitud }: { solicitud: SolicitudResumen }) => {
             </div>
 
             {/* Status */}
-            <div className="flex flex-col ml-auto min-w-[65px]">
+            <div className="flex flex-col md:ml-auto min-w-[65px]">
                 <span className="text-[#232323] font-medium text-[13px] font-['Poppins']">{t("historial.status")}</span>
                 <div className="flex items-center gap-1.5">
                     <div className={`w-2 h-2 rounded-full ${STATUS_DOT_COLORS[solicitud.estado]}`}></div>
@@ -104,7 +104,7 @@ const RequestItem = ({ solicitud }: { solicitud: SolicitudResumen }) => {
             </div>
 
             {/* Arrow */}
-            <ChevronRight className="w-4 h-4 text-[#5F6368] flex-shrink-0" />
+            <ChevronRight className="w-4 h-4 text-[#5F6368] flex-shrink-0 self-end md:self-auto" />
         </div>
     );
 };
@@ -128,20 +128,20 @@ export const HistorialSolicitudesCard = () => {
     }, []);
 
     return (
-        <div className="w-full xl:w-[52%] bg-white border border-[#E8EDF3] rounded-[16px] p-5 sm:p-6 min-h-[358px] shadow-[0_8px_22px_rgba(15,23,42,0.04)]">
+        <div className="w-full h-full bg-white border border-[#E6EDF5] rounded-[16px] p-5 lg:p-6 min-h-[358px] shadow-[0_8px_24px_rgba(15,23,42,0.06)]">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[#2D3748] text-[19px] sm:text-[20px] font-semibold font-['Poppins']">
+                <h3 className="text-[#2D3748] text-[20px] font-semibold font-['Poppins']">
                     {t("historial.title")}
                 </h3>
                 <button
                     onClick={() => navigate('/historial-solicitudes')}
-                    className="text-[#34A4B3] text-[13px] sm:text-sm font-['Poppins'] font-medium hover:underline"
+                    className="text-[#34A4B3] text-sm font-medium font-['Poppins'] hover:underline"
                 >
                     {t("detail.goToHistory")}
                 </button>
             </div>
 
-            <div className="w-full h-px bg-[#E2E8F0] mb-5"></div>
+            <div className="w-full h-px bg-[#D7E0EA] mb-5"></div>
 
             {loading ? (
                 <div className="flex justify-center items-center h-[200px]">

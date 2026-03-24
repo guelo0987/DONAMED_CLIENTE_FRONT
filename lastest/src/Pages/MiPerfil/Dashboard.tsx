@@ -48,30 +48,32 @@ const Dashboard = () => {
 
     return (
         <MainLayout className="font-['Poppins']">
-            <div className="max-w-[1240px] w-full mx-auto relative pt-6 lg:pt-10 pb-16 px-4 sm:px-5 lg:px-6">
-                <div className="flex flex-col lg:flex-row gap-5 lg:gap-6">
+            {/* Main Content Container */}
+            <div className="max-w-[1240px] w-full mx-auto relative pt-6 lg:pt-10 pb-16 px-4 lg:px-6 xl:px-7">
+
+                <div className="flex flex-col lg:flex-row gap-6 lg:gap-7 pt-2 lg:pt-6">
 
                     {/* Sidebar - Desktop: Left Side, Mobile: Bottom Section (Quick Actions) */}
-                    <aside className="w-full lg:w-[300px] flex-shrink-0 bg-white border border-[#E8EDF3] rounded-[16px] p-5 md:p-6 flex flex-col order-2 lg:order-1 lg:min-h-[560px] shadow-[0_8px_22px_rgba(15,23,42,0.04)]">
-                        <h3 className="text-[#2D3748] font-medium text-[15px] mb-5">
+                    <aside className="w-full lg:w-[280px] xl:w-[290px] flex-shrink-0 bg-white border border-[#E6EDF5] rounded-[16px] p-5 lg:p-6 flex flex-col order-2 lg:order-1 lg:min-h-[524px] shadow-[0_8px_24px_rgba(15,23,42,0.06)] lg:sticky lg:top-24">
+                        <h3 className="text-[#2D3748] font-semibold text-[15px] mb-5">
                             {t("dashboard.manageAccount")}
                         </h3>
-                        <div className="w-full h-px bg-[#E2E8F0] mb-5"></div>
+                        <div className="w-full h-px bg-[#D7E0EA] mb-5"></div>
 
                         {/* Menu Items */}
-                        <div className="flex flex-col gap-1.5 flex-1">
+                        <div className="flex flex-col gap-2 flex-1">
                             {/* Items same as before */}
                             <div
                                 onClick={() => setIsEditProfileOpen(true)}
-                                className="flex items-center gap-3 py-3 px-4 bg-[#F0FDFF] border-l-[4px] border-[#40C9DB] rounded-[10px] cursor-pointer"
+                                className="flex items-center gap-3 py-3 px-3.5 bg-[#F1FBFD] border border-[#CFEFF4] rounded-[10px] cursor-pointer"
                             >
                                 <img src="/assets/editar_perfil_icon.png" alt="Editar" className="w-6 h-6 object-contain" />
-                                <span className="text-[#2D3748] text-[15px]">{t("dashboard.editPersonalInfo")}</span>
+                                <span className="text-[#2D3748] text-[15px] font-medium">{t("dashboard.editPersonalInfo")}</span>
                             </div>
 
                             <div
                                 onClick={() => setIsChangePasswordOpen(true)}
-                                className="flex items-center gap-3 py-3 px-4 rounded-[10px] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
+                                className="flex items-center gap-3 py-3 px-3.5 rounded-[10px] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
                             >
                                 <img src="/assets/cambiar_pass_icon.png" alt="Password" className="w-6 h-6 object-contain" />
                                 <span className="text-[#2D3748] text-[15px]">{t("dashboard.changePassword")}</span>
@@ -79,7 +81,7 @@ const Dashboard = () => {
 
                             <div
                                 onClick={() => setIsDeactivateOpen(true)}
-                                className="flex items-center gap-3 py-3 px-4 rounded-[10px] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
+                                className="flex items-center gap-3 py-3 px-3.5 rounded-[10px] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
                             >
                                 <img src="/assets/desactivar_cuenta_icon.png" alt="Desactivar" className="w-6 h-6 object-contain" />
                                 <span className="text-[#2D3748] text-[15px]">{t("dashboard.deactivateAccount")}</span>
@@ -90,7 +92,7 @@ const Dashboard = () => {
                             <button
                                 type="button"
                                 onClick={() => setIsLogoutOpen(true)}
-                                className="flex items-center gap-3 py-3 px-4 rounded-[10px] hover:bg-[#F8FAFC] transition-colors cursor-pointer w-full text-left"
+                                className="flex items-center gap-3 py-3 px-3.5 rounded-[10px] hover:bg-[#F8FAFC] transition-colors cursor-pointer w-full text-left"
                             >
                                 <img src="/assets/log_out_icon.png" alt="Logout" className="w-6 h-6 object-contain" />
                                 <span className="text-[#2D3748] text-[15px]">{t("dashboard.logout")}</span>
@@ -99,7 +101,7 @@ const Dashboard = () => {
                             <button
                                 type="button"
                                 onClick={() => setIsDeleteOpen(true)}
-                                className="w-full bg-[#1C5961] text-white py-3 px-6 rounded-[12px] text-[15px] hover:bg-[#164950] transition-colors mt-4"
+                                className="w-full bg-[#1C5961] text-white py-3 px-6 rounded-[12px] text-[15px] font-medium hover:bg-[#164950] transition-colors mt-4 shadow-[0_6px_16px_rgba(28,89,97,0.28)]"
                             >
                                 {t("dashboard.deleteAccount")}
                             </button>
@@ -107,12 +109,12 @@ const Dashboard = () => {
                     </aside>
 
                     {/* Main Area - Desktop: Right Side, Mobile: Top Section */}
-                    <div className="flex-1 w-full flex flex-col gap-5 lg:gap-6 order-1 lg:order-2">
+                    <div className="flex-1 w-full max-w-[920px] flex flex-col gap-5 lg:gap-6 order-1 lg:order-2">
 
                         {/* Profile Banner & Card Wrapper */}
                         <div className="relative w-full flex flex-col">
                             {/* Banner Background */}
-                            <div className="w-full h-[165px] sm:h-[190px] lg:h-[220px] rounded-[16px] overflow-hidden relative z-0 border border-[#D7E6EA] shadow-[0_8px_22px_rgba(15,23,42,0.06)]">
+                            <div className="w-full h-[170px] lg:h-[220px] rounded-[16px] overflow-hidden relative z-0 border border-[#D8E7EE] shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
                                 <div className="absolute inset-0 bg-[#4FD1C5]"></div>
                                 <img
                                     src="/banners/historial_banner.png"
@@ -124,12 +126,12 @@ const Dashboard = () => {
                             {/* Profile Card - Overlapping using Negative Margin on Mobile, Absolute on Desktop */}
                             <div
                                 className="relative lg:absolute z-10 
-                                           mt-[-56px] mx-4 lg:mt-0 lg:mx-0
-                                           lg:left-[6%] lg:top-[40%] 
-                                           w-auto lg:w-[56%] max-w-[650px] 
+                                           mt-[-58px] mx-4 lg:mt-0 lg:mx-0
+                                           lg:left-[5%] lg:top-[46%]
+                                           w-auto lg:w-[52%] max-w-[590px]
                                            bg-white/80 backdrop-blur-[10.5px] 
-                                           rounded-[14px] border border-[#E8EDF3] shadow-[0_10px_26px_rgba(15,23,42,0.08)] 
-                                           p-4 flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-4 text-center sm:text-left"
+                                           rounded-[15px] border border-[#E7EEF4] shadow-[0_10px_24px_rgba(15,23,42,0.12)]
+                                           p-4 lg:p-5 flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-4 text-center sm:text-left"
                                 style={{
                                     background: "linear-gradient(112.83deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.8) 110.84%)",
                                 }}
@@ -152,8 +154,8 @@ const Dashboard = () => {
                                 </div>
 
                                 {/* Name and Email */}
-                                <div className="flex flex-col">
-                                    <h2 className="text-[#2D3748] text-[20px] sm:text-[24px] lg:text-[34px] font-medium leading-[125%]">
+                                <div className="flex flex-col max-w-[360px]">
+                                    <h2 className="text-[#2D3748] text-[20px] sm:text-[24px] lg:text-[30px] font-medium leading-[122%]">
                                         {name}
                                     </h2>
                                     <p className="text-[#64748B] text-[13px] sm:text-[14px] leading-[140%] break-all">
@@ -164,18 +166,18 @@ const Dashboard = () => {
                         </div>
 
                         {/* Content Row: Profile Info + Historial */}
-                        <div className="flex flex-col xl:flex-row gap-5 lg:gap-6 lg:mt-24 xl:mt-0">
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 mt-8 md:mt-10 lg:mt-24 xl:mt-16 items-stretch">
 
                             {/* Profile Info Card */}
-                            <div className="w-full xl:w-[48%] bg-white border border-[#E8EDF3] rounded-[16px] p-5 sm:p-6 shadow-[0_8px_22px_rgba(15,23,42,0.04)]">
+                            <div className="w-full h-full min-h-[358px] bg-white border border-[#E6EDF5] rounded-[16px] p-5 lg:p-6 shadow-[0_8px_24px_rgba(15,23,42,0.06)]">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-[#2D3748] text-[19px] sm:text-[20px] font-semibold">{t("dashboard.personalInfo")}</h3>
+                                    <h3 className="text-[#2D3748] text-[20px] font-semibold">{t("dashboard.personalInfo")}</h3>
                                 </div>
-                                <div className="w-full h-px bg-[#E2E8F0] mb-5"></div>
+                                <div className="w-full h-px bg-[#D7E0EA] mb-5"></div>
                                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
                                     <div className="flex flex-col gap-2">
-                                        <h4 className="text-[#2D3748] text-[24px] font-medium mb-1">{name}</h4>
-                                        <div className="flex flex-col gap-2 text-[#334155] text-[14px] sm:text-[15px] font-medium">
+                                        <h4 className="text-[#2D3748] text-[26px] leading-[130%] font-medium mb-2">{name}</h4>
+                                        <div className="flex flex-col gap-2 text-[#2D3748] text-[15px] font-medium">
                                             <p><span className="text-[#64748B]">{t("dashboard.field.firstName")}:</span> {firstName}</p>
                                             <p><span className="text-[#64748B]">{t("dashboard.field.lastName")}:</span> {lastName}</p>
                                             <p><span className="text-[#64748B]">{t("dashboard.field.id")}:</span> {profile?.cedula_usuario || ""}</p>
@@ -189,7 +191,7 @@ const Dashboard = () => {
                             </div>
 
                             {/* Historial de Solicitudes Card */}
-                            <div className="w-full">
+                            <div className="w-full h-full">
                                 <HistorialSolicitudesCard />
                             </div>
                         </div>
