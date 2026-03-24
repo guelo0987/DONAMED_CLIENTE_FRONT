@@ -4,10 +4,19 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSolicitudes } from "../../hooks/useSolicitudes";
 import type { SolicitudResumen, EstadoSolicitud } from "../../types/solicitud";
+import { useI18n } from "../../i18n/language-context";
 
 // Helper to translate backend states to human-readable badges
-const getStatusLabel = (estado: EstadoSolicitud) => {
-    const labels: Record<EstadoSolicitud, string> = {
+const getStatusLabel = (estado: EstadoSolicitud, isEnglish: boolean) => {
+    const labels: Record<EstadoSolicitud, string> = isEnglish ? {
+        PENDIENTE: "Pending",
+        EN_REVISION: "In Review",
+        APROBADA: "Approved",
+        RECHAZADA: "Rejected",
+        DESPACHADA: "Dispatched",
+        CANCELADA: "Cancelled",
+        INCOMPLETA: "Incomplete"
+    } : {
         PENDIENTE: "Pendiente",
         EN_REVISION: "En Revisión",
         APROBADA: "Aprobada",
@@ -23,12 +32,14 @@ const RequestCard = ({
     numerosolicitud,
     date,
     medication,
-    statusLabel
+    statusLabel,
+    t
 }: {
     numerosolicitud: number;
     date: string;
     medication: string;
     statusLabel: string;
+    t: (key: string, fallback?: string) => string;
 }) => {
     const navigate = useNavigate();
 
@@ -68,27 +79,27 @@ const RequestCard = ({
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 w-full text-left sm:text-center">
                 {/* Fecha */}
                 <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-start">
-                    <span className="font-['Poppins'] font-medium text-[#2D3748] text-[13px] sm:text-[14px] sm:hidden">Fecha:</span>
+                    <span className="font-['Poppins'] font-medium text-[#2D3748] text-[13px] sm:text-[14px] sm:hidden">{t("historial.date")}:</span>
                     <div className="flex flex-col items-end sm:items-start text-right sm:text-left">
-                        <span className="font-['Poppins'] font-medium text-[#2D3748] text-[14px] hidden sm:block">Fecha</span>
+                        <span className="font-['Poppins'] font-medium text-[#2D3748] text-[14px] hidden sm:block">{t("historial.date")}</span>
                         <span className="font-['Poppins'] font-normal text-[#2D3748] text-[13px] sm:text-[14px]">{date}</span>
                     </div>
                 </div>
 
                 {/* Medicamento */}
                 <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-start">
-                    <span className="font-['Poppins'] font-medium text-[#232323] text-[13px] sm:text-[14px] sm:hidden">Medicamento:</span>
+                    <span className="font-['Poppins'] font-medium text-[#232323] text-[13px] sm:text-[14px] sm:hidden">{t("historial.medication")}:</span>
                     <div className="flex flex-col items-end sm:items-start text-right sm:text-left">
-                        <span className="font-['Poppins'] font-medium text-[#232323] text-[14px] hidden sm:block">Medicamento</span>
+                        <span className="font-['Poppins'] font-medium text-[#232323] text-[14px] hidden sm:block">{t("historial.medication")}</span>
                         <span className="font-['Poppins'] font-normal text-[#2D3748] text-[13px] sm:text-[14px]">{medication}</span>
                     </div>
                 </div>
 
                 {/* Estado */}
                 <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-start">
-                    <span className="font-['Poppins'] font-medium text-[#232323] text-[13px] sm:text-[14px] sm:hidden">Estado:</span>
+                    <span className="font-['Poppins'] font-medium text-[#232323] text-[13px] sm:text-[14px] sm:hidden">{t("historial.status")}:</span>
                     <div className="flex flex-col items-end sm:items-start text-right sm:text-left">
-                        <span className="font-['Poppins'] font-medium text-[#232323] text-[14px] hidden sm:block">Estado</span>
+                        <span className="font-['Poppins'] font-medium text-[#232323] text-[14px] hidden sm:block">{t("historial.status")}</span>
                         <span className="font-['Poppins'] font-normal text-[#2D3748] text-[13px] sm:text-[14px]">{statusLabel}</span>
                     </div>
                 </div>
@@ -103,6 +114,7 @@ const RequestCard = ({
 };
 
 export const HistorialSolicitudes = () => {
+    const { t, language } = useI18n();
     const { fetchHistorial, isLoading, error } = useSolicitudes();
     const [solicitudes, setSolicitudes] = useState<SolicitudResumen[]>([]);
 
@@ -141,7 +153,7 @@ export const HistorialSolicitudes = () => {
                                     bg-white/90 sm:bg-white/80 backdrop-blur-md sm:rounded-t-[12px] border-t border-white/50
                                     flex items-center justify-center sm:justify-start px-5 sm:px-6 shadow-sm">
                             <h1 className="font-['Poppins'] font-normal text-[#2D3748] text-[18px] sm:text-[24px] md:text-[30px]">
-                                Historial de Solicitudes
+                                {t("historial.title")}
                             </h1>
                         </div>
                     </div>
@@ -153,7 +165,7 @@ export const HistorialSolicitudes = () => {
                     {/* Recientes Section */}
                     <section className="mb-10">
                         <h2 className="font-['Poppins'] font-normal text-[#2D3748] text-[22px] sm:text-[26px] mb-5 border-b border-[#DCD7D7] pb-2">
-                            Mis Solicitudes
+                            {t("historial.myRequests")}
                         </h2>
 
                         {isLoading && (
@@ -170,7 +182,7 @@ export const HistorialSolicitudes = () => {
 
                         {!isLoading && !error && recentRequests.length === 0 && (
                             <div className="text-center py-10">
-                                <p className="text-gray-500 font-['Poppins'] text-base">No tienes solicitudes registradas en este momento.</p>
+                                <p className="text-gray-500 font-['Poppins'] text-base">{t("historial.empty")}</p>
                             </div>
                         )}
 
@@ -181,7 +193,8 @@ export const HistorialSolicitudes = () => {
                                     numerosolicitud={req.numerosolicitud}
                                     date={new Date(req.creada_en).toLocaleDateString('es-DO')}
                                     medication={req.patologia} // Use pathology as the main subject string for generic lists
-                                    statusLabel={getStatusLabel(req.estado)}
+                                    statusLabel={getStatusLabel(req.estado, language !== "es")}
+                                    t={t}
                                 />
                             ))}
                         </div>

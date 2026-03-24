@@ -5,8 +5,10 @@ import { Button } from "../../components/ui/buttons";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import LandingPage from "../Landing/LandingPage";
+import { useI18n } from "../../i18n/language-context";
 
 export const ResetPass = () => {
+    const { t } = useI18n();
     const [showNuevaContrasena, setShowNuevaContrasena] = useState(false);
     const [showConfirmarContrasena, setShowConfirmarContrasena] = useState(false);
 
@@ -56,10 +58,10 @@ export const ResetPass = () => {
                             {/* Header */}
                             <div className="space-y-3 w-full">
                                 <h1 className="text-[#404040] text-[22px] md:text-[28px] xl:text-[32px] font-medium leading-[1.2] tracking-normal">
-                                    Restablecer Contraseña
+                                    {t("auth.resetTitle")}
                                 </h1>
                                 <p className="text-[#2D3748] text-[13px] md:text-[14px] xl:text-[15px] font-medium leading-relaxed">
-                                    Ingrese su nueva contraseña
+                                    {t("auth.resetSubtitle")}
                                 </p>
                             </div>
 
@@ -69,7 +71,7 @@ export const ResetPass = () => {
                                 <div className="space-y-1.5 text-left">
                                     <div className="flex items-center gap-2">
                                         <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
-                                            Nueva Contraseña
+                                            {t("auth.newPassword")}
                                         </Label>
                                         <img
                                             src="/assets/plus_icon.png"
@@ -80,14 +82,14 @@ export const ResetPass = () => {
                                     <div className="relative">
                                         <Input
                                             type={showNuevaContrasena ? "text" : "password"}
-                                            placeholder="Nueva Contraseña"
+                                            placeholder={t("auth.newPassword")}
                                             className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowNuevaContrasena((prev) => !prev)}
                                             className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
-                                            aria-label={showNuevaContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                            aria-label={showNuevaContrasena ? t("auth.hidePassword") : t("auth.showPassword")}
                                         >
                                             {showNuevaContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
                                         </button>
@@ -98,7 +100,7 @@ export const ResetPass = () => {
                                 <div className="space-y-1.5 text-left">
                                     <div className="flex items-center gap-2">
                                         <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
-                                            Repita la Contraseña
+                                            {t("auth.repeatPassword")}
                                         </Label>
                                         <img
                                             src="/assets/plus_icon.png"
@@ -109,14 +111,14 @@ export const ResetPass = () => {
                                     <div className="relative">
                                         <Input
                                             type={showConfirmarContrasena ? "text" : "password"}
-                                            placeholder="Repita la Contraseña"
+                                            placeholder={t("auth.repeatPassword")}
                                             className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowConfirmarContrasena((prev) => !prev)}
                                             className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
-                                            aria-label={showConfirmarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                            aria-label={showConfirmarContrasena ? t("auth.hidePassword") : t("auth.showPassword")}
                                         >
                                             {showConfirmarContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
                                         </button>
@@ -127,17 +129,17 @@ export const ResetPass = () => {
                                     <Button
                                         className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                     >
-                                        Confirmar Contraseña
+                                        {t("auth.confirmPasswordButton")}
                                     </Button>
                                 </div>
 
                                 <p className="text-center text-[#404040] text-[11px] xl:text-[12px] font-medium pt-2">
-                                    ¿Recordaste tu contraseña?{" "}
+                                    {t("auth.rememberedPasswordQ")}{" "}
                                     <Link
                                         to="/iniciar-sesion"
                                         className="text-[#34A4B3] hover:underline"
                                     >
-                                        Iniciar Sesión
+                                        {t("auth.iniciarSesion")}
                                     </Link>
                                 </p>
                             </div>

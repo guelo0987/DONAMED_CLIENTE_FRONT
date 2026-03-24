@@ -8,8 +8,11 @@ import { Label } from "../../components/ui/label";
 import LandingPage from "../Landing/LandingPage";
 import { useAuth } from "../../hooks/useAuth";
 import { validarCorreo } from "../../utils/validators";
+import { useI18n } from "../../i18n/language-context";
 
 export const ForgotPass = () => {
+    const { t, language } = useI18n();
+    const isEn = language !== "es";
     const { recuperarContrasena, isLoading, error, setError } = useAuth();
     const [correo, setCorreo] = useState("");
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -19,7 +22,7 @@ export const ForgotPass = () => {
         setError(null);
 
         if (!validarCorreo(correo)) {
-            setError("El formato del correo electrónico no es válido.");
+            setError(t("auth.invalidEmailFormat"));
             return;
         }
 
@@ -75,10 +78,10 @@ export const ForgotPass = () => {
                             {/* Header */}
                             <div className="space-y-3 w-full">
                                 <h1 className="text-[#404040] text-[22px] md:text-[28px] xl:text-[32px] font-medium leading-[1.2] tracking-normal">
-                                    ¿Olvidaste tu contraseña?
+                                    {t("auth.forgotTitle")}
                                 </h1>
                                 <p className="text-[#2D3748] text-[13px] md:text-[14px] xl:text-[15px] font-medium leading-relaxed">
-                                    Ingresa tu correo electrónico para restablecer tu contraseña
+                                    {t("auth.forgotSubtitle")}
                                 </p>
                             </div>
 
@@ -90,7 +93,7 @@ export const ForgotPass = () => {
                                 <div className="space-y-1.5 text-left">
                                     <div className="flex items-center gap-2">
                                         <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
-                                            Correo Electrónico
+                                            {t("auth.email")}
                                         </Label>
                                         <img
                                             src="/assets/plus_icon.png"
@@ -102,7 +105,7 @@ export const ForgotPass = () => {
                                         type="email"
                                         value={correo}
                                         onChange={(e) => setCorreo(e.target.value)}
-                                        placeholder="Dirección de correo electrónico"
+                                        placeholder={t("auth.emailPlaceholder")}
                                         className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                         required
                                     />
@@ -114,17 +117,17 @@ export const ForgotPass = () => {
                                         disabled={isLoading}
                                         className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] disabled:opacity-50 rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                     >
-                                        {isLoading ? "Enviando..." : "Siguiente"}
+                                        {isLoading ? t("auth.sending") : t("auth.next")}
                                     </Button>
                                 </div>
 
                                 <p className="text-center text-[#404040] text-[11px] xl:text-[12px] font-medium pt-2">
-                                    ¿Recordaste tu contraseña?{" "}
+                                    {t("auth.rememberedPasswordQ")}{" "}
                                     <Link
                                         to="/iniciar-sesion"
                                         className="text-[#34A4B3] hover:underline"
                                     >
-                                        Iniciar Sesión
+                                        {t("auth.iniciarSesion")}
                                     </Link>
                                 </p>
                             </form>
@@ -133,10 +136,10 @@ export const ForgotPass = () => {
                         <ConfirmationCard
                             open={showConfirmation}
                             inlineTitle
-                            title="Revisa tu correo "
-                            highlight="electrónico"
-                            description="Te hemos enviado un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada y sigue las instrucciones."
-                            buttonLabel="Ir al inicio de sesión"
+                            title={isEn ? "Check your " : "Revisa tu correo "}
+                            highlight={isEn ? "email" : "electrónico"}
+                            description={t("auth.verifyEmailDescription")}
+                            buttonLabel={t("auth.goToSignIn")}
                             to="/iniciar-sesion"
                         />
                     </div>

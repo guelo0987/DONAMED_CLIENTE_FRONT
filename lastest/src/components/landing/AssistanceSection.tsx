@@ -1,4 +1,7 @@
+import { useI18n } from "../../i18n/language-context";
+
 export const AssistanceSection = () => {
+    const { t } = useI18n();
     return (
         <section className="w-full py-10 px-4 sm:px-5 md:px-6 lg:px-7">
             <div className="max-w-[1060px] mx-auto relative">
@@ -26,13 +29,13 @@ export const AssistanceSection = () => {
                         <div className="w-full lg:w-[55%] p-6 lg:p-8 text-center lg:text-left">
                             {/* Title */}
                             <h2 className="text-[24px] lg:text-[36px] font-medium mb-2.5 [font-family:'Poppins',sans-serif]">
-                                <span className="text-[#404040]">¿Necesitas </span>
-                                <span className="text-[#40C9DB]">Asistencia?</span>
+                                <span className="text-[#404040]">{t("landing.assistance.title1")}</span>
+                                <span className="text-[#40C9DB]">{t("landing.assistance.title2")}</span>
                             </h2>
 
                             {/* Subtitle */}
                             <p className="text-[#2D3748] text-[14px] lg:text-[16px] font-medium mb-5 [font-family:'Poppins',sans-serif]">
-                                Para hablar con un representante llamar al
+                                {t("landing.assistance.subtitle")}
                             </p>
 
                             {/* Phone Button */}

@@ -1,4 +1,7 @@
+import { useI18n } from "../../i18n/language-context";
+
 export const PartnersSection = () => {
+    const { t } = useI18n();
     const partners = [
         { name: "Pfizer", logo: "/logos/pfizer_logo.png" },
         { name: "Novartis", logo: "/logos/novartis_logo.png" },
@@ -10,13 +13,13 @@ export const PartnersSection = () => {
             <div className="max-w-[1060px] mx-auto">
                 {/* Title */}
                 <h2 className="text-center text-[28px] lg:text-[40px] font-medium mb-3 [font-family:'Poppins',sans-serif]">
-                    <span className="text-[#404040]">Aliados </span>
-                    <span className="text-[#40C9DB]">Comprometidos</span>
+                    <span className="text-[#404040]">{t("landing.partners.title1")}</span>
+                    <span className="text-[#40C9DB]">{t("landing.partners.title2")}</span>
                 </h2>
 
                 {/* Subtitle */}
                 <p className="text-center text-[#2D3748] text-[13px] lg:text-[15px] max-w-[720px] mx-auto mb-8 [font-family:'Poppins',sans-serif]">
-                    "Con el apoyo de nuestras farmacéuticas aliadas, cada donación llega a quienes más lo necesitan."
+                    {t("landing.partners.subtitle")}
                 </p>
 
                 {/* Partner Cards Container */}

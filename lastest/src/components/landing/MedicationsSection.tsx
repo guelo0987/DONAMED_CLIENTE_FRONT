@@ -4,6 +4,7 @@ import { medicamentoService } from "../../services/medicamentoService";
 import { MedicationDetailModal } from "../ui/medication-detail-modal";
 import { getStoragePublicUrl } from "../../utils/storageUrl";
 import type { MedicamentoDetalle, MedicamentoListItem } from "../../types/medicamento";
+import { useI18n } from "../../i18n/language-context";
 
 const PLACEHOLDER_IMAGE = "/assets/Rectangulo%20Medicamentos.png";
 
@@ -15,9 +16,10 @@ interface MedicationCardProps {
     position?: -1 | 0 | 1;
     onSelect?: () => void;
     onClick?: () => void;
+    t: (key: string, fallback?: string) => string;
 }
 
-export const MedicationCard = ({ name, image, categories, isCenter = false, position = 0, onSelect, onClick }: MedicationCardProps) => {
+export const MedicationCard = ({ name, image, categories, isCenter = false, position = 0, onSelect, onClick, t }: MedicationCardProps) => {
     const cardTransform =
         position === 0
             ? "translate3d(0, -10px, 0) scale(1.03)"
@@ -46,7 +48,7 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, posi
                 <div className="inline-flex items-center gap-2 bg-[#DEDEDE] rounded-full px-3 py-1.5">
                     <div className="w-2 h-2 rounded-full bg-[#40C9DB]"></div>
                     <span className="text-[#2D3748] text-[12px] font-medium [font-family:'Poppins',sans-serif]">
-                        Disponible
+                        {t("landing.meds.available")}
                     </span>
                 </div>
             </div>
@@ -101,7 +103,7 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, posi
                     border-2 border-[#34A4B3] text-[#34A4B3] border-solid rounded-[20px] [font-family:'Poppins',sans-serif] font-medium hover:bg-[#34A4B3] hover:text-white transition-colors
                     w-[118px] py-2 text-[13px]
                 `}>
-                    Ver detalles
+                    {t("landing.meds.viewDetails")}
                 </button>
             </div>
         </div>
@@ -109,6 +111,7 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, posi
 };
 
 export const MedicationsSection = () => {
+    const { t } = useI18n();
     const [medicamentos, setMedicamentos] = useState<MedicamentoListItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedMedicamento, setSelectedMedicamento] = useState<MedicamentoDetalle | null>(null);
@@ -173,14 +176,13 @@ export const MedicationsSection = () => {
             <div className="max-w-[1060px] mx-auto">
                 {/* Title */}
                 <h2 className="text-center text-[29px] lg:text-[40px] font-bold mb-3 [font-family:'Merienda',cursive]">
-                    <span className="text-[#40C9DB]">Medicamentos </span>
-                    <span className="text-[#404040]">Disponibles</span>
+                    <span className="text-[#40C9DB]">{t("landing.meds.title1")}</span>
+                    <span className="text-[#404040]">{t("landing.meds.title2")}</span>
                 </h2>
 
                 {/* Subtitle */}
                 <p className="text-center text-[#2D3748] text-[13px] lg:text-[14px] max-w-[760px] mx-auto mb-7 lg:mb-8 [font-family:'Poppins',sans-serif]">
-                    "Cada donación de medicamentos es una oportunidad de vida. Juntos, podemos hacer la diferencia
-                    en la salud de quienes más lo necesitan."
+                    {t("landing.meds.subtitle")}
                 </p>
 
                 {/* Medication Cards */}
@@ -190,7 +192,7 @@ export const MedicationsSection = () => {
                     </div>
                 ) : medicamentos.length === 0 ? (
                     <div className="text-center py-12 text-[#718096] [font-family:'Poppins',sans-serif]">
-                        No hay medicamentos disponibles en este momento.
+                        {t("landing.meds.empty")}
                     </div>
                 ) : (
                     <div
@@ -210,6 +212,7 @@ export const MedicationsSection = () => {
                                 position={position}
                                 onSelect={() => setActiveIndex(medIndex)}
                                 onClick={() => handleVerDetalles(med)}
+                                t={t}
                             />
                             );
                         })}

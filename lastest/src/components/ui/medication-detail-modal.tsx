@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { useI18n } from "../../i18n/language-context";
 
 interface MedicationDetailModalProps {
     open: boolean;
@@ -29,6 +30,7 @@ export const MedicationDetailModal = ({
     description,
     proveedor,
 }: MedicationDetailModalProps) => {
+    const { t } = useI18n();
     if (!open) return null;
 
     const categoriasTexto = categorias?.filter(Boolean).join(", ");
@@ -40,7 +42,7 @@ export const MedicationDetailModal = ({
                 <button
                     onClick={onClose}
                     className="absolute top-5 right-5 z-20 p-2 rounded-full bg-white/90 hover:bg-white transition-colors border border-gray-100 shadow-sm"
-                    aria-label="Cerrar"
+                    aria-label={t("common.cerrar")}
                 >
                     <X className="w-6 h-6 text-[#5F6368]" />
                 </button>
@@ -81,7 +83,7 @@ export const MedicationDetailModal = ({
                             {formaFarmaceutica && (
                                 <div>
                                     <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
-                                        Forma Farmacéutica
+                                        {t("medicationModal.pharmaceuticalForm")}
                                     </p>
                                     <p className="text-[#2D3748] text-[14px] md:text-[15px] font-medium">
                                         {formaFarmaceutica}
@@ -91,7 +93,7 @@ export const MedicationDetailModal = ({
                             {viaAdministracion && (
                                 <div>
                                     <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
-                                        Vía de Administración
+                                        {t("medicationModal.administrationRoute")}
                                     </p>
                                     <p className="text-[#2D3748] text-[14px] md:text-[15px] font-medium">
                                         {viaAdministracion}
@@ -104,7 +106,7 @@ export const MedicationDetailModal = ({
                     {categoriasTexto && (
                         <div className="mb-4">
                             <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
-                                Categorías
+                                {t("medicationModal.categories")}
                             </p>
                             <p className="text-[#2D3748] text-[14px] md:text-[15px] font-medium">
                                 {categoriasTexto}
@@ -115,7 +117,7 @@ export const MedicationDetailModal = ({
                     {enfermedadesTexto && (
                         <div className="mb-4">
                             <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
-                                Indicado para
+                                {t("medicationModal.indicatedFor")}
                             </p>
                             <p className="text-[#2D3748] text-[14px] md:text-[15px] font-medium">
                                 {enfermedadesTexto}
@@ -126,17 +128,17 @@ export const MedicationDetailModal = ({
                     <hr className="my-3 border-[#DCE1E7]" />
 
                     <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-2">
-                        Descripción
+                        {t("medicationModal.description")}
                     </p>
                     <p className="text-[#4A5568] text-[13px] md:text-[14px] leading-[1.65] mb-5">
-                        {description || "No hay descripción disponible para este medicamento."}
+                        {description || t("medicationModal.noDescription")}
                     </p>
 
                     {proveedor?.nombre && (
                         <>
                             <hr className="my-3 border-[#DCE1E7]" />
                             <p className="text-[#7A8597] text-[11px] md:text-[12px] uppercase tracking-[0.06em] font-semibold mb-1">
-                                Proveedor
+                                {t("medicationModal.provider")}
                             </p>
                             <p className="text-[#2D3748] text-[14px] md:text-[15px] font-semibold">
                                 {proveedor.nombre}

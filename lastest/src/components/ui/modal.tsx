@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { useI18n } from "../../i18n/language-context";
 
 interface ModalProps {
     isOpen: boolean;
@@ -9,6 +10,7 @@ interface ModalProps {
 }
 
 export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
+    const { t } = useI18n();
     const modalRef = useRef<HTMLDivElement>(null);
 
     // Cerrar con Escape
@@ -54,7 +56,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
                     <button
                         onClick={onClose}
                         className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                        aria-label="Cerrar modal"
+                        aria-label={`${t("common.cerrar")} modal`}
                     >
                         <X className="w-6 h-6 text-gray-500" />
                     </button>

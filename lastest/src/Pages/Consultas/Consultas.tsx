@@ -8,11 +8,13 @@ import { useSearchParams } from "react-router-dom";
 import { medicamentoService } from "../../services/medicamentoService";
 import type { MedicamentoListItem, MedicamentoDetalle, CategoriaItem } from "../../types/medicamento";
 import { getStoragePublicUrl } from "../../utils/storageUrl";
+import { useI18n } from "../../i18n/language-context";
 
 // Placeholder para imagen cuando no hay foto_url
 const PLACEHOLDER_IMAGE = "/assets/Rectangulo%20Medicamentos.png";
 
 export const Consultas = () => {
+    const { t } = useI18n();
     const [searchParams] = useSearchParams();
     const [medicamentos, setMedicamentos] = useState<MedicamentoListItem[]>([]);
     const [categorias, setCategorias] = useState<CategoriaItem[]>([]);
@@ -35,7 +37,7 @@ export const Consultas = () => {
             });
             setMedicamentos(res.data?.medicamentos ?? []);
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : "Error al buscar medicamentos";
+            const msg = err instanceof Error ? err.message : t("consultas.searchError");
             setError(msg);
             setMedicamentos([]);
         } finally {
@@ -78,14 +80,14 @@ export const Consultas = () => {
                         <div className="space-y-7 max-w-[760px]">
                             <h1 className="text-[#2D3748] text-[32px] md:text-[34px] xl:text-[38px] font-semibold leading-tight">
                                 <span className="text-[#34A4B3] font-['Merienda']">
-                                    Encuentra{" "}
+                                    {t("consultas.title.highlight")}
                                 </span>
-                                el apoyo que necesitas para tu bienestar
+                                {t("consultas.title.rest")}
                             </h1>
 
                             <div className="bg-white backdrop-blur-[20px] rounded-[18px] lg:rounded-[22px] shadow-[0px_18px_40px_rgba(0,0,0,0.08)] p-4 lg:p-5 border border-gray-50/50 max-w-[760px]">
                                 <p className="text-[#404040] font-semibold text-[12px] lg:text-[13px] mb-3.5 [font-family:'Poppins',sans-serif] ml-1 text-center lg:text-left">
-                                    Encuentra medicamentos disponibles
+                                    {t("consultas.searchTitle")}
                                 </p>
                                 <form
                                     onSubmit={(e) => { e.preventDefault(); buscarMedicamentos(); }}
@@ -94,7 +96,7 @@ export const Consultas = () => {
                                     <div className="w-full min-w-0">
                                         <input
                                             type="text"
-                                            placeholder="Nombre del Medicamento"
+                                            placeholder={t("consultas.searchPlaceholder")}
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                             className="w-full bg-[#F3F4F6] rounded-full px-5 lg:px-6 py-3 lg:py-3.5 text-[#4A5568] placeholder:text-[#A0AEC0] text-[13px] lg:text-[14px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
@@ -105,7 +107,7 @@ export const Consultas = () => {
                                             value={categoriaFilter}
                                             onChange={setCategoriaFilter}
                                             options={categorias.map((c) => ({ value: c.id.toString(), label: c.nombre }))}
-                                            placeholder="Todas las categorías"
+                                            placeholder={t("consultas.allCategories")}
                                             buttonClassName="bg-[#F3F4F6] rounded-full px-5 lg:px-6 py-3 lg:py-3.5 text-[#4A5568] text-[13px] lg:text-[14px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
                                         />
                                     </div>
@@ -115,7 +117,7 @@ export const Consultas = () => {
                                         className="bg-[#34A4B3] text-white px-6 lg:px-8 py-3 lg:py-3.5 rounded-full flex items-center justify-center gap-2 [font-family:'Poppins',sans-serif] font-semibold text-[13px] lg:text-[14px] hover:bg-[#2B93A1] transition-all transform hover:scale-[1.02] shadow-lg shadow-[#34A4B3]/30 w-full lg:w-auto min-w-[135px] disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {loading ? <Loader2 className="w-4 h-4 lg:w-5 lg:h-5 animate-spin" /> : <Search className="w-4 h-4 lg:w-5 lg:h-5" />}
-                                        Buscar
+                                        {t("common.buscar")}
                                     </button>
                                 </form>
                             </div>
@@ -145,7 +147,7 @@ export const Consultas = () => {
                         </div>
                     ) : medicamentos.length === 0 ? (
                         <div className="col-span-full text-center py-12 text-[#718096]">
-                            No se encontraron medicamentos. Prueba con otros términos o filtros.
+                            {t("consultas.empty")}
                         </div>
                     ) : (
                         medicamentos.map((med) => (
@@ -179,7 +181,7 @@ export const Consultas = () => {
                                     disabled={loadingDetailFor === med.codigo}
                                     className="mt-5 w-[120px] h-[34px] bg-[#34A4B3] hover:bg-[#2d8f9c] rounded-[12px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all disabled:opacity-70"
                                 >
-                                    {loadingDetailFor === med.codigo ? <Loader2 className="w-4 h-4 animate-spin" /> : "Ver detalles"}
+                                    {loadingDetailFor === med.codigo ? <Loader2 className="w-4 h-4 animate-spin" /> : t("landing.meds.viewDetails")}
                                 </Button>
                             </div>
                         ))

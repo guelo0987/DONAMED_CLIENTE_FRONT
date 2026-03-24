@@ -5,11 +5,13 @@ import { medicamentoService } from "../../services/medicamentoService";
 import { DropdownSelect } from "../ui/dropdown-select";
 import { getStoragePublicUrl } from "../../utils/storageUrl";
 import type { MedicamentoListItem, CategoriaItem } from "../../types/medicamento";
+import { useI18n } from "../../i18n/language-context";
 
 const PLACEHOLDER_IMAGE = "/assets/Rectangulo%20Medicamentos.png";
 
 export const HeroSection = () => {
     const navigate = useNavigate();
+    const { t } = useI18n();
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<MedicamentoListItem[]>([]);
     const [categorias, setCategorias] = useState<CategoriaItem[]>([]);
@@ -101,17 +103,15 @@ export const HeroSection = () => {
                     <div className="pointer-events-auto w-full flex flex-col items-center lg:items-start">
                         {/* Title */}
                         <h1 className="text-[32px] sm:text-[38px] lg:text-[56px] leading-[1.1] mb-3 lg:mb-5">
-                            <span className="[font-family:'Merienda',cursive] italic text-[#40C9DB] font-bold">Transforma</span>{" "}
-                            <span className="[font-family:'Poppins',sans-serif] font-bold text-[#404040]">tu ayuda</span>
+                            <span className="[font-family:'Merienda',cursive] italic text-[#40C9DB] font-bold">{t("landing.hero.title.highlight")}</span>{" "}
+                            <span className="[font-family:'Poppins',sans-serif] font-bold text-[#404040]">{t("landing.hero.title.line1")}</span>
                             <br />
-                            <span className="[font-family:'Poppins',sans-serif] font-bold text-[#404040]">en esperanza</span>
+                            <span className="[font-family:'Poppins',sans-serif] font-bold text-[#404040]">{t("landing.hero.title.line2")}</span>
                         </h1>
 
                         {/* Description */}
                         <p className="text-[#4A5568] text-[13px] lg:text-[16px] leading-[1.6] mb-6 max-w-[460px] [font-family:'Poppins',sans-serif] font-normal mx-auto lg:mx-0">
-                            El acceso a medicamentos de alto costo es esencial para
-                            garantizar la salud y el bienestar de todos. Cada donación de
-                            medicamentos puede cambiar una vida.
+                            {t("landing.hero.description")}
                         </p>
 
                         {/* CTA Button */}
@@ -119,7 +119,7 @@ export const HeroSection = () => {
                             onClick={() => navigate("/consultas")}
                             className="bg-[#34A4B3] text-white px-7 py-2.5 lg:px-8 lg:py-3 rounded-[8px] flex items-center gap-2.5 [font-family:'Poppins',sans-serif] font-medium text-[14px] lg:text-[15px] hover:bg-[#2D8A96] transition-colors shadow-[0px_4px_33px_rgba(64,201,219,0.25)] mb-7 lg:mb-10"
                         >
-                            Encuentra lo que necesitas
+                            {t("landing.hero.cta")}
                             <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5" />
                         </button>
                     </div>
@@ -206,7 +206,7 @@ export const HeroSection = () => {
             <div className="relative z-[120] -mt-12 sm:-mt-16 lg:-mt-16 w-full max-w-[860px] mx-auto lg:ml-0 px-2 sm:px-3 lg:px-0">
                 <div className="bg-white backdrop-blur-[20px] rounded-[18px] lg:rounded-[22px] shadow-[0px_20px_50px_rgba(0,0,0,0.08)] p-5 lg:p-6 border border-gray-50/50">
                     <p className="text-[#404040] font-semibold text-[13px] lg:text-[15px] mb-3.5 [font-family:'Poppins',sans-serif] ml-1.5 text-center lg:text-left">
-                        Encuentra medicamentos disponibles
+                        {t("landing.hero.searchTitle")}
                     </p>
 
                     <div className="flex flex-col lg:flex-row gap-3.5 items-center">
@@ -215,7 +215,7 @@ export const HeroSection = () => {
                             <input
                                 ref={inputRef}
                                 type="text"
-                                placeholder="Nombre del Medicamento"
+                                placeholder={t("landing.hero.searchPlaceholder")}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onFocus={() => {
@@ -249,7 +249,7 @@ export const HeroSection = () => {
                                                     {med.nombre}
                                                 </span>
                                                 <span className="text-[#A0AEC0] text-[12px] [font-family:'Poppins',sans-serif] truncate">
-                                                    {med.categorias?.join(", ") || "Sin categoría"}
+                                                    {med.categorias?.join(", ") || t("common.sinCategoria")}
                                                 </span>
                                             </div>
                                         </button>
@@ -271,7 +271,7 @@ export const HeroSection = () => {
                                 value={categoriaFilter}
                                 onChange={setCategoriaFilter}
                                 options={categorias.map((c) => ({ value: c.id.toString(), label: c.nombre }))}
-                                placeholder="Todas las categorías"
+                                placeholder={t("landing.hero.allCategories")}
                                 openUpward
                                 buttonClassName="bg-[#F3F4F6] rounded-full px-5 lg:px-7 py-2.5 lg:py-3.5 text-[#4A5568] text-[13px] lg:text-[14px] [font-family:'Poppins',sans-serif] outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
                             />
@@ -282,7 +282,7 @@ export const HeroSection = () => {
                             className="bg-[#34A4B3] text-white px-7 lg:px-10 py-2.5 lg:py-3.5 rounded-full flex items-center justify-center gap-2.5 [font-family:'Poppins',sans-serif] font-semibold text-[14px] lg:text-[15px] hover:bg-[#2B93A1] transition-all transform hover:scale-[1.02] shadow-lg shadow-[#34A4B3]/30 w-full lg:w-auto min-w-[135px]"
                         >
                             <Search className="w-4 h-4 lg:w-5 lg:h-5" />
-                            Buscar
+                            {t("common.buscar")}
                         </button>
                     </div>
                 </div>

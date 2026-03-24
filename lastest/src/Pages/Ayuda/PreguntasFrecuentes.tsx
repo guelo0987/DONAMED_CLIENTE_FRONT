@@ -2,28 +2,41 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { AssistanceModal } from "../../components/ui/assistance-modal";
-
-const faqs = [
-    {
-        question: "¿Cómo puedo solicitar un medicamento de alto costo?",
-        answer:
-            "Después de iniciar sesión, dirígete a la sección de solicitudes, elige el medicamento que necesitas, adjunta los documentos médicos necesarios y confirma tu solicitud.",
-    },
-    {
-        question: "¿Qué documentos son necesarios para solicitar un medicamento?",
-        answer:
-            "Necesitas tu receta médica vigente, diagnóstico del especialista y documento de identidad. En algunos casos se solicitarán estudios adicionales.",
-    },
-    {
-        question: "¿Cómo puedo configurar alertas de disponibilidad de medicamentos?",
-        answer:
-            "Desde tu perfil puedes activar notificaciones para recibir alertas cuando un medicamento esté disponible.",
-    },
-];
+import { useI18n } from "../../i18n/language-context";
 
 export const PreguntasFrecuentes = () => {
+    const { t, language } = useI18n();
     const [openIndex, setOpenIndex] = useState<number | null>(0);
     const [isAssistanceOpen, setIsAssistanceOpen] = useState(false);
+    const faqs = language !== "es"
+        ? [
+            {
+                question: "How can I request a high-cost medicine?",
+                answer: "After signing in, go to requests, choose the medicine you need, attach the required medical documents, and confirm your request.",
+            },
+            {
+                question: "What documents are required to request a medicine?",
+                answer: "You need a valid medical prescription, specialist diagnosis, and identity document. Additional studies may be required in some cases.",
+            },
+            {
+                question: "How can I set medicine availability alerts?",
+                answer: "From your profile, you can enable notifications to receive alerts when a medicine is available.",
+            },
+        ]
+        : [
+            {
+                question: "¿Cómo puedo solicitar un medicamento de alto costo?",
+                answer: "Después de iniciar sesión, dirígete a la sección de solicitudes, elige el medicamento que necesitas, adjunta los documentos médicos necesarios y confirma tu solicitud.",
+            },
+            {
+                question: "¿Qué documentos son necesarios para solicitar un medicamento?",
+                answer: "Necesitas tu receta médica vigente, diagnóstico del especialista y documento de identidad. En algunos casos se solicitarán estudios adicionales.",
+            },
+            {
+                question: "¿Cómo puedo configurar alertas de disponibilidad de medicamentos?",
+                answer: "Desde tu perfil puedes activar notificaciones para recibir alertas cuando un medicamento esté disponible.",
+            },
+        ];
 
     return (
         <MainLayout className="bg-white">
@@ -32,18 +45,18 @@ export const PreguntasFrecuentes = () => {
                     <div className="space-y-5">
                         <h1 className="text-[#2D3748] text-[40px] md:text-[46px] lg:text-[48px] font-semibold leading-tight">
                             <span className="text-[#34A4B3] font-['Merienda']">
-                                Hola,
+                                {t("help.title.greeting")}
                             </span>{" "}
-                            ¿Necesitas Ayuda?
+                            {t("help.title.main")}
                         </h1>
                         <p className="text-[#4A5568] text-[16px] lg:text-[17px] font-medium [font-family:'Poppins',sans-serif] max-w-[420px]">
-                            No dudes en contactarnos si necesitas ayuda; estamos para ayudarte en cada paso.
+                            {t("help.description")}
                         </p>
                         <button
                             onClick={() => setIsAssistanceOpen(true)}
                             className="bg-[#34A4B3] text-white px-6 py-2.5 rounded-[10px] text-[13px] lg:text-[14px] font-medium [font-family:'Poppins',sans-serif] hover:bg-[#2B93A1] transition-all"
                         >
-                            Solicitar Asistencia
+                            {t("help.requestAssistance")}
                         </button>
                     </div>
 
@@ -65,7 +78,7 @@ export const PreguntasFrecuentes = () => {
             <section className="w-full px-4 pb-12">
                 <div className="max-w-[1200px] mx-auto">
                     <h2 className="text-[#2D3748] text-[30px] lg:text-[32px] font-semibold mb-12">
-                        Preguntas Frecuentes
+                        {t("help.faqTitle")}
                     </h2>
 
                     <div className="space-y-6 max-w-[700px]">

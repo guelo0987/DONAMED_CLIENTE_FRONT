@@ -12,8 +12,11 @@ import type { RegisterData } from "../../types/auth";
 import type { Provincia, Ciudad } from "../../types/geo";
 import { geoService } from "../../services/geoService";
 import { validarCedulaDominicana, validarContrasena, validarCorreo } from "../../utils/validators";
+import { useI18n } from "../../i18n/language-context";
 
 export const CreateAccount = () => {
+    const { t, language } = useI18n();
+    const isEn = language !== "es";
     const { register, checkCedulaAndEmail, isLoading, error, setError } = useAuth();
     const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -75,22 +78,22 @@ export const CreateAccount = () => {
         setError(null);
 
         if (!validarCedulaDominicana(formData.cedula)) {
-            setError("La cédula ingresada no es válida.");
+            setError(isEn ? "The ID entered is not valid." : "La cédula ingresada no es válida.");
             return;
         }
 
         if (!validarCorreo(formData.correo)) {
-            setError("El formato del correo electrónico no es válido.");
+            setError(t("auth.invalidEmailFormat"));
             return;
         }
 
         if (formData.contrasena !== confirmarContrasena) {
-            setError("Las contraseñas no coinciden.");
+            setError(isEn ? "Passwords do not match." : "Las contraseñas no coinciden.");
             return;
         }
 
         if (!validarContrasena(formData.contrasena)) {
-            setError("La contraseña debe tener al menos 8 caracteres.");
+            setError(isEn ? "Password must be at least 8 characters." : "La contraseña debe tener al menos 8 caracteres.");
             return;
         }
 
@@ -148,7 +151,7 @@ export const CreateAccount = () => {
                         <form onSubmit={handleRegister} className="w-full max-w-[620px] space-y-5 flex flex-col items-center lg:items-start text-center lg:text-left">
                             <div className="space-y-3 w-full">
                                 <h1 className="text-[#404040] text-[20px] md:text-[24px] xl:text-[26px] font-medium leading-[1.2] tracking-normal">
-                                    Crea tu cuenta
+                                    {t("auth.createAccountTitle")}
                                 </h1>
                                 {error && (
                                     <p className="text-red-500 text-sm">{error}</p>
@@ -159,7 +162,7 @@ export const CreateAccount = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Nombres</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "First names" : "Nombres"}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <Input
@@ -167,14 +170,14 @@ export const CreateAccount = () => {
                                             value={formData.nombre}
                                             onChange={handleChange}
                                             required
-                                            placeholder="Tus nombres"
+                                            placeholder={isEn ? "Your first names" : "Tus nombres"}
                                             className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                         />
                                     </div>
 
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Apellidos</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "Last names" : "Apellidos"}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <Input
@@ -182,7 +185,7 @@ export const CreateAccount = () => {
                                             value={formData.apellidos}
                                             onChange={handleChange}
                                             required
-                                            placeholder="Tus apellidos"
+                                            placeholder={isEn ? "Your last names" : "Tus apellidos"}
                                             className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                         />
                                     </div>
@@ -191,7 +194,7 @@ export const CreateAccount = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Cédula</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "ID" : "Cédula"}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <Input
@@ -199,14 +202,14 @@ export const CreateAccount = () => {
                                             value={formData.cedula}
                                             onChange={handleChange}
                                             required
-                                            placeholder="Documento de identidad"
+                                            placeholder={isEn ? "Identity document" : "Documento de identidad"}
                                             className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                         />
                                     </div>
 
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Fecha de Nacimiento</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "Date of Birth" : "Fecha de Nacimiento"}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <div className="relative">
@@ -224,17 +227,17 @@ export const CreateAccount = () => {
 
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Sexo</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "Gender" : "Sexo"}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <DropdownSelect
                                             value={formData.sexo}
                                             onChange={(value) => setFormData((prev) => ({ ...prev, sexo: value }))}
-                                            placeholder="Sexo"
+                                            placeholder={isEn ? "Gender" : "Sexo"}
                                             options={[
-                                                { value: "F", label: "Femenino" },
-                                                { value: "M", label: "Masculino" },
-                                                { value: "O", label: "Otro" },
+                                                { value: "F", label: isEn ? "Female" : "Femenino" },
+                                                { value: "M", label: isEn ? "Male" : "Masculino" },
+                                                { value: "O", label: isEn ? "Other" : "Otro" },
                                             ]}
                                             buttonClassName="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium focus:border-[#40C9DB] focus:ring-2 focus:ring-[#40C9DB]/20 transition-all px-3"
                                         />
@@ -244,7 +247,7 @@ export const CreateAccount = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Provincia</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "Province" : "Provincia"}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <DropdownSelect
@@ -252,7 +255,7 @@ export const CreateAccount = () => {
                                             onChange={(value) =>
                                                 setFormData((prev) => ({ ...prev, codigoprovincia: value, codigociudad: "" }))
                                             }
-                                            placeholder="Provincia (Ej: Distrito Nacional)"
+                                            placeholder={isEn ? "Province (Ex: Distrito Nacional)" : "Provincia (Ej: Distrito Nacional)"}
                                             options={provincias.map((prov) => ({
                                                 value: prov.codigoprovincia,
                                                 label: prov.nombre,
@@ -264,13 +267,13 @@ export const CreateAccount = () => {
 
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Ciudad</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "City" : "Ciudad"}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <DropdownSelect
                                             value={formData.codigociudad}
                                             onChange={(value) => setFormData((prev) => ({ ...prev, codigociudad: value }))}
-                                            placeholder="Ciudad (Ej: Santo Domingo)"
+                                            placeholder={isEn ? "City (Ex: Santo Domingo)" : "Ciudad (Ej: Santo Domingo)"}
                                             options={ciudades
                                                 .filter((c) => c.codigoprovincia === formData.codigoprovincia)
                                                 .map((ciudad) => ({
@@ -285,7 +288,7 @@ export const CreateAccount = () => {
 
                                 <div className="space-y-1.5">
                                     <div className="flex items-center gap-2">
-                                        <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Dirección</Label>
+                                        <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "Address" : "Dirección"}</Label>
                                         <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                     </div>
                                     <Input
@@ -293,7 +296,7 @@ export const CreateAccount = () => {
                                         value={formData.direccion}
                                         onChange={handleChange}
                                         required
-                                        placeholder="Dirección completa"
+                                        placeholder={isEn ? "Full address" : "Dirección completa"}
                                         className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                     />
                                 </div>
@@ -301,7 +304,7 @@ export const CreateAccount = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Teléfono</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "Phone" : "Teléfono"}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <Input
@@ -309,20 +312,20 @@ export const CreateAccount = () => {
                                             value={formData.telefono}
                                             onChange={handleChange}
                                             required
-                                            placeholder="Teléfono Celular"
+                                            placeholder={isEn ? "Mobile phone" : "Teléfono Celular"}
                                             className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                         />
                                     </div>
 
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Teléfono Adicional</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "Additional Phone" : "Teléfono Adicional"}</Label>
                                         </div>
                                         <Input
                                             name="telefono_alternativo"
                                             value={formData.telefono_alternativo}
                                             onChange={handleChange}
-                                            placeholder="Teléfono Secundario"
+                                            placeholder={isEn ? "Secondary phone" : "Teléfono Secundario"}
                                             className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                         />
                                     </div>
@@ -330,7 +333,7 @@ export const CreateAccount = () => {
 
                                 <div className="space-y-1.5">
                                     <div className="flex items-center gap-2">
-                                        <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Correo Electrónico</Label>
+                                        <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{t("auth.email")}</Label>
                                         <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                     </div>
                                     <Input
@@ -339,7 +342,7 @@ export const CreateAccount = () => {
                                         value={formData.correo}
                                         onChange={handleChange}
                                         required
-                                        placeholder="Dirección de correo electrónico"
+                                        placeholder={t("auth.emailPlaceholder")}
                                         className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                     />
                                 </div>
@@ -347,7 +350,7 @@ export const CreateAccount = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Contraseña</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{t("auth.password")}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <div className="relative">
@@ -357,14 +360,14 @@ export const CreateAccount = () => {
                                                 value={formData.contrasena}
                                                 onChange={handleChange}
                                                 required
-                                                placeholder="Tu contraseña"
+                                                placeholder={t("auth.passwordPlaceholder")}
                                                 className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowContrasena((prev) => !prev)}
                                                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
-                                                aria-label={showContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                                aria-label={showContrasena ? t("auth.hidePassword") : t("auth.showPassword")}
                                             >
                                                 {showContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
                                             </button>
@@ -373,7 +376,7 @@ export const CreateAccount = () => {
 
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">Confirmar Contraseña</Label>
+                                            <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">{isEn ? "Confirm Password" : "Confirmar Contraseña"}</Label>
                                             <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                                         </div>
                                         <div className="relative">
@@ -382,14 +385,14 @@ export const CreateAccount = () => {
                                                 value={confirmarContrasena}
                                                 onChange={(e) => setConfirmarContrasena(e.target.value)}
                                                 required
-                                                placeholder="Confirmar tu contraseña"
+                                                placeholder={isEn ? "Confirm your password" : "Confirmar tu contraseña"}
                                                 className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowConfirmarContrasena((prev) => !prev)}
                                                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
-                                                aria-label={showConfirmarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                                aria-label={showConfirmarContrasena ? t("auth.hidePassword") : t("auth.showPassword")}
                                             >
                                                 {showConfirmarContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
                                             </button>
@@ -408,7 +411,7 @@ export const CreateAccount = () => {
                                             <Check className="w-3 h-3" strokeWidth={3.2} />
                                         </span>
                                         <span>
-                                            Acepto los <Link to="/" className="text-[#34A4B3] hover:underline">términos y condiciones</Link>
+                                            {t("auth.acceptTerms")} <Link to="/" className="text-[#34A4B3] hover:underline">{t("auth.termsAndConditions")}</Link>
                                         </span>
                                     </label>
 
@@ -418,12 +421,12 @@ export const CreateAccount = () => {
                                             disabled={isLoading}
                                             className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] disabled:opacity-50 rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                         >
-                                            {isLoading ? "Registrando..." : "Registrarme"}
+                                            {isLoading ? t("auth.registering") : t("auth.registerButton")}
                                         </Button>
                                     </div>
 
                                     <p className="text-center text-[#404040] text-[11px] xl:text-[12px] font-medium mt-1">
-                                        ¿Ya tienes una cuenta? <Link to="/iniciar-sesion" className="text-[#34A4B3] hover:underline">Inicia Sesión</Link>
+                                        {t("auth.hasAccountQ")} <Link to="/iniciar-sesion" className="text-[#34A4B3] hover:underline">{t("auth.signInLink")}</Link>
                                     </p>
                                 </div>
                             </div>
@@ -431,10 +434,10 @@ export const CreateAccount = () => {
 
                         <ConfirmationCard
                             open={showConfirmation}
-                            title="Su cuenta se ha creado"
-                            highlight="satisfactoriamente"
-                            description="Revisa tu correo electrónico y haz clic en el enlace para verificar tu cuenta. Luego podrás iniciar sesión."
-                            buttonLabel="Ir al inicio de sesión"
+                            title={t("auth.accountCreated")}
+                            highlight={t("auth.successfully")}
+                            description={t("auth.verifyEmailDescription")}
+                            buttonLabel={t("auth.goToSignIn")}
                             to="/iniciar-sesion"
                         />
                     </div>

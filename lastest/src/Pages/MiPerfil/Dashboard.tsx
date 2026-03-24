@@ -9,8 +9,10 @@ import { getStoragePublicUrl } from "../../utils/storageUrl";
 import { Modal } from "../../components/ui/modal";
 import { EditProfileModal } from "./components/EditProfileModal";
 import { ChangePasswordModal } from "./components/ChangePasswordModal";
+import { useI18n } from "../../i18n/language-context";
 
 const Dashboard = () => {
+    const { t } = useI18n();
     const navigate = useNavigate();
     const { fetchProfile, getUser, logout, deactivateAccount, deleteAccount } = useAuth();
     const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -35,54 +37,52 @@ const Dashboard = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const name = profile ? `${profile.persona.nombre} ${profile.persona.apellidos}` : user?.nombre_completo || "Cargando...";
+    const name = profile ? `${profile.persona.nombre} ${profile.persona.apellidos}` : user?.nombre_completo || t("detail.loadingProfile");
     const email = profile ? profile.correo : user?.correo || "";
     const phone = profile ? profile.persona.telefono : "";
     const firstName = profile ? profile.persona.nombre : "";
     const lastName = profile ? profile.persona.apellidos : "";
     const avatar = getStoragePublicUrl(profile?.foto_url || user?.foto_url) || "/assets/user_header.png";
-    const joinDate = profile?.creado_en ? new Date(profile.creado_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : "Desconocido";
-    const altPhone = profile?.persona.telefono_alternativo || "No especificado";
+    const joinDate = profile?.creado_en ? new Date(profile.creado_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : t("dashboard.unknown");
+    const altPhone = profile?.persona.telefono_alternativo || t("dashboard.notSpecified");
 
     return (
         <MainLayout className="font-['Poppins']">
-            {/* Main Content Container */}
-            <div className="max-w-[1728px] w-full mx-auto relative pt-8 lg:pt-[50px] pb-20 px-4 xl:px-[103px]">
-
-                <div className="flex flex-col lg:flex-row gap-8 pt-4 lg:pt-[58px]">
+            <div className="max-w-[1240px] w-full mx-auto relative pt-6 lg:pt-10 pb-16 px-4 sm:px-5 lg:px-6">
+                <div className="flex flex-col lg:flex-row gap-5 lg:gap-6">
 
                     {/* Sidebar - Desktop: Left Side, Mobile: Bottom Section (Quick Actions) */}
-                    <aside className="w-full lg:w-[318px] flex-shrink-0 bg-[#F0F0F0]/45 rounded-[17px] p-6 flex flex-col order-2 lg:order-1 lg:min-h-[524px]">
-                        <h3 className="text-[#2D3748] font-medium text-base mb-6">
-                            Gestionar Cuenta
+                    <aside className="w-full lg:w-[300px] flex-shrink-0 bg-white border border-[#E8EDF3] rounded-[16px] p-5 md:p-6 flex flex-col order-2 lg:order-1 lg:min-h-[560px] shadow-[0_8px_22px_rgba(15,23,42,0.04)]">
+                        <h3 className="text-[#2D3748] font-medium text-[15px] mb-5">
+                            {t("dashboard.manageAccount")}
                         </h3>
-                        <div className="w-full h-px bg-[#404040] opacity-50 mb-6"></div>
+                        <div className="w-full h-px bg-[#E2E8F0] mb-5"></div>
 
                         {/* Menu Items */}
-                        <div className="flex flex-col gap-2 flex-1">
+                        <div className="flex flex-col gap-1.5 flex-1">
                             {/* Items same as before */}
                             <div
                                 onClick={() => setIsEditProfileOpen(true)}
-                                className="flex items-center gap-3 py-3 px-4 bg-gradient-to-r from-[#DEDEDE] to-transparent border-l-[6px] border-[#40C9DB] rounded-l-[6px] cursor-pointer"
+                                className="flex items-center gap-3 py-3 px-4 bg-[#F0FDFF] border-l-[4px] border-[#40C9DB] rounded-[10px] cursor-pointer"
                             >
                                 <img src="/assets/editar_perfil_icon.png" alt="Editar" className="w-6 h-6 object-contain" />
-                                <span className="text-[#2D3748] text-base">Editar Información Personal</span>
+                                <span className="text-[#2D3748] text-[15px]">{t("dashboard.editPersonalInfo")}</span>
                             </div>
 
                             <div
                                 onClick={() => setIsChangePasswordOpen(true)}
-                                className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                                className="flex items-center gap-3 py-3 px-4 rounded-[10px] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
                             >
                                 <img src="/assets/cambiar_pass_icon.png" alt="Password" className="w-6 h-6 object-contain" />
-                                <span className="text-[#2D3748] text-base">Cambiar Contraseña</span>
+                                <span className="text-[#2D3748] text-[15px]">{t("dashboard.changePassword")}</span>
                             </div>
 
                             <div
                                 onClick={() => setIsDeactivateOpen(true)}
-                                className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                                className="flex items-center gap-3 py-3 px-4 rounded-[10px] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
                             >
                                 <img src="/assets/desactivar_cuenta_icon.png" alt="Desactivar" className="w-6 h-6 object-contain" />
-                                <span className="text-[#2D3748] text-base">Desactivar Cuenta</span>
+                                <span className="text-[#2D3748] text-[15px]">{t("dashboard.deactivateAccount")}</span>
                             </div>
 
                             <div className="flex-1 lg:block"></div>
@@ -90,29 +90,29 @@ const Dashboard = () => {
                             <button
                                 type="button"
                                 onClick={() => setIsLogoutOpen(true)}
-                                className="flex items-center gap-3 py-3 px-4 hover:bg-gray-50 transition-colors cursor-pointer w-full text-left"
+                                className="flex items-center gap-3 py-3 px-4 rounded-[10px] hover:bg-[#F8FAFC] transition-colors cursor-pointer w-full text-left"
                             >
                                 <img src="/assets/log_out_icon.png" alt="Logout" className="w-6 h-6 object-contain" />
-                                <span className="text-[#2D3748] text-base">Cerrar Sesión</span>
+                                <span className="text-[#2D3748] text-[15px]">{t("dashboard.logout")}</span>
                             </button>
 
                             <button
                                 type="button"
                                 onClick={() => setIsDeleteOpen(true)}
-                                className="w-full bg-[#1C5961] text-white py-3 px-6 rounded-[14px] text-base hover:bg-[#164950] transition-colors mt-4"
+                                className="w-full bg-[#1C5961] text-white py-3 px-6 rounded-[12px] text-[15px] hover:bg-[#164950] transition-colors mt-4"
                             >
-                                Eliminar Cuenta
+                                {t("dashboard.deleteAccount")}
                             </button>
                         </div>
                     </aside>
 
                     {/* Main Area - Desktop: Right Side, Mobile: Top Section */}
-                    <div className="flex-1 w-full max-w-[1167px] flex flex-col gap-6 order-1 lg:order-2">
+                    <div className="flex-1 w-full flex flex-col gap-5 lg:gap-6 order-1 lg:order-2">
 
                         {/* Profile Banner & Card Wrapper */}
                         <div className="relative w-full flex flex-col">
                             {/* Banner Background */}
-                            <div className="w-full h-[180px] lg:h-[241px] rounded-[15px] overflow-hidden relative z-0">
+                            <div className="w-full h-[165px] sm:h-[190px] lg:h-[220px] rounded-[16px] overflow-hidden relative z-0 border border-[#D7E6EA] shadow-[0_8px_22px_rgba(15,23,42,0.06)]">
                                 <div className="absolute inset-0 bg-[#4FD1C5]"></div>
                                 <img
                                     src="/banners/historial_banner.png"
@@ -124,11 +124,11 @@ const Dashboard = () => {
                             {/* Profile Card - Overlapping using Negative Margin on Mobile, Absolute on Desktop */}
                             <div
                                 className="relative lg:absolute z-10 
-                                           mt-[-60px] mx-4 lg:mt-0 lg:mx-0
+                                           mt-[-56px] mx-4 lg:mt-0 lg:mx-0
                                            lg:left-[6%] lg:top-[40%] 
-                                           w-auto lg:w-[52%] max-w-[614px] 
+                                           w-auto lg:w-[56%] max-w-[650px] 
                                            bg-white/80 backdrop-blur-[10.5px] 
-                                           rounded-[15px] border-[1.5px] border-[#F3F3F3] shadow-sm 
+                                           rounded-[14px] border border-[#E8EDF3] shadow-[0_10px_26px_rgba(15,23,42,0.08)] 
                                            p-4 flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-4 text-center sm:text-left"
                                 style={{
                                     background: "linear-gradient(112.83deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.8) 110.84%)",
@@ -153,10 +153,10 @@ const Dashboard = () => {
 
                                 {/* Name and Email */}
                                 <div className="flex flex-col">
-                                    <h2 className="text-[#2D3748] text-[20px] sm:text-[24px] lg:text-[36px] font-normal leading-[140%]">
+                                    <h2 className="text-[#2D3748] text-[20px] sm:text-[24px] lg:text-[34px] font-medium leading-[125%]">
                                         {name}
                                     </h2>
-                                    <p className="text-[#718096] text-[13px] sm:text-[15px] leading-[140%] break-all">
+                                    <p className="text-[#64748B] text-[13px] sm:text-[14px] leading-[140%] break-all">
                                         {email}
                                     </p>
                                 </div>
@@ -164,25 +164,25 @@ const Dashboard = () => {
                         </div>
 
                         {/* Content Row: Profile Info + Historial */}
-                        <div className="flex flex-col xl:flex-row gap-6 lg:mt-24 xl:mt-0"> {/* lg:mt-24 compensates for absolute card height on desktop */}
+                        <div className="flex flex-col xl:flex-row gap-5 lg:gap-6 lg:mt-24 xl:mt-0">
 
                             {/* Profile Info Card */}
-                            <div className="w-full xl:w-[527px] bg-[#F0F0F0]/45 rounded-[17px] p-6">
+                            <div className="w-full xl:w-[48%] bg-white border border-[#E8EDF3] rounded-[16px] p-5 sm:p-6 shadow-[0_8px_22px_rgba(15,23,42,0.04)]">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-[#2D3748] text-lg sm:text-xl font-medium">Información personal</h3>
+                                    <h3 className="text-[#2D3748] text-[19px] sm:text-[20px] font-semibold">{t("dashboard.personalInfo")}</h3>
                                 </div>
-                                <div className="w-full h-px bg-[#404040] opacity-50 mb-6"></div>
+                                <div className="w-full h-px bg-[#E2E8F0] mb-5"></div>
                                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
                                     <div className="flex flex-col gap-2">
-                                        <h4 className="text-[#2D3748] text-xl sm:text-2xl font-normal mb-2">{name}</h4>
-                                        <div className="flex flex-col gap-2 text-[#2D3748] text-sm sm:text-base font-medium">
-                                            <p><span className="text-[#2D3748] opacity-70">Nombre:</span> {firstName}</p>
-                                            <p><span className="text-[#2D3748] opacity-70">Apellido:</span> {lastName}</p>
-                                            <p><span className="text-[#2D3748] opacity-70">Cédula:</span> {profile?.cedula_usuario || ""}</p>
-                                            <p><span className="text-[#2D3748] opacity-70">Teléfono:</span> {phone}</p>
-                                            <p><span className="text-[#2D3748] opacity-70">Tel. Alternativo:</span> {altPhone}</p>
-                                            <p><span className="text-[#2D3748] opacity-70">Correo:</span> <span className="break-all">{email}</span></p>
-                                            <p><span className="text-[#2D3748] opacity-70 mt-2 block border-t border-gray-300/50 pt-2">Miembro desde: {joinDate}</span></p>
+                                        <h4 className="text-[#2D3748] text-[24px] font-medium mb-1">{name}</h4>
+                                        <div className="flex flex-col gap-2 text-[#334155] text-[14px] sm:text-[15px] font-medium">
+                                            <p><span className="text-[#64748B]">{t("dashboard.field.firstName")}:</span> {firstName}</p>
+                                            <p><span className="text-[#64748B]">{t("dashboard.field.lastName")}:</span> {lastName}</p>
+                                            <p><span className="text-[#64748B]">{t("dashboard.field.id")}:</span> {profile?.cedula_usuario || ""}</p>
+                                            <p><span className="text-[#64748B]">{t("dashboard.field.phone")}:</span> {phone}</p>
+                                            <p><span className="text-[#64748B]">{t("dashboard.field.altPhone")}:</span> {altPhone}</p>
+                                            <p><span className="text-[#64748B]">{t("dashboard.field.email")}:</span> <span className="break-all">{email}</span></p>
+                                            <p><span className="text-[#64748B] mt-2 block border-t border-[#E2E8F0] pt-2">{t("dashboard.memberSince")}: {joinDate}</span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -198,24 +198,24 @@ const Dashboard = () => {
             </div>
             <ConfirmationCard
                 open={isLogoutOpen}
-                title="¿Está seguro de que quiere"
-                highlight="cerrar sesión?"
-                buttonLabel="Sí"
+                title={t("dashboard.logoutConfirmTitle")}
+                highlight={t("dashboard.logoutConfirmHighlight")}
+                buttonLabel={t("dashboard.yes")}
                 onButtonClick={() => {
                     setIsLogoutOpen(false);
                     logout();
                     navigate("/");
                 }}
-                secondaryLabel="No"
+                secondaryLabel={t("dashboard.no")}
                 onSecondaryClick={() => setIsLogoutOpen(false)}
             />
             <ConfirmationCard
                 open={isDeleteOpen}
-                title="¿Está seguro de que quiere"
-                highlight="eliminar su cuenta?"
-                description="¡Esto borrará tus datos"
-                descriptionHighlight="para siempre!"
-                buttonLabel="Sí, eliminar"
+                title={t("dashboard.logoutConfirmTitle")}
+                highlight={t("dashboard.deleteConfirmHighlight")}
+                description={t("dashboard.deleteConfirmDesc")}
+                descriptionHighlight={t("dashboard.deleteConfirmDescHighlight")}
+                buttonLabel={t("dashboard.deleteYes")}
                 onButtonClick={async () => {
                     const success = await deleteAccount();
                     if (success) {
@@ -223,17 +223,17 @@ const Dashboard = () => {
                         navigate("/");
                     }
                 }}
-                secondaryLabel="No"
+                secondaryLabel={t("dashboard.no")}
                 onSecondaryClick={() => setIsDeleteOpen(false)}
             />
 
             <ConfirmationCard
                 open={isDeactivateOpen}
-                title="¿Está seguro de que quiere"
-                highlight="desactivar su cuenta?"
-                description="Tu cuenta quedará en pausa, pero podrás"
-                descriptionHighlight="reactivarla en el futuro."
-                buttonLabel="Sí, desactivar"
+                title={t("dashboard.logoutConfirmTitle")}
+                highlight={t("dashboard.deactivateConfirmHighlight")}
+                description={t("dashboard.deactivateDesc")}
+                descriptionHighlight={t("dashboard.deactivateDescHighlight")}
+                buttonLabel={t("dashboard.deactivateYes")}
                 onButtonClick={async () => {
                     const success = await deactivateAccount();
                     if (success) {
@@ -241,7 +241,7 @@ const Dashboard = () => {
                         navigate("/");
                     }
                 }}
-                secondaryLabel="Cancelar"
+                secondaryLabel={t("dashboard.cancel")}
                 onSecondaryClick={() => setIsDeactivateOpen(false)}
             />
 
@@ -249,7 +249,7 @@ const Dashboard = () => {
             <Modal
                 isOpen={isEditProfileOpen}
                 onClose={() => setIsEditProfileOpen(false)}
-                title="Editar Información Personal"
+                title={t("dashboard.editModalTitle")}
             >
                 {profile && (
                     <EditProfileModal
@@ -266,7 +266,7 @@ const Dashboard = () => {
             <Modal
                 isOpen={isChangePasswordOpen}
                 onClose={() => setIsChangePasswordOpen(false)}
-                title="Cambiar Contraseña"
+                title={t("dashboard.changePassword")}
             >
                 <ChangePasswordModal
                     onClose={() => setIsChangePasswordOpen(false)}

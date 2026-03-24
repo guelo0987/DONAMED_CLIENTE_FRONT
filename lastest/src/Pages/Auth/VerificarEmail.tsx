@@ -6,10 +6,12 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import LandingPage from "../Landing/LandingPage";
 import { authService } from "../../services/authService";
+import { useI18n } from "../../i18n/language-context";
 
 type Estado = "cargando" | "exito" | "ya_verificado" | "error" | "sin_token";
 
 export const VerificarEmail = () => {
+    const { t } = useI18n();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const token = searchParams.get("token");
@@ -23,7 +25,7 @@ export const VerificarEmail = () => {
     useEffect(() => {
         if (!token) {
             setEstado("sin_token");
-            setMensaje("No se encontró el token de verificación. Por favor, utiliza el enlace que recibiste por correo.");
+            setMensaje(t("auth.verify.noToken"));
             return;
         }
 
@@ -39,26 +41,26 @@ export const VerificarEmail = () => {
                     }
                 } else {
                     setEstado("error");
-                    setMensaje(response.message || "Error al verificar el correo.");
+                    setMensaje(response.message || t("auth.verify.errorChecking"));
                 }
             } catch (err: unknown) {
                 const axiosError = err as { response?: { data?: { message?: string }; status?: number } };
                 setEstado("error");
                 setMensaje(
                     axiosError.response?.data?.message ||
-                        "El enlace ha expirado o no es válido. Solicita uno nuevo."
+                        t("auth.verify.expiredLink")
                 );
             }
         };
 
         verificar();
-    }, [token]);
+    }, [token, t]);
 
     const handleReenviar = async (e: React.FormEvent) => {
         e.preventDefault();
         setMensajeReenviar(null);
         if (!correoReenviar.trim()) {
-            setMensajeReenviar("Ingresa tu correo electrónico.");
+            setMensajeReenviar(t("auth.verify.enterEmail"));
             return;
         }
 
@@ -66,14 +68,14 @@ export const VerificarEmail = () => {
         try {
             const response = await authService.reenviarVerificacion(correoReenviar.trim());
             if (response.success) {
-                setMensajeReenviar(response.message || "Se ha enviado un nuevo correo de verificación.");
+                setMensajeReenviar(response.message || t("auth.verify.resent"));
             } else {
-                setMensajeReenviar(response.message || "Error al reenviar el correo.");
+                setMensajeReenviar(response.message || t("auth.verify.resendError"));
             }
         } catch (err: unknown) {
             const axiosError = err as { response?: { data?: { message?: string } } };
             setMensajeReenviar(
-                axiosError.response?.data?.message || "Error al reenviar el correo. Intenta de nuevo."
+                axiosError.response?.data?.message || t("auth.verify.resendErrorTryAgain")
             );
         } finally {
             setIsReenviando(false);
@@ -130,10 +132,10 @@ export const VerificarEmail = () => {
                             {estado === "cargando" && (
                                 <>
                                     <h1 className="text-[#404040] text-[22px] md:text-[28px] xl:text-[32px] font-medium leading-[1.2] tracking-normal">
-                                        Verificando correo...
+                                        {t("auth.verify.loadingTitle")}
                                     </h1>
                                     <p className="text-[#2D3748] text-[13px] md:text-[14px] xl:text-[15px] font-medium leading-relaxed">
-                                        Por favor espera un momento.
+                                        {t("auth.verify.loadingSubtitle")}
                                     </p>
                                 </>
                             )}
@@ -142,7 +144,7 @@ export const VerificarEmail = () => {
                                 <>
                                     <div className="space-y-3 w-full">
                                         <h1 className="text-[#404040] text-[22px] md:text-[28px] xl:text-[32px] font-medium leading-[1.2] tracking-normal">
-                                            {estado === "exito" ? "Correo verificado" : "Correo ya verificado"}
+                                            {estado === "exito" ? t("auth.verify.verified") : t("auth.verify.alreadyVerified")}
                                         </h1>
                                         <p className="text-[#2D3748] text-[13px] md:text-[14px] xl:text-[15px] font-medium leading-relaxed">
                                             {mensaje}
@@ -153,7 +155,7 @@ export const VerificarEmail = () => {
                                             asChild
                                             className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                         >
-                                            <Link to="/iniciar-sesion">Ir al inicio de sesión</Link>
+                                            <Link to="/iniciar-sesion">{t("auth.goToSignIn")}</Link>
                                         </Button>
                                     </div>
                                 </>
@@ -163,13 +165,13 @@ export const VerificarEmail = () => {
                                 <>
                                     <div className="space-y-3 w-full">
                                         <h1 className="text-[#404040] text-[22px] md:text-[28px] xl:text-[32px] font-medium leading-[1.2] tracking-normal">
-                                            Error al verificar
+                                            {t("auth.verify.errorTitle")}
                                         </h1>
                                         <p className="text-red-500 text-[13px] md:text-[14px] xl:text-[15px] font-medium leading-relaxed">
                                             {mensaje}
                                         </p>
                                         <p className="text-[#2D3748] text-[12px] xl:text-[13px] font-medium leading-relaxed">
-                                            Si el enlace expiró, ingresa tu correo para recibir uno nuevo.
+                                            {t("auth.verify.expiredHint")}
                                         </p>
                                     </div>
 
@@ -177,7 +179,7 @@ export const VerificarEmail = () => {
                                         <div className="space-y-1.5 text-left">
                                             <div className="flex items-center gap-2">
                                                 <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
-                                                    Correo Electrónico
+                                                    {t("auth.email")}
                                                 </Label>
                                                 <img
                                                     src="/assets/plus_icon.png"
@@ -189,7 +191,7 @@ export const VerificarEmail = () => {
                                                 type="email"
                                                 value={correoReenviar}
                                                 onChange={(e) => setCorreoReenviar(e.target.value)}
-                                                placeholder="Dirección de correo electrónico"
+                                                placeholder={t("auth.emailPlaceholder")}
                                                 className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                             />
                                         </div>
@@ -204,14 +206,14 @@ export const VerificarEmail = () => {
                                                 disabled={isReenviando}
                                                 className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] disabled:opacity-50 rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                             >
-                                                {isReenviando ? "Enviando..." : "Reenviar correo de verificación"}
+                                                {isReenviando ? t("auth.sending") : t("auth.verify.resendButton")}
                                             </Button>
                                         </div>
                                     </form>
 
                                     <p className="text-center text-[#404040] text-[11px] xl:text-[12px] font-medium pt-2">
                                         <Link to="/iniciar-sesion" className="text-[#34A4B3] hover:underline">
-                                            Volver al inicio de sesión
+                                            {t("auth.verify.backToSignIn")}
                                         </Link>
                                     </p>
                                 </>
@@ -221,20 +223,20 @@ export const VerificarEmail = () => {
                                 <>
                                     <div className="space-y-3 w-full">
                                         <h1 className="text-[#404040] text-[22px] md:text-[28px] xl:text-[32px] font-medium leading-[1.2] tracking-normal">
-                                            Enlace inválido
+                                            {t("auth.verify.invalidLink")}
                                         </h1>
                                         <p className="text-red-500 text-[13px] md:text-[14px] xl:text-[15px] font-medium leading-relaxed">
                                             {mensaje}
                                         </p>
                                         <p className="text-[#2D3748] text-[12px] xl:text-[13px] font-medium leading-relaxed">
-                                            Serás redirigido al inicio de sesión en unos segundos.
+                                            {t("auth.verify.redirecting")}
                                         </p>
                                     </div>
                                     <Button
                                         asChild
                                         className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                     >
-                                        <Link to="/iniciar-sesion">Ir al inicio de sesión</Link>
+                                        <Link to="/iniciar-sesion">{t("auth.goToSignIn")}</Link>
                                     </Button>
                                 </>
                             )}

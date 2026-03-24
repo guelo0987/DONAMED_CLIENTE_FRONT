@@ -10,18 +10,19 @@ import { useSolicitudes } from "../../hooks/useSolicitudes";
 import { useAuth } from "../../hooks/useAuth";
 import { ConfirmationCard } from "../../components/ui/confirmation-card";
 import { authService } from "../../services/authService";
+import { useI18n } from "../../i18n/language-context";
 
 export type SolicitudFormMode = "create" | "edit";
 
-const REQUIRED_DOCUMENTS = [
-    { label: "Copia de cédula de identidad (Copia de acta de nacimiento en caso de ser menor de edad)", required: true },
-    { label: "En caso de ser menor de edad, copia de cédula de identidad del tutor", required: false },
-    { label: "En caso de ser extranjero legal copia de pasaporte, copia de residencia dominicana", required: false },
-    { label: "Copia de Carnet de Seguro médico (Si aplica)", required: false },
-    { label: "Historial Clínico firmado y sellado por el medico tratante (Con un mínimo de 6 meses de vigencia)", required: true },
-    { label: "Copia de Resultados de estudios y/o analíticas (Con un mínimo de 6 meses de vigencia)", required: true },
-    { label: "Receta o indicación medica original (Con un mínimo de 3 meses de vigencia)", required: true },
-    { label: "Carta de la administradora de Riesgo de Salud (ARS) (Si aplica)", required: false },
+const getRequiredDocuments = (t: (key: string, fallback?: string) => string) => [
+    { label: t("solicitudForm.requiredDocs.idCopy"), required: true },
+    { label: t("solicitudForm.requiredDocs.tutorIdCopy"), required: false },
+    { label: t("solicitudForm.requiredDocs.foreignDocs"), required: false },
+    { label: t("solicitudForm.requiredDocs.insuranceCard"), required: false },
+    { label: t("solicitudForm.requiredDocs.clinicalHistory"), required: true },
+    { label: t("solicitudForm.requiredDocs.studiesResults"), required: true },
+    { label: t("solicitudForm.requiredDocs.prescription"), required: true },
+    { label: t("solicitudForm.requiredDocs.arsLetter"), required: false },
 ];
 
 const INPUT_STYLE =
@@ -37,22 +38,23 @@ interface SolicitudFormProps {
 }
 
 const ErrorModal = ({ open, errorMsg, onClose }: { open: boolean, errorMsg: string, onClose: () => void }) => {
+    const { t } = useI18n();
     if (!open) return null;
 
     // Determinar ícono y título inteligente en base al contenido del mensaje
-    let title = "Ocurrió un problema";
+    let title = t("solicitudForm.errors.problemTitle");
     let desc = errorMsg;
 
     if (errorMsg.includes("4.5MB") || errorMsg.includes("peso") || errorMsg.includes("pesados")) {
-        title = "Archivos Demasiado Pesados";
+        title = t("solicitudForm.errors.filesTooLarge");
     } else if (errorMsg.includes("conexión") || errorMsg.includes("Network")) {
-        title = "Fallo de Conexión";
-    } else if (errorMsg.includes("representante") || errorMsg.includes("Cédula")) {
-        title = "Representante Inválido";
+        title = t("solicitudForm.errors.connectionFailure");
+    } else if (errorMsg.includes("representante") || errorMsg.includes("Cédula") || errorMsg.includes("Representative")) {
+        title = t("solicitudForm.errors.invalidRepresentative");
     } else if (errorMsg.includes("obligatorios") || errorMsg.includes("medicamento") || errorMsg.includes("adjuntar") || errorMsg.includes("seleccionar")) {
-        title = "Información Incompleta";
+        title = t("solicitudForm.errors.incompleteInformation");
     } else if (errorMsg.includes("formato")) {
-        title = "Formato no Permitido";
+        title = t("solicitudForm.errors.unsupportedFormat");
     }
 
     return (
@@ -70,7 +72,7 @@ const ErrorModal = ({ open, errorMsg, onClose }: { open: boolean, errorMsg: stri
                     onClick={onClose}
                     className="w-full h-[48px] bg-red-500 hover:bg-red-600 rounded-[14px] text-white text-[16px] font-medium font-['Poppins'] transition-all shadow-md hover:shadow-lg focus:ring-4 focus:ring-red-500/20 outline-none"
                 >
-                    Entendido
+                    {t("solicitudForm.understood")}
                 </button>
             </div>
         </div>
@@ -78,6 +80,8 @@ const ErrorModal = ({ open, errorMsg, onClose }: { open: boolean, errorMsg: stri
 };
 
 export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
+    const { t } = useI18n();
+    const REQUIRED_DOCUMENTS = getRequiredDocuments(t);
     const isEdit = mode === "edit";
     const navigate = useNavigate();
     const { submitCompleto, isLoading: isSubmitLoading, error, setError } = useSolicitudes();
@@ -146,7 +150,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
             // Límite de 2.5MB por archivo para Serverless
             const MAX_SIZE = 2.5 * 1024 * 1024;
             if (file.size > MAX_SIZE) {
-                setError(`El archivo '${file.name}' supera el límite máximo de 2.5MB.`);
+                setError(`${t("solicitudForm.errors.fileTooLargePrefix")} '${file.name}' ${t("solicitudForm.errors.fileTooLargeSuffix")}`);
                 if (fileInputRefs.current[index]) fileInputRefs.current[index]!.value = '';
                 return;
             }
@@ -162,7 +166,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
             ];
 
             if (!allowedTypes.includes(file.type)) {
-                setError(`El formato de '${file.name}' no está permitido. Use PDF, JPG, PNG, DOC o DOCX.`);
+                setError(`${t("solicitudForm.errors.invalidFormatPrefix")} '${file.name}' ${t("solicitudForm.errors.invalidFormatSuffix")}`);
                 if (fileInputRefs.current[index]) fileInputRefs.current[index]!.value = '';
                 return;
             }
@@ -177,24 +181,24 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
 
         // Validación local (simplificada, requiere las básicas)
         if (!formData.codigoTipoSolicitud) {
-            setError("Debe seleccionar el Tipo de Solicitud.");
+            setError(t("solicitudForm.errors.selectRequestType"));
             return;
         }
 
         if (!formData.centroMedico || !formData.patologia) {
-            setError("Los campos Centro Médico y Patología son obligatorios.");
+            setError(t("solicitudForm.errors.medicalCenterPathologyRequired"));
             return;
         }
 
         const validMeds = medications.filter(m => m.nombre.trim() !== "").map(m => ({ nombre: m.nombre.trim() }));
         if (validMeds.length === 0) {
-            setError("Debe especificar al menos un medicamento válido.");
+            setError(t("solicitudForm.errors.atLeastOneMedication"));
             return;
         }
 
         const uploadedFiles = Object.values(files);
         if (uploadedFiles.length === 0) {
-            setError("Debe adjuntar al menos un documento o receta justificativa.");
+            setError(t("solicitudForm.errors.atLeastOneDocument"));
             return;
         }
 
@@ -202,7 +206,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
         const totalSize = uploadedFiles.reduce((acc, file) => acc + file.size, 0);
         const MAX_TOTAL_SIZE = 4.5 * 1024 * 1024;
         if (totalSize > MAX_TOTAL_SIZE) {
-            setError("El peso total de todos los documentos sumados excede los 4.5MB permitidos. Por favor comprima sus archivos (imágenes/PDF) antes de subir.");
+            setError(t("solicitudForm.errors.totalFileSizeExceeded"));
             return;
         }
 
@@ -214,7 +218,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
 
         if (hasRepresentative) {
             if (!formData.nombreRepresentante || !formData.cedulaRepresentante) {
-                setError("Debe proporcionar el nombre y la cédula del representante, o desmarcar la opción 'Aplica representante'.");
+                setError(t("solicitudForm.errors.representativeRequired"));
                 return;
             }
 
@@ -222,12 +226,12 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                 // Verificar si la cédula del representante existe en el sistema
                 const verifyRes = await authService.verificarCedula(formData.cedulaRepresentante);
                 if (!verifyRes.success || (verifyRes.data && !verifyRes.data.exists)) {
-                    throw new Error("La cédula ingresada no se encuentra registrada como usuario en Donamed. El representante debe crear una cuenta.");
+                    throw new Error(t("solicitudForm.errors.representativeNotRegistered"));
                 }
                 // Ajustar si la respuesta es distinta
             } catch (err: any) {
-                const msg = err.response?.data?.error?.message || err.response?.data?.message || err.message || 'Error de red. No se pudo verificar la cédula.';
-                setError(`Error en representante: ${msg}`);
+                const msg = err.response?.data?.error?.message || err.response?.data?.message || err.message || t("solicitudForm.errors.networkCouldNotVerifyId");
+                setError(`${t("solicitudForm.errors.representativeErrorPrefix")}: ${msg}`);
                 return;
             }
 
@@ -275,40 +279,40 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
     const placeholders = isEdit
         ? {
             solicitante: {
-                nombre: "Nombre del Solicitante",
-                cedula: "Documento de Identidad",
-                direccion: "Dirección del solicitante",
-                telefono: "Teléfono del Solicitante",
-                telefonoAdicional: "Teléfono adicional del Solicitante",
-                centroMedico: "Centro Medico",
-                patologia: "Patología",
-                medicamento: "Medicamento",
+                nombre: t("solicitudForm.placeholders.applicantName"),
+                cedula: t("solicitudForm.placeholders.identityDocument"),
+                direccion: t("solicitudForm.placeholders.applicantAddress"),
+                telefono: t("solicitudForm.placeholders.applicantPhone"),
+                telefonoAdicional: t("solicitudForm.placeholders.applicantAltPhone"),
+                centroMedico: t("solicitudForm.placeholders.medicalCenter"),
+                patologia: t("solicitudForm.placeholders.pathology"),
+                medicamento: t("solicitudForm.placeholders.medication"),
             },
             representante: {
-                nombre: "Nombre del Representante",
-                cedula: "Documento de Identidad",
-                telefonoAdicional: "Teléfono Adicional del Representante",
-                telefono: "Teléfono del Representante",
-                relacion: "Relación con el Solicitante",
+                nombre: t("solicitudForm.placeholders.representativeName"),
+                cedula: t("solicitudForm.placeholders.identityDocument"),
+                telefonoAdicional: t("solicitudForm.placeholders.representativeAltPhone"),
+                telefono: t("solicitudForm.placeholders.representativePhone"),
+                relacion: t("solicitudForm.placeholders.relationshipWithApplicant"),
             },
         }
         : {
             solicitante: {
-                nombre: "Nombre Completo",
+                nombre: t("solicitudForm.placeholders.fullName"),
                 cedula: "000-0000000-0",
-                direccion: "Dirección completa",
+                direccion: t("solicitudForm.placeholders.fullAddress"),
                 telefono: "(809) 000-0000",
                 telefonoAdicional: "(809) 000-0000",
-                centroMedico: "Nombre del centro",
-                patologia: "Descripción",
-                medicamento: "Medicamento",
+                centroMedico: t("solicitudForm.placeholders.centerName"),
+                patologia: t("solicitudForm.placeholders.description"),
+                medicamento: t("solicitudForm.placeholders.medication"),
             },
             representante: {
-                nombre: "Nombre Completo",
+                nombre: t("solicitudForm.placeholders.fullName"),
                 cedula: "000-0000000-0",
                 telefonoAdicional: "(809) 000-0000",
                 telefono: "(809) 000-0000",
-                relacion: "Ej. Padre, Madre, Hijo...",
+                relacion: t("solicitudForm.placeholders.relationshipExample"),
             },
         };
 
@@ -318,7 +322,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
             <section className={isEdit ? "mb-7" : "mb-9 md:mb-12"}>
                 <div className="mb-4 md:mb-5 pb-2 border-b border-[#E8EDF3]">
                     <h2 className={`${SECTION_TITLE_STYLE} text-center md:text-left`}>
-                        Datos de Solicitante
+                        {t("solicitudForm.section.applicant")}
                     </h2>
                 </div>
 
@@ -327,60 +331,60 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-x-6 md:gap-x-7 gap-y-3.5 md:gap-y-4">
                         <div className="space-y-2 md:space-y-3 lg:col-span-2">
                             <div className="flex items-center gap-2">
-                                <Label className={LABEL_STYLE}>Tipo de Solicitud</Label>
+                                <Label className={LABEL_STYLE}>{t("solicitudForm.labels.requestType")}</Label>
                                 <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                             </div>
                             <DropdownSelect
                                 value={formData.codigoTipoSolicitud}
                                 onChange={(value) => setFormData((prev) => ({ ...prev, codigoTipoSolicitud: value }))}
-                                placeholder="Seleccione el tipo de solicitud"
+                                placeholder={t("solicitudForm.placeholders.selectRequestType")}
                                 options={[
-                                    { value: "PRIMERA_SOLICITUD", label: "Primera Solicitud" },
-                                    { value: "RENOVACION", label: "Renovación" },
-                                    { value: "CAMBIO", label: "Cambio" },
-                                    { value: "INCLUSIÓN", label: "Inclusión" },
+                                    { value: "PRIMERA_SOLICITUD", label: t("solicitudForm.requestType.first") },
+                                    { value: "RENOVACION", label: t("solicitudForm.requestType.renewal") },
+                                    { value: "CAMBIO", label: t("solicitudForm.requestType.change") },
+                                    { value: "INCLUSIÓN", label: t("solicitudForm.requestType.inclusion") },
                                 ]}
                                 buttonClassName={`${INPUT_STYLE} w-full outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all ${!formData.codigoTipoSolicitud ? "text-gray-400" : "text-[#111827]"}`}
                             />
                         </div>
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Nombre del Solicitante</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.applicantName")}</Label>
                             <Input name="nombreSolicitante" value={formData.nombreSolicitante} readOnly className={`${INPUT_STYLE} bg-gray-100 cursor-not-allowed opacity-80`} />
                         </div>
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Cédula</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.id")}</Label>
                             <Input name="cedulaSolicitante" value={formData.cedulaSolicitante} readOnly className={`${INPUT_STYLE} bg-gray-100 cursor-not-allowed opacity-80`} />
                         </div>
                         <div className="space-y-2 md:space-y-3 lg:col-span-2">
-                            <Label className={LABEL_STYLE}>Dirección</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.address")}</Label>
                             <Input name="direccionSolicitante" value={formData.direccionSolicitante} onChange={handleInputChange} placeholder={placeholders.solicitante.direccion} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Teléfono</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.phone")}</Label>
                             <Input name="telefonoSolicitante" value={formData.telefonoSolicitante} onChange={handleInputChange} placeholder={placeholders.solicitante.telefono} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Teléfono Adicional</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.altPhone")}</Label>
                             <Input name="telefonoAdicionalSolicitante" value={formData.telefonoAdicionalSolicitante} onChange={handleInputChange} placeholder={placeholders.solicitante.telefonoAdicional} className={INPUT_STYLE} />
                         </div>
 
                         <div className="space-y-2 md:space-y-3">
                             <div className="flex items-center gap-2">
-                                <Label className={LABEL_STYLE}>Centro Medico</Label>
+                                <Label className={LABEL_STYLE}>{t("solicitudForm.labels.medicalCenter")}</Label>
                                 <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                             </div>
                             <Input required name="centroMedico" value={formData.centroMedico} onChange={handleInputChange} placeholder={placeholders.solicitante.centroMedico} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-2 md:space-y-3">
                             <div className="flex items-center gap-2">
-                                <Label className={LABEL_STYLE}>Patología</Label>
+                                <Label className={LABEL_STYLE}>{t("solicitudForm.labels.pathology")}</Label>
                                 <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                             </div>
                             <Input required name="patologia" value={formData.patologia} onChange={handleInputChange} placeholder={placeholders.solicitante.patologia} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-4 lg:col-span-2">
                             <div className="flex items-center gap-2">
-                                <Label className={LABEL_STYLE}>Medicamentos</Label>
+                                <Label className={LABEL_STYLE}>{t("solicitudForm.labels.medications")}</Label>
                                 <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3" />
                             </div>
                             {medications.map((item, index) => (
@@ -395,7 +399,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                                         type="button"
                                         onClick={() => (index === 0 ? addMedication() : removeMedication(item.id))}
                                         className="h-[38px] w-[38px] md:h-[42px] md:w-[42px] flex items-center justify-center bg-[#E2E8F0] rounded-[10px] md:rounded-[12px] cursor-pointer hover:bg-[#cbd5e1] transition-colors flex-shrink-0"
-                                        aria-label={index === 0 ? "Añadir medicamento" : "Quitar medicamento"}
+                                        aria-label={index === 0 ? t("solicitudForm.addMedication") : t("solicitudForm.removeMedication")}
                                     >
                                         {index === 0 ? (
                                             <Plus className="w-5 h-5 md:w-6 md:h-6 text-[#64748B]" />
@@ -416,7 +420,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
             <section className={isEdit ? "mb-7" : "mb-9 md:mb-12"}>
                 <div className="mb-4 md:mb-5 pb-2 border-b border-[#E8EDF3]">
                     <h2 className={`${SECTION_TITLE_STYLE} text-center md:text-left`}>
-                        Datos de Representante
+                        {t("solicitudForm.section.representative")}
                     </h2>
                 </div>
 
@@ -430,10 +434,10 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                         />
                         <span className="flex flex-col">
                             <span className="font-['Poppins'] text-[#2D3748] font-medium text-[13px] md:text-[14px] leading-snug">
-                                ¿El paciente es menor de edad / aplica representante?
+                                {t("solicitudForm.representativeQuestion")}
                             </span>
                             <span className="font-['Poppins'] text-[#718096] text-[11px] md:text-[12px]">
-                                Activa esta opción para registrar los datos del representante legal.
+                                {t("solicitudForm.representativeHint")}
                             </span>
                         </span>
                     </label>
@@ -442,7 +446,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                 {hasRepresentative && (
                     <div className="bg-blue-50 border border-blue-200 rounded-[10px] p-3.5 mb-5 w-full">
                         <p className="text-blue-700 font-['Poppins'] text-[12px] md:text-[13px]">
-                            <strong className="font-semibold">Importante:</strong> Su representante legal debe tener una cuenta creada en DONAMED. Ingrese con exactitud la <strong>Cédula</strong> con la que se registró en la plataforma para poder ser asociado correctamente a la solicitud.
+                            <strong className="font-semibold">{t("solicitudForm.labels.important")}</strong> {t("solicitudForm.labels.representativeAccountHint")}
                         </p>
                     </div>
                 )}
@@ -450,23 +454,23 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                 {hasRepresentative && (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4 md:gap-y-5 w-full animate-in fade-in slide-in-from-top-4 duration-300">
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Nombre del Representante</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.representativeName")}</Label>
                             <Input name="nombreRepresentante" value={formData.nombreRepresentante} onChange={handleInputChange} placeholder={placeholders.representante.nombre} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Cédula</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.id")}</Label>
                             <Input name="cedulaRepresentante" value={formData.cedulaRepresentante} onChange={handleInputChange} placeholder={placeholders.representante.cedula} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Teléfono Adicional</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.altPhone")}</Label>
                             <Input name="telefonoAdicionalRepresentante" value={formData.telefonoAdicionalRepresentante} onChange={handleInputChange} placeholder={placeholders.representante.telefonoAdicional} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-2 md:space-y-3">
-                            <Label className={LABEL_STYLE}>Teléfono</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.phone")}</Label>
                             <Input name="telefonoRepresentante" value={formData.telefonoRepresentante} onChange={handleInputChange} placeholder={placeholders.representante.telefono} className={INPUT_STYLE} />
                         </div>
                         <div className="space-y-2 md:space-y-3 lg:col-span-2">
-                            <Label className={LABEL_STYLE}>Relación con el Solicitante</Label>
+                            <Label className={LABEL_STYLE}>{t("solicitudForm.labels.relationshipWithApplicant")}</Label>
                             <Input name="relacionRepresentante" value={formData.relacionRepresentante} onChange={handleInputChange} placeholder={placeholders.representante.relacion} className={INPUT_STYLE} />
                         </div>
                     </div>
@@ -477,7 +481,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
             <section className={isEdit ? "mb-7" : "mb-9 md:mb-12"}>
                 <div className="mb-4 md:mb-5 pb-2 border-b border-[#E8EDF3]">
                     <h2 className={`${SECTION_TITLE_STYLE} text-center md:text-left`}>
-                        Documentos Requeridos
+                        {t("solicitudForm.section.documents")}
                     </h2>
                 </div>
 
@@ -488,7 +492,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                             className="flex flex-col gap-2.5 py-2.5 border-b border-[#F0F3F7] last:border-b-0 md:grid md:grid-cols-[minmax(0,1fr)_minmax(260px,320px)] md:items-center md:gap-4"
                         >
                             <Label className={`${LABEL_STYLE} text-[13px] md:text-[14px] lg:text-[15px] max-w-[700px] leading-snug flex items-start gap-1`}>
-                                {doc.label} {doc.required ? <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3 mt-1" /> : <span className="text-gray-400 text-sm font-normal mt-1">(Opcional)</span>}
+                                {doc.label} {doc.required ? <img src="/assets/plus_icon.png" alt="required" className="w-2 h-2 lg:w-3 lg:h-3 mt-1" /> : <span className="text-gray-400 text-sm font-normal mt-1">{t("solicitudForm.optional")}</span>}
                             </Label>
                             <div
                                 onClick={() => triggerFileInput(index)}
@@ -498,7 +502,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                                     }`}
                             >
                                 <span className={`text-[12px] md:text-[13px] truncate font-['Poppins'] ${files[index] ? 'text-[#34A4B3] font-medium' : 'text-gray-400 group-hover:text-gray-500'}`}>
-                                    {files[index] ? files[index].name : 'Seleccionar archivo...'}
+                                    {files[index] ? files[index].name : t("solicitudForm.selectFile")}
                                 </span>
                                 {files[index] ? (
                                     <FileText className="w-4 h-4 text-[#34A4B3] flex-shrink-0" />
@@ -528,7 +532,7 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                     disabled={isSubmitLoading}
                     className="w-full sm:w-[160px] h-[44px] bg-white border-2 border-[#34A4B3] text-[#34A4B3] hover:bg-[#34A4B3] hover:text-white rounded-[12px] font-['Poppins'] font-medium text-[15px] transition-colors shadow-sm disabled:opacity-50"
                 >
-                    Cancelar
+                    {t("solicitudForm.cancel")}
                 </Button>
                 <Button
                     type="button"
@@ -539,18 +543,18 @@ export const SolicitudForm = ({ mode, className = "" }: SolicitudFormProps) => {
                     {isSubmitLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin text-white" />
                     ) : (
-                        isEdit ? "Guardar" : "Confirmar"
+                        isEdit ? t("solicitudForm.save") : t("solicitudForm.confirm")
                     )}
                 </Button>
             </div>
 
             <ConfirmationCard
                 open={isSuccessModalOpen}
-                title="Su solicitud ha sido enviada"
-                highlight="correctamente"
-                description="Estaremos enviándole un correo cuando sea validada y"
-                descriptionHighlight="aprobada."
-                buttonLabel="Ver Historial"
+                title={t("solicitudForm.success.title")}
+                highlight={t("solicitudForm.success.highlight")}
+                description={t("solicitudForm.success.description")}
+                descriptionHighlight={t("solicitudForm.success.descriptionHighlight")}
+                buttonLabel={t("solicitudForm.success.buttonLabel")}
                 onButtonClick={() => {
                     setIsSuccessModalOpen(false);
                     navigate('/historial-solicitudes');

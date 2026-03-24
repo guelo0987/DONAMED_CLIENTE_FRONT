@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { Loader2, Eye, EyeOff } from "lucide-react";
+import { useI18n } from "../../../i18n/language-context";
 
 interface ChangePasswordModalProps {
     onClose: () => void;
@@ -8,6 +9,7 @@ interface ChangePasswordModalProps {
 }
 
 export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalProps) => {
+    const { t } = useI18n();
     const { changePassword, error, setError } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -28,7 +30,7 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
         e.preventDefault();
 
         if (nuevaContrasena !== confirmarContrasena) {
-            setError("Las contraseñas nuevas no coinciden");
+            setError(t("profile.changePassword.notMatch"));
             return;
         }
 
@@ -50,7 +52,7 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
             )}
 
             <div className="flex flex-col gap-2 relative">
-                <label className="text-sm font-medium text-gray-700">Contraseña Actual *</label>
+                <label className="text-sm font-medium text-gray-700">{t("profile.changePassword.current")} *</label>
                 <div className="relative">
                     <input
                         required
@@ -58,7 +60,7 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
                         value={contrasenaActual}
                         onChange={(e) => setContrasenaActual(e.target.value)}
                         className="w-full px-4 py-3 rounded-lg border border-[#DCD7D7] focus:border-[#40C9DB] focus:ring-1 focus:ring-[#40C9DB] outline-none transition-all placeholder:text-gray-400 font-['Poppins']"
-                        placeholder="Ingresa tu contraseña actual"
+                        placeholder={t("profile.changePassword.currentPlaceholder")}
                     />
                     <button
                         type="button"
@@ -71,7 +73,7 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
             </div>
 
             <div className="flex flex-col gap-2 relative">
-                <label className="text-sm font-medium text-gray-700">Nueva Contraseña *</label>
+                <label className="text-sm font-medium text-gray-700">{t("profile.changePassword.new")} *</label>
                 <div className="relative">
                     <input
                         required
@@ -79,7 +81,7 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
                         value={nuevaContrasena}
                         onChange={(e) => setNuevaContrasena(e.target.value)}
                         className="w-full px-4 py-3 rounded-lg border border-[#DCD7D7] focus:border-[#40C9DB] focus:ring-1 focus:ring-[#40C9DB] outline-none transition-all placeholder:text-gray-400 font-['Poppins']"
-                        placeholder="Al menos 8 caracteres"
+                        placeholder={t("profile.changePassword.newPlaceholder")}
                     />
                     <button
                         type="button"
@@ -90,12 +92,12 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
                     </button>
                 </div>
                 {nuevaContrasena.length > 0 && nuevaContrasena.length < 8 && (
-                    <span className="text-xs text-red-500 mt-1">La contraseña debe tener al menos 8 caracteres</span>
+                    <span className="text-xs text-red-500 mt-1">{t("profile.changePassword.min8Hint")}</span>
                 )}
             </div>
 
             <div className="flex flex-col gap-2 relative">
-                <label className="text-sm font-medium text-gray-700">Confirmar Nueva Contraseña *</label>
+                <label className="text-sm font-medium text-gray-700">{t("profile.changePassword.confirmNew")} *</label>
                 <div className="relative">
                     <input
                         required
@@ -107,7 +109,7 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
                                 ? 'border-red-300 focus:border-red-500 focus:ring-red-500 bg-red-50'
                                 : 'border-[#DCD7D7] focus:border-[#40C9DB] focus:ring-[#40C9DB]'
                             }`}
-                        placeholder="Repite tu nueva contraseña"
+                        placeholder={t("profile.changePassword.confirmPlaceholder")}
                     />
                     <button
                         type="button"
@@ -126,14 +128,14 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
                     disabled={isLoading}
                     className="px-6 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 font-['Poppins']"
                 >
-                    Cancelar
+                    {t("detail.cancel")}
                 </button>
                 <button
                     type="submit"
                     disabled={isLoading || !isValid}
                     className="px-6 py-2.5 rounded-lg bg-[#40C9DB] text-white font-medium hover:bg-[#34A4B3] transition-colors flex items-center justify-center min-w-[140px] disabled:opacity-50 disabled:cursor-not-allowed font-['Poppins']"
                 >
-                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Actualizar Contraseña"}
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : t("profile.changePassword.updateButton")}
                 </button>
             </div>
         </form>

@@ -1,4 +1,8 @@
+import { useI18n } from "../i18n/language-context";
+
 export const FooterSection = () => {
+    const { t } = useI18n();
+
     return (
         <footer className="w-full bg-[#F0F0F0] py-12">
             <div className="max-w-[1400px] mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 relative">
@@ -15,7 +19,7 @@ export const FooterSection = () => {
                 {/* Slogan Section */}
                 <div className="flex-1 flex justify-center text-center">
                     <p className="[font-family:'Poppins',sans-serif] font-light italic text-[#000000] text-[18.5px] leading-[28px]">
-                        Juntos llevamos salud a quienes más lo necesitan
+                        {t("footer.slogan")}
                     </p>
                 </div>
 

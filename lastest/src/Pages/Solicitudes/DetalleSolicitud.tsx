@@ -14,6 +14,7 @@ import { ConfirmationCard } from "../../components/ui/confirmation-card";
 import type { SolicitudDetalle, EstadoSolicitud } from "../../types/solicitud";
 import type { UserProfile } from "../../types/user";
 import { getStoragePublicUrl } from "../../utils/storageUrl";
+import { useI18n } from "../../i18n/language-context";
 
 type TabId = "informacion" | "datos-solicitante" | "editar";
 
@@ -45,6 +46,36 @@ const STATUS_LABELS: Record<EstadoSolicitud, string> = {
     INCOMPLETA: "Incompleta"
 };
 
+const STATUS_LABELS_EN: Record<EstadoSolicitud, string> = {
+    PENDIENTE: "Pending",
+    EN_REVISION: "In Review",
+    APROBADA: "Approved",
+    RECHAZADA: "Rejected",
+    DESPACHADA: "Dispatched",
+    CANCELADA: "Cancelled",
+    INCOMPLETA: "Incomplete"
+};
+
+const STATUS_LABELS_FR: Record<EstadoSolicitud, string> = {
+    PENDIENTE: "En attente",
+    EN_REVISION: "En révision",
+    APROBADA: "Approuvée",
+    RECHAZADA: "Rejetée",
+    DESPACHADA: "Expédiée",
+    CANCELADA: "Annulée",
+    INCOMPLETA: "Incomplète"
+};
+
+const STATUS_LABELS_PT: Record<EstadoSolicitud, string> = {
+    PENDIENTE: "Pendente",
+    EN_REVISION: "Em revisão",
+    APROBADA: "Aprovada",
+    RECHAZADA: "Rejeitada",
+    DESPACHADA: "Despachada",
+    CANCELADA: "Cancelada",
+    INCOMPLETA: "Incompleta"
+};
+
 function formatFileSize(bytes: number): string {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -52,6 +83,7 @@ function formatFileSize(bytes: number): string {
 }
 
 export const DetalleSolicitud = () => {
+    const { t, language } = useI18n();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const {
@@ -170,7 +202,15 @@ export const DetalleSolicitud = () => {
             if (Object.keys(editData).length > 0) {
                 const edited = await editarSolicitud(solicitud.numerosolicitud, editData);
                 if (!edited) {
-                    setEditError("Error guardando los cambios.");
+                    setEditError(
+                        language === "en"
+                            ? "Error saving changes."
+                            : language === "fr"
+                                ? "Erreur lors de l'enregistrement des modifications."
+                                : language === "pt"
+                                    ? "Erro ao salvar alterações."
+                                : "Error guardando los cambios."
+                    );
                     setIsSubmitting(false);
                     return;
                 }
@@ -182,7 +222,15 @@ export const DetalleSolicitud = () => {
                 newFiles.forEach(file => formData.append("documentos", file));
                 const docsUploaded = await agregarDocumentos(solicitud.numerosolicitud, formData);
                 if (!docsUploaded) {
-                    setEditError("Error subiendo documentos nuevos.");
+                    setEditError(
+                        language === "en"
+                            ? "Error uploading new documents."
+                            : language === "fr"
+                                ? "Erreur lors du téléversement des nouveaux documents."
+                                : language === "pt"
+                                    ? "Erro ao enviar novos documentos."
+                                : "Error subiendo documentos nuevos."
+                    );
                     setIsSubmitting(false);
                     return;
                 }
@@ -193,10 +241,26 @@ export const DetalleSolicitud = () => {
             if (confirmed) {
                 setIsConfirmModalOpen(true);
             } else {
-                setEditError("Error al confirmar la solicitud.");
+                setEditError(
+                    language === "en"
+                        ? "Error confirming request."
+                        : language === "fr"
+                            ? "Erreur lors de la confirmation de la demande."
+                            : language === "pt"
+                                ? "Erro ao confirmar a solicitação."
+                            : "Error al confirmar la solicitud."
+                );
             }
         } catch {
-            setEditError("Error inesperado al guardar.");
+            setEditError(
+                language === "en"
+                    ? "Unexpected error while saving."
+                    : language === "fr"
+                        ? "Erreur inattendue lors de l'enregistrement."
+                        : language === "pt"
+                            ? "Erro inesperado ao salvar."
+                        : "Error inesperado al guardar."
+            );
         } finally {
             setIsSubmitting(false);
         }
@@ -204,11 +268,11 @@ export const DetalleSolicitud = () => {
 
     // Tabs dinámicos
     const tabsConfig = [
-        { id: "informacion" as TabId, label: "Información de Solicitud", icon: <Info className="w-4 h-4" /> },
-        { id: "datos-solicitante" as TabId, label: "Datos de Solicitante", icon: <FileText className="w-4 h-4" /> }
+        { id: "informacion" as TabId, label: t("detalle.tab.info"), icon: <Info className="w-4 h-4" /> },
+        { id: "datos-solicitante" as TabId, label: t("detalle.tab.applicant"), icon: <FileText className="w-4 h-4" /> }
     ];
     if (solicitud?.estado === 'PENDIENTE') {
-        tabsConfig.push({ id: "editar" as TabId, label: "Editar Solicitud", icon: <Edit className="w-4 h-4" /> });
+        tabsConfig.push({ id: "editar" as TabId, label: t("detalle.tab.edit"), icon: <Edit className="w-4 h-4" /> });
     }
 
     if (isLoading && !solicitud) {
@@ -216,7 +280,7 @@ export const DetalleSolicitud = () => {
             <MainLayout>
                 <div className="w-full h-[60vh] flex flex-col items-center justify-center">
                     <Loader2 className="w-10 h-10 animate-spin text-[#34A4B3] mb-4" />
-                    <p className="text-gray-500 font-['Poppins']">Cargando detalles de solicitud...</p>
+                    <p className="text-gray-500 font-['Poppins']">{t("detalle.loading")}</p>
                 </div>
             </MainLayout>
         );
@@ -227,8 +291,8 @@ export const DetalleSolicitud = () => {
             <MainLayout>
                 <div className="w-full max-w-[1060px] mx-auto px-4 sm:px-5 md:px-6 lg:px-7 py-10 text-center">
                     <h2 className="text-2xl text-red-600 font-bold mb-4">Error</h2>
-                    <p className="text-gray-600 mb-6">{error || "No se encontró la solicitud"}</p>
-                    <button onClick={() => navigate('/historial-solicitudes')} className="bg-[#34A4B3] text-white px-6 py-2 rounded-lg font-['Poppins']">Volver al Historial</button>
+                    <p className="text-gray-600 mb-6">{error || t("detalle.errorNotFound")}</p>
+                    <button onClick={() => navigate('/historial-solicitudes')} className="bg-[#34A4B3] text-white px-6 py-2 rounded-lg font-['Poppins']">{t("detalle.backHistoryButton")}</button>
                 </div>
             </MainLayout>
         );
@@ -236,11 +300,19 @@ export const DetalleSolicitud = () => {
 
     if (!solicitud) return null;
 
-    const solicitanteNombre = profile ? `${profile.persona.nombre} ${profile.persona.apellidos}` : "Cargando...";
+    const solicitanteNombre = profile ? `${profile.persona.nombre} ${profile.persona.apellidos}` : t("detail.loadingProfile");
     const solicitanteCedula = profile?.cedula_usuario || "";
     const solicitanteDireccion = profile?.persona.direccion || "";
     const solicitanteTelefono = profile?.persona.telefono || "";
     const solicitanteCorreo = profile?.correo || "";
+    const statusLabelMap =
+        language === "en"
+            ? STATUS_LABELS_EN
+            : language === "fr"
+                ? STATUS_LABELS_FR
+                : language === "pt"
+                    ? STATUS_LABELS_PT
+                    : STATUS_LABELS;
 
     return (
         <MainLayout>
@@ -251,17 +323,17 @@ export const DetalleSolicitud = () => {
                     <div className="flex flex-col gap-2.5">
                         <button onClick={() => navigate('/historial-solicitudes')} className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors w-fit mb-1">
                             <ArrowLeft className="w-4 h-4" />
-                            <span className="font-['Poppins'] text-sm">Volver al historial</span>
+                            <span className="font-['Poppins'] text-sm">{t("detalle.backToHistory")}</span>
                         </button>
                         <div className="w-fit flex items-center gap-2 bg-[#F3F4F6] px-3.5 py-1.5 rounded-full">
                             <div className={`w-2.5 h-2.5 rounded-full ${STATUS_COLORS[solicitud.estado]}`}></div>
-                            <span className="font-['Poppins'] font-medium text-[#4B5563] text-[13px]">{STATUS_LABELS[solicitud.estado]}</span>
+                            <span className="font-['Poppins'] font-medium text-[#4B5563] text-[13px]">{statusLabelMap[solicitud.estado]}</span>
                         </div>
-                        <h1 className="font-['Poppins'] font-medium text-[#2D3748] text-[24px] md:text-[28px]">Detalles de Solicitud</h1>
+                        <h1 className="font-['Poppins'] font-medium text-[#2D3748] text-[24px] md:text-[28px]">{t("detalle.title")}</h1>
                     </div>
                     {solicitud.estado === 'PENDIENTE' && (
                         <button onClick={() => setIsCancelModalOpen(true)} className="bg-[#34A4B3] hover:bg-[#2B93A1] text-white px-5 py-2.5 rounded-[10px] font-['Poppins'] text-[14px] font-medium transition-colors w-full md:w-auto">
-                            Cancelar Solicitud
+                            {t("detalle.cancelRequest")}
                         </button>
                     )}
                 </div>
@@ -272,17 +344,17 @@ export const DetalleSolicitud = () => {
                         <AlertTriangle className="w-4.5 h-4.5 text-[#CA8A04] flex-shrink-0 mt-0.5" />
                         <div className="font-['Poppins']">
                             <p className="text-[#854D0E] font-medium text-[13px]">
-                                Esta solicitud está pendiente de confirmación.
+                                {t("detalle.pendingNoticeTitle")}
                             </p>
                             <p className="text-[#A16207] text-[12px] mt-1">
-                                Mientras esté en estado <strong>Pendiente</strong>, puede editar los datos, documentos y medicamentos en la pestaña "Editar Solicitud". Al confirmar, será enviada para revisión por el administrador.
+                                {t("detalle.pendingNoticeBody")}
                             </p>
                         </div>
                     </div>
                 )}
 
                 {/* Tabs */}
-                <div className="bg-white rounded-[12px] p-1.5 mb-6 flex flex-col md:flex-row gap-1.5 shadow-sm border border-gray-100 overflow-x-auto">
+                <div className="bg-white rounded-[12px] p-1.5 mb-6 flex flex-col md:flex-row md:justify-center gap-1.5 shadow-sm border border-gray-100 overflow-x-auto">
                     {tabsConfig.map(({ id, label, icon }) => (
                         <button key={id} type="button" onClick={() => setActiveTab(id)}
                             className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-[10px] min-w-fit transition-colors w-full md:w-auto ${activeTab === id ? "bg-[#F3F4F6] text-[#2D3748]" : "hover:bg-gray-50 text-[#9CA3AF]"}`}>
@@ -295,39 +367,39 @@ export const DetalleSolicitud = () => {
                 {/* ====== TAB: Información ====== */}
                 {activeTab === "informacion" && (
                     <div className="flex flex-col gap-5">
-                        <DetailCard title="Información de Solicitud">
+                        <DetailCard title={t("detail.infoRequestTitle")}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                                <ReadOnlyInput label="Tipo de Solicitud" value={solicitud.tipoSolicitud.descripcion} />
-                                <ReadOnlyInput label="Estado" value={STATUS_LABELS[solicitud.estado]} />
-                                <ReadOnlyInput label="Fecha de Creación" value={solicitud.creada_en ? new Date(solicitud.creada_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"} />
-                                <ReadOnlyInput label="Última Actualización" value={solicitud.actualizado_en ? new Date(solicitud.actualizado_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"} />
-                                <ReadOnlyInput label="Centro Médico" value={solicitud.centroMedico} />
-                                <ReadOnlyInput label="Patología" value={solicitud.patologia} />
+                                <ReadOnlyInput label={t("detail.type")} value={solicitud.tipoSolicitud.descripcion} />
+                                <ReadOnlyInput label={t("detail.status")} value={statusLabelMap[solicitud.estado]} />
+                                <ReadOnlyInput label={t("detail.createdAt")} value={solicitud.creada_en ? new Date(solicitud.creada_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"} />
+                                <ReadOnlyInput label={t("detail.updatedAt")} value={solicitud.actualizado_en ? new Date(solicitud.actualizado_en).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"} />
+                                <ReadOnlyInput label={t("detail.medicalCenter")} value={solicitud.centroMedico} />
+                                <ReadOnlyInput label={t("detail.pathology")} value={solicitud.patologia} />
                             </div>
                         </DetailCard>
                         {solicitud.almacen_retiro && (
-                            <DetailCard title="Lugar de Retiro Asignado">
+                            <DetailCard title={t("detail.pickupLocationTitle")}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                                    <ReadOnlyInput label="Almacén" value={solicitud.almacen_retiro.nombre} />
-                                    <ReadOnlyInput label="Dirección" value={solicitud.almacen_retiro.direccion} />
-                                    <ReadOnlyInput label="Teléfono" value={solicitud.almacen_retiro.telefono} />
-                                    <ReadOnlyInput label="Ciudad" value={solicitud.almacen_retiro.ciudad.nombre} />
+                                    <ReadOnlyInput label={t("detail.warehouse")} value={solicitud.almacen_retiro.nombre} />
+                                    <ReadOnlyInput label={t("detail.address")} value={solicitud.almacen_retiro.direccion} />
+                                    <ReadOnlyInput label={t("detail.phone")} value={solicitud.almacen_retiro.telefono} />
+                                    <ReadOnlyInput label={t("detail.city")} value={solicitud.almacen_retiro.ciudad.nombre} />
                                 </div>
                             </DetailCard>
                         )}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                            <DetailCard title="Medicamentos Solicitados" className="h-full">
+                            <DetailCard title={t("detail.requestedMedsTitle")} className="h-full">
                                 <div className="flex flex-col gap-4">
                                     {solicitud.medicamento_solicitado.length > 0 ? solicitud.medicamento_solicitado.map(med => (
                                         <ReadOnlyInput key={med.id} value={med.nombre} />
-                                    )) : <p className="text-gray-500 italic font-['Poppins']">No hay medicamentos especificados.</p>}
+                                    )) : <p className="text-gray-500 italic font-['Poppins']">{t("detail.noMeds")}</p>}
                                 </div>
                             </DetailCard>
-                            <DetailCard title="Observaciones" className="h-full">
-                                <ReadOnlyInput value={solicitud.observaciones || "Sin observaciones al momento."} multiline className="h-full" />
+                            <DetailCard title={t("detail.observationsTitle")} className="h-full">
+                                <ReadOnlyInput value={solicitud.observaciones || t("detail.noObservations")} multiline className="h-full" />
                             </DetailCard>
                         </div>
-                        <DetailCard title="Documentos Adjuntos">
+                        <DetailCard title={t("detail.attachedDocsTitle")}>
                             <div className="flex flex-col gap-3">
                                 {solicitud.documentos.length > 0 ? solicitud.documentos.map(doc => (
                                     <a key={doc.id} href={getStoragePublicUrl(doc.url) || doc.url} target="_blank" rel="noreferrer"
@@ -335,7 +407,7 @@ export const DetalleSolicitud = () => {
                                         <span className="text-gray-600 truncate font-['Poppins'] text-sm">{doc.nombre}</span>
                                         <FileText className="w-4.5 h-4.5 text-[#34A4B3] flex-shrink-0" />
                                     </a>
-                                )) : <p className="text-gray-500 italic font-['Poppins']">No hay documentos adjuntos.</p>}
+                                )) : <p className="text-gray-500 italic font-['Poppins']">{t("detail.noDocs")}</p>}
                             </div>
                         </DetailCard>
                     </div>
@@ -344,22 +416,22 @@ export const DetalleSolicitud = () => {
                 {/* ====== TAB: Datos de Solicitante ====== */}
                 {activeTab === "datos-solicitante" && (
                     <div className="flex flex-col gap-5">
-                        <DetailCard title="Datos del Solicitante">
+                        <DetailCard title={t("detail.applicantDataTitle")}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                                <ReadOnlyInput label="Nombre del Solicitante" value={solicitanteNombre} />
-                                <ReadOnlyInput label="Cédula" value={solicitanteCedula} />
-                                <div className="md:col-span-2"><ReadOnlyInput label="Dirección" value={solicitanteDireccion} /></div>
-                                <ReadOnlyInput label="Teléfono" value={solicitanteTelefono} />
-                                <ReadOnlyInput label="Correo Electrónico" value={solicitanteCorreo} />
+                                <ReadOnlyInput label={t("detail.applicantName")} value={solicitanteNombre} />
+                                <ReadOnlyInput label={t("detail.idNumber")} value={solicitanteCedula} />
+                                <div className="md:col-span-2"><ReadOnlyInput label={t("detail.address")} value={solicitanteDireccion} /></div>
+                                <ReadOnlyInput label={t("detail.phone")} value={solicitanteTelefono} />
+                                <ReadOnlyInput label={t("detail.email")} value={solicitanteCorreo} />
                             </div>
                         </DetailCard>
                         {solicitud.representante && (
-                            <DetailCard title="Datos de Representante">
+                            <DetailCard title={t("detail.representativeDataTitle")}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                                    <ReadOnlyInput label="Nombre del Representante" value={`${solicitud.representante.nombre} ${solicitud.representante.apellidos}`} />
-                                    <ReadOnlyInput label="Cédula" value={solicitud.representante.cedula} />
-                                    <ReadOnlyInput label="Teléfono" value={solicitud.representante.telefono} />
-                                    <ReadOnlyInput label="Relación" value={solicitud.relacion_solicitante || "N/A"} />
+                                    <ReadOnlyInput label={t("detail.representativeName")} value={`${solicitud.representante.nombre} ${solicitud.representante.apellidos}`} />
+                                    <ReadOnlyInput label={t("detail.idNumber")} value={solicitud.representante.cedula} />
+                                    <ReadOnlyInput label={t("detail.phone")} value={solicitud.representante.telefono} />
+                                    <ReadOnlyInput label={t("detail.relationship")} value={solicitud.relacion_solicitante || "N/A"} />
                                 </div>
                             </DetailCard>
                         )}
@@ -370,32 +442,32 @@ export const DetalleSolicitud = () => {
                 {activeTab === "editar" && solicitud.estado === 'PENDIENTE' && (
                     <div className="flex flex-col gap-5">
                         {/* Datos del Solicitante (read-only) */}
-                        <DetailCard title="Datos de Solicitante">
+                        <DetailCard title={t("detalle.tab.applicant")}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                                <ReadOnlyInput label="Nombre del Solicitante" value={solicitanteNombre} />
-                                <ReadOnlyInput label="Cédula" value={solicitanteCedula} />
-                                <div className="md:col-span-2"><ReadOnlyInput label="Dirección" value={solicitanteDireccion} /></div>
-                                <ReadOnlyInput label="Teléfono" value={solicitanteTelefono} />
-                                <ReadOnlyInput label="Correo Electrónico" value={solicitanteCorreo} />
+                                <ReadOnlyInput label={t("detail.applicantName")} value={solicitanteNombre} />
+                                <ReadOnlyInput label={t("detail.idNumber")} value={solicitanteCedula} />
+                                <div className="md:col-span-2"><ReadOnlyInput label={t("detail.address")} value={solicitanteDireccion} /></div>
+                                <ReadOnlyInput label={t("detail.phone")} value={solicitanteTelefono} />
+                                <ReadOnlyInput label={t("detail.email")} value={solicitanteCorreo} />
                             </div>
                         </DetailCard>
 
                         {/* Campos editables */}
-                        <DetailCard title="Información de la Solicitud">
+                        <DetailCard title={t("detail.requestInfoTitle")}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                 <div className="space-y-2">
-                                    <Label className={LABEL_STYLE}>Centro Médico</Label>
+                                    <Label className={LABEL_STYLE}>{t("detail.medicalCenter")}</Label>
                                     <Input name="centroMedico" value={editForm.centroMedico} onChange={handleEditChange} className={INPUT_STYLE} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className={LABEL_STYLE}>Patología</Label>
+                                    <Label className={LABEL_STYLE}>{t("detail.pathology")}</Label>
                                     <Input name="patologia" value={editForm.patologia} onChange={handleEditChange} className={INPUT_STYLE} />
                                 </div>
                             </div>
                         </DetailCard>
 
                         {/* Medicamentos Solicitados (editable) */}
-                        <DetailCard title="Medicamentos Solicitados">
+                        <DetailCard title={t("detail.requestedMedsTitle")}>
                             <div className="flex flex-col gap-4">
                                 {editMedications.map((med, index) => (
                                     <div key={med.id} className="flex items-center gap-3">
@@ -413,7 +485,7 @@ export const DetalleSolicitud = () => {
                                                 type="button"
                                                 onClick={() => setEditMedications(prev => prev.filter((_, i) => i !== index))}
                                                 className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                title="Quitar medicamento"
+                                                title={t("detail.removeMedication")}
                                             >
                                                 <Trash2 className="w-5 h-5" />
                                             </button>
@@ -425,34 +497,34 @@ export const DetalleSolicitud = () => {
                                     onClick={() => setEditMedications(prev => [...prev, { id: Date.now(), nombre: "" }])}
                                     className="flex items-center gap-2 text-[#34A4B3] hover:text-[#2B93A1] font-['Poppins'] font-medium text-sm w-fit"
                                 >
-                                    <Plus className="w-4 h-4" /> Agregar medicamento
+                                    <Plus className="w-4 h-4" /> {t("solicitudForm.addMedication")}
                                 </button>
                             </div>
                         </DetailCard>
 
                         {/* Representante */}
-                        <DetailCard title="Datos de Representante">
+                        <DetailCard title={t("detail.representativeDataTitle")}>
                             <div className="bg-blue-50 border border-blue-200 rounded-[10px] p-3 mb-5">
                                 <p className="text-blue-700 font-['Poppins'] text-[12px]">
-                                    <strong>Nota:</strong> El representante legal debe tener una cuenta creada en DONAMED. Ingrese la cédula con la que se registró.
+                                    <strong>{t("detail.representativeNote")}</strong> {t("detail.representativeAccountHint")}
                                 </p>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                 <div className="space-y-2">
-                                    <Label className={LABEL_STYLE}>Cédula del Representante</Label>
-                                    <Input name="cedularepresentante" value={editForm.cedularepresentante} onChange={handleEditChange} placeholder="Cédula registrada en DONAMED" className={INPUT_STYLE} />
+                                    <Label className={LABEL_STYLE}>{t("detail.representativeId")}</Label>
+                                    <Input name="cedularepresentante" value={editForm.cedularepresentante} onChange={handleEditChange} placeholder={t("detail.representativeIdPlaceholder")} className={INPUT_STYLE} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className={LABEL_STYLE}>Relación con el Solicitante</Label>
-                                    <Input name="relacion_solicitante" value={editForm.relacion_solicitante} onChange={handleEditChange} placeholder="Ej: Padre, Madre, Tutor" className={INPUT_STYLE} />
+                                    <Label className={LABEL_STYLE}>{t("detail.relationshipWithApplicant")}</Label>
+                                    <Input name="relacion_solicitante" value={editForm.relacion_solicitante} onChange={handleEditChange} placeholder={t("detail.relationshipPlaceholder")} className={INPUT_STYLE} />
                                 </div>
                             </div>
                         </DetailCard>
 
                         {/* Documentos */}
-                        <DetailCard title="Documentos Requeridos">
+                        <DetailCard title={t("detail.requiredDocsTitle")}>
                             <p className="text-gray-400 font-['Poppins'] text-[12px] mb-4">
-                                Formatos permitidos: PDF, JPEG, PNG, DOC, DOCX • Tamaño máximo por archivo: {MAX_DOC_SIZE_MB} MB
+                                {t("detail.allowedFormats")} {MAX_DOC_SIZE_MB} MB
                             </p>
 
                             {/* Documentos existentes */}
@@ -474,7 +546,7 @@ export const DetalleSolicitud = () => {
                                                 onClick={() => handleDeleteDocument(doc.id)}
                                                 disabled={deletingDocId === doc.id}
                                                 className="ml-3 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                                                title="Eliminar documento"
+                                                title={t("detail.deleteDocument")}
                                             >
                                                 {deletingDocId === doc.id
                                                     ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -488,7 +560,7 @@ export const DetalleSolicitud = () => {
                             {/* Nuevos archivos agregados */}
                             {newFiles.length > 0 && (
                                 <div className="flex flex-col gap-3 mb-4">
-                                    <p className="text-gray-500 font-['Poppins'] text-[13px] font-medium">Nuevos archivos a subir:</p>
+                                    <p className="text-gray-500 font-['Poppins'] text-[13px] font-medium">{t("detail.newFilesToUpload")}</p>
                                     {newFiles.map((file, index) => (
                                         <div key={`new-${index}`} className="flex items-center justify-between w-full bg-[#E6F4F1] border border-[#34A4B3]/30 rounded-[10px] px-4 py-3">
                                             <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -502,7 +574,7 @@ export const DetalleSolicitud = () => {
                                                 type="button"
                                                 onClick={() => handleRemoveNewFile(index)}
                                                 className="ml-3 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                                                title="Quitar archivo"
+                                                title={t("detail.removeFile")}
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -517,7 +589,7 @@ export const DetalleSolicitud = () => {
                                 onClick={() => fileInputRef.current?.click()}
                                 className="flex items-center gap-2 text-[#34A4B3] hover:text-[#2B93A1] font-['Poppins'] font-medium text-sm w-fit"
                             >
-                                <Plus className="w-4 h-4" /> Agregar documento
+                                <Plus className="w-4 h-4" /> {t("detail.addDocument")}
                             </button>
                             <input
                                 type="file"
@@ -543,7 +615,7 @@ export const DetalleSolicitud = () => {
                                 onClick={() => setActiveTab("informacion")}
                                 className="w-full sm:w-[150px] h-[44px] bg-white border-2 border-[#34A4B3] text-[#34A4B3] hover:bg-[#34A4B3] hover:text-white rounded-[12px] text-[13px] font-medium font-['Poppins'] transition-all"
                             >
-                                Cancelar
+                                {t("detail.cancel")}
                             </Button>
                             <Button
                                 type="button"
@@ -551,7 +623,7 @@ export const DetalleSolicitud = () => {
                                 disabled={isSubmitting}
                                 className="w-full sm:w-[150px] h-[44px] bg-[#34A4B3] hover:bg-[#2B93A1] rounded-[12px] text-white text-[13px] font-medium font-['Poppins'] shadow-lg shadow-[#34A4B3]/20 transition-all disabled:opacity-50"
                             >
-                                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Confirmar"}
+                                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : t("detail.confirm")}
                             </Button>
                         </div>
                     </div>
@@ -561,24 +633,24 @@ export const DetalleSolicitud = () => {
             {/* Modal de Cancelación */}
             <ConfirmationCard
                 open={isCancelModalOpen}
-                title="¿Está seguro de que quiere"
-                highlight="cancelar esta solicitud?"
-                description="Esta acción no se puede deshacer. La solicitud será"
-                descriptionHighlight="cancelada permanentemente."
-                buttonLabel={isCancelling ? "Cancelando..." : "Sí, cancelar"}
+                title={t("detail.confirmCancelTitle")}
+                highlight={t("detail.confirmCancelHighlight")}
+                description={t("detail.confirmCancelDescription")}
+                descriptionHighlight={t("detail.confirmCancelDescriptionHighlight")}
+                buttonLabel={isCancelling ? t("detail.cancelling") : t("detail.yesCancel")}
                 onButtonClick={handleCancelar}
-                secondaryLabel="No"
+                secondaryLabel={t("detail.no")}
                 onSecondaryClick={() => setIsCancelModalOpen(false)}
             />
 
             {/* Modal de Confirmación Exitosa */}
             <ConfirmationCard
                 open={isConfirmModalOpen}
-                title="Su solicitud ha sido confirmada"
-                highlight="exitosamente"
-                description="Su solicitud fue enviada para revisión. Recibirá un correo cuando sea"
-                descriptionHighlight="aprobada."
-                buttonLabel="Ir al Historial"
+                title={t("detail.confirmedTitle")}
+                highlight={t("detail.confirmedHighlight")}
+                description={t("detail.confirmedDescription")}
+                descriptionHighlight={t("detail.confirmedDescriptionHighlight")}
+                buttonLabel={t("detail.goToHistory")}
                 onButtonClick={() => { setIsConfirmModalOpen(false); navigate('/historial-solicitudes'); }}
             />
         </MainLayout>
