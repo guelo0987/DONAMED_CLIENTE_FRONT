@@ -20,6 +20,8 @@ type TabId = "informacion" | "datos-solicitante" | "editar";
 
 const MAX_DOC_SIZE_MB = 10;
 const MAX_DOC_SIZE_BYTES = MAX_DOC_SIZE_MB * 1024 * 1024;
+const DETALLE_GUIDE_STORAGE_KEY = "donamed.detalle.guide.dismissed";
+const DETALLE_ONBOARDING_STORAGE_KEY = "donamed.detalle.onboarding.completed";
 
 const INPUT_STYLE =
     "h-[46px] md:h-[50px] bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] md:rounded-[12px] px-5 text-[14px] md:text-[15px] font-['Poppins']";
@@ -112,6 +114,20 @@ export const DetalleSolicitud = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editError, setEditError] = useState<string | null>(null);
     const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
+    const [showGuide, setShowGuide] = useState<boolean>(() => {
+        try {
+            return localStorage.getItem(DETALLE_GUIDE_STORAGE_KEY) !== "1";
+        } catch {
+            return true;
+        }
+    });
+    const [onboardingStep, setOnboardingStep] = useState<number>(() => {
+        try {
+            return localStorage.getItem(DETALLE_ONBOARDING_STORAGE_KEY) === "1" ? -1 : 0;
+        } catch {
+            return 0;
+        }
+    });
 
     useEffect(() => {
         if (id) {
@@ -300,6 +316,66 @@ export const DetalleSolicitud = () => {
 
     if (!solicitud) return null;
 
+    const onboardingSteps = solicitud.estado === "PENDIENTE"
+        ? [
+            {
+                target: "tabs",
+                title: t("detalle.onboarding.step1Title"),
+                description: t("detalle.onboarding.step1Desc"),
+            },
+            {
+                target: "review",
+                title: t("detalle.onboarding.step2Title"),
+                description: t("detalle.onboarding.step2Desc"),
+            },
+            {
+                target: "edit",
+                title: t("detalle.onboarding.step3Title"),
+                description: t("detalle.onboarding.step3Desc"),
+            },
+        ] as const
+        : [
+            {
+                target: "tabs",
+                title: t("detalle.onboarding.step1Title"),
+                description: t("detalle.onboarding.step1Desc"),
+            },
+            {
+                target: "review",
+                title: t("detalle.onboarding.step2Title"),
+                description: t("detalle.onboarding.step2Desc"),
+            },
+        ] as const;
+
+    const isOnboardingActive = onboardingStep >= 0;
+    const currentOnboarding =
+        isOnboardingActive && onboardingStep < onboardingSteps.length
+            ? onboardingSteps[onboardingStep]
+            : null;
+
+    const handleHideGuide = () => {
+        setShowGuide(false);
+        localStorage.setItem(DETALLE_GUIDE_STORAGE_KEY, "1");
+    };
+
+    const handleShowGuide = () => {
+        setShowGuide(true);
+        localStorage.removeItem(DETALLE_GUIDE_STORAGE_KEY);
+    };
+
+    const finishOnboarding = () => {
+        setOnboardingStep(-1);
+        localStorage.setItem(DETALLE_ONBOARDING_STORAGE_KEY, "1");
+    };
+
+    const nextOnboardingStep = () => {
+        if (onboardingStep >= onboardingSteps.length - 1) {
+            finishOnboarding();
+            return;
+        }
+        setOnboardingStep((prev) => prev + 1);
+    };
+
     const solicitanteNombre = profile ? `${profile.persona.nombre} ${profile.persona.apellidos}` : t("detail.loadingProfile");
     const solicitanteCedula = profile?.cedula_usuario || "";
     const solicitanteDireccion = profile?.persona.direccion || "";
@@ -332,9 +408,81 @@ export const DetalleSolicitud = () => {
                         <h1 className="font-['Poppins'] font-medium text-[#2D3748] text-[24px] md:text-[28px]">{t("detalle.title")}</h1>
                     </div>
                     {solicitud.estado === 'PENDIENTE' && (
-                        <button onClick={() => setIsCancelModalOpen(true)} className="bg-[#34A4B3] hover:bg-[#2B93A1] text-white px-5 py-2.5 rounded-[10px] font-['Poppins'] text-[14px] font-medium transition-colors w-full md:w-auto">
+                        <button onClick={() => setIsCancelModalOpen(true)} className={`bg-[#34A4B3] hover:bg-[#2B93A1] text-white px-5 py-2.5 rounded-[10px] font-['Poppins'] text-[14px] font-medium transition-colors w-full md:w-auto ${currentOnboarding?.target === "edit" ? "ring-2 ring-[#40C9DB]/30" : ""}`}>
                             {t("detalle.cancelRequest")}
                         </button>
+                    )}
+                </div>
+
+                <div className="mb-4 space-y-2">
+                    <div className="flex justify-end">
+                        {showGuide ? (
+                            <button
+                                type="button"
+                                onClick={handleHideGuide}
+                                className="inline-flex items-center rounded-full border border-[#BFEAF2] bg-[#EBFAFD] px-3 py-1 text-[#34A4B3] text-[12px] font-medium hover:bg-[#E1F6FB] transition-colors"
+                            >
+                                {t("detalle.guide.hide")}
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={handleShowGuide}
+                                className="inline-flex items-center rounded-full border border-[#BFEAF2] bg-[#EBFAFD] px-3 py-1 text-[#34A4B3] text-[12px] font-medium hover:bg-[#E1F6FB] transition-colors"
+                            >
+                                {t("detalle.guide.show")}
+                            </button>
+                        )}
+                    </div>
+
+                    {isOnboardingActive && currentOnboarding && (
+                        <div className="rounded-[12px] border border-[#BFEAF2] bg-[#EBFAFD] p-3 shadow-[0_6px_16px_rgba(52,164,179,0.12)]">
+                            <p className="text-[#34A4B3] text-[11px] font-semibold uppercase tracking-wide">
+                                {t("detalle.onboarding.badge")} {onboardingStep + 1}/{onboardingSteps.length}
+                            </p>
+                            <p className="text-[#2D3748] text-[13px] font-semibold mt-1">
+                                {currentOnboarding.title}
+                            </p>
+                            <p className="text-[#64748B] text-[11px] mt-1 leading-snug">
+                                {currentOnboarding.description}
+                            </p>
+                            <div className="mt-3 flex items-center justify-between">
+                                <button
+                                    type="button"
+                                    onClick={finishOnboarding}
+                                    className="text-[#64748B] text-[11px] font-medium hover:underline"
+                                >
+                                    {t("detalle.onboarding.skip")}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={nextOnboardingStep}
+                                    className="text-[#34A4B3] text-[11px] font-semibold hover:underline"
+                                >
+                                    {onboardingStep === onboardingSteps.length - 1
+                                        ? t("detalle.onboarding.finish")
+                                        : t("detalle.onboarding.next")}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {showGuide && (
+                        <div className="rounded-[12px] border border-[#CFEFF4] bg-[#F1FBFD] p-3">
+                            <p className="text-[#2D3748] text-[13px] font-semibold">
+                                {t("detalle.guide.title")}
+                            </p>
+                            <p className="text-[#64748B] text-[11px] mt-0.5">
+                                {t("detalle.guide.subtitle")}
+                            </p>
+                            <div className="mt-2.5 space-y-1.5">
+                                <p className="text-[#2D3748] text-[12px] font-medium">1. {t("detalle.guide.step1")}</p>
+                                <p className="text-[#2D3748] text-[12px] font-medium">2. {t("detalle.guide.step2")}</p>
+                                {solicitud.estado === "PENDIENTE" && (
+                                    <p className="text-[#2D3748] text-[12px] font-medium">3. {t("detalle.guide.step3")}</p>
+                                )}
+                            </div>
+                        </div>
                     )}
                 </div>
 
@@ -354,10 +502,10 @@ export const DetalleSolicitud = () => {
                 )}
 
                 {/* Tabs */}
-                <div className="bg-white rounded-[12px] p-1.5 mb-6 flex flex-col md:flex-row md:justify-center gap-1.5 shadow-sm border border-gray-100 overflow-x-auto">
+                <div className={`bg-white rounded-[12px] p-1.5 mb-6 flex flex-col md:flex-row md:justify-center gap-1.5 shadow-sm border border-gray-100 overflow-x-auto ${currentOnboarding?.target === "tabs" ? "ring-2 ring-[#40C9DB]/30" : ""}`}>
                     {tabsConfig.map(({ id, label, icon }) => (
                         <button key={id} type="button" onClick={() => setActiveTab(id)}
-                            className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-[10px] min-w-fit transition-colors w-full md:w-auto ${activeTab === id ? "bg-[#F3F4F6] text-[#2D3748]" : "hover:bg-gray-50 text-[#9CA3AF]"}`}>
+                            className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-[10px] min-w-fit transition-colors w-full md:w-auto ${activeTab === id ? "bg-[#F3F4F6] text-[#2D3748]" : "hover:bg-gray-50 text-[#9CA3AF]"} ${currentOnboarding?.target === "edit" && id === "editar" ? "ring-2 ring-[#40C9DB]/30" : ""}`}>
                             {icon}
                             <span className={`font-['Poppins'] text-[14px] ${activeTab === id ? "font-semibold" : "font-medium"}`}>{label}</span>
                         </button>
@@ -366,7 +514,7 @@ export const DetalleSolicitud = () => {
 
                 {/* ====== TAB: Información ====== */}
                 {activeTab === "informacion" && (
-                    <div className="flex flex-col gap-5">
+                    <div className={`flex flex-col gap-5 ${currentOnboarding?.target === "review" ? "rounded-[12px] ring-2 ring-[#40C9DB]/30 p-2" : ""}`}>
                         <DetailCard title={t("detail.infoRequestTitle")}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                                 <ReadOnlyInput label={t("detail.type")} value={solicitud.tipoSolicitud.descripcion} />

@@ -1,14 +1,137 @@
+import { useState } from "react";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { useI18n } from "../../i18n/language-context";
 
+const CONTACTO_GUIDE_STORAGE_KEY = "donamed.contacto.guide.dismissed";
+const CONTACTO_ONBOARDING_STORAGE_KEY = "donamed.contacto.onboarding.completed";
+
 export const Contacto = () => {
     const { t } = useI18n();
+    const [showGuide, setShowGuide] = useState<boolean>(() => {
+        try {
+            return localStorage.getItem(CONTACTO_GUIDE_STORAGE_KEY) !== "1";
+        } catch {
+            return true;
+        }
+    });
+    const [onboardingStep, setOnboardingStep] = useState<number>(() => {
+        try {
+            return localStorage.getItem(CONTACTO_ONBOARDING_STORAGE_KEY) === "1" ? -1 : 0;
+        } catch {
+            return 0;
+        }
+    });
+    const onboardingSteps = [
+        {
+            target: "info",
+            title: t("contact.onboarding.step1Title"),
+            description: t("contact.onboarding.step1Desc"),
+        },
+        {
+            target: "form",
+            title: t("contact.onboarding.step2Title"),
+            description: t("contact.onboarding.step2Desc"),
+        },
+    ] as const;
+    const isOnboardingActive = onboardingStep >= 0;
+    const currentOnboarding = isOnboardingActive ? onboardingSteps[onboardingStep] : null;
+
+    const handleHideGuide = () => {
+        setShowGuide(false);
+        localStorage.setItem(CONTACTO_GUIDE_STORAGE_KEY, "1");
+    };
+
+    const handleShowGuide = () => {
+        setShowGuide(true);
+        localStorage.removeItem(CONTACTO_GUIDE_STORAGE_KEY);
+    };
+
+    const finishOnboarding = () => {
+        setOnboardingStep(-1);
+        localStorage.setItem(CONTACTO_ONBOARDING_STORAGE_KEY, "1");
+    };
+
+    const nextOnboardingStep = () => {
+        if (onboardingStep >= onboardingSteps.length - 1) {
+            finishOnboarding();
+            return;
+        }
+        setOnboardingStep((prev) => prev + 1);
+    };
+
     return (
         <MainLayout className="bg-white">
             <section className="w-full px-4 py-8 lg:py-10">
                 <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-6 lg:gap-10 items-center">
                     <div className="space-y-5">
+                        <div className="flex justify-end">
+                            {showGuide ? (
+                                <button
+                                    type="button"
+                                    onClick={handleHideGuide}
+                                    className="inline-flex items-center rounded-full border border-[#BFEAF2] bg-[#EBFAFD] px-3 py-1 text-[#34A4B3] text-[12px] font-medium hover:bg-[#E1F6FB] transition-colors"
+                                >
+                                    {t("contact.guide.hide")}
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={handleShowGuide}
+                                    className="inline-flex items-center rounded-full border border-[#BFEAF2] bg-[#EBFAFD] px-3 py-1 text-[#34A4B3] text-[12px] font-medium hover:bg-[#E1F6FB] transition-colors"
+                                >
+                                    {t("contact.guide.show")}
+                                </button>
+                            )}
+                        </div>
+
+                        {isOnboardingActive && currentOnboarding && (
+                            <div className="rounded-[12px] border border-[#BFEAF2] bg-[#EBFAFD] p-3 shadow-[0_6px_16px_rgba(52,164,179,0.12)]">
+                                <p className="text-[#34A4B3] text-[11px] font-semibold uppercase tracking-wide">
+                                    {t("contact.onboarding.badge")} {onboardingStep + 1}/{onboardingSteps.length}
+                                </p>
+                                <p className="text-[#2D3748] text-[13px] font-semibold mt-1">
+                                    {currentOnboarding.title}
+                                </p>
+                                <p className="text-[#64748B] text-[11px] mt-1 leading-snug">
+                                    {currentOnboarding.description}
+                                </p>
+                                <div className="mt-3 flex items-center justify-between">
+                                    <button
+                                        type="button"
+                                        onClick={finishOnboarding}
+                                        className="text-[#64748B] text-[11px] font-medium hover:underline"
+                                    >
+                                        {t("contact.onboarding.skip")}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={nextOnboardingStep}
+                                        className="text-[#34A4B3] text-[11px] font-semibold hover:underline"
+                                    >
+                                        {onboardingStep === onboardingSteps.length - 1
+                                            ? t("contact.onboarding.finish")
+                                            : t("contact.onboarding.next")}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {showGuide && (
+                            <div className="rounded-[12px] border border-[#CFEFF4] bg-[#F1FBFD] p-3">
+                                <p className="text-[#2D3748] text-[13px] font-semibold">
+                                    {t("contact.guide.title")}
+                                </p>
+                                <p className="text-[#64748B] text-[11px] mt-0.5">
+                                    {t("contact.guide.subtitle")}
+                                </p>
+                                <div className="mt-2.5 space-y-1.5">
+                                    <p className="text-[#2D3748] text-[12px] font-medium">1. {t("contact.guide.step1")}</p>
+                                    <p className="text-[#2D3748] text-[12px] font-medium">2. {t("contact.guide.step2")}</p>
+                                </div>
+                            </div>
+                        )}
+
                         <h1 className="text-[#2D3748] text-[38px] md:text-[44px] lg:text-[46px] font-semibold leading-tight">
                             <span className="text-[#34A4B3] font-['Merienda']">
                                 {t("contact.title.main")}
@@ -24,7 +147,7 @@ export const Contacto = () => {
                     </div>
 
                     <div className="w-full flex justify-center lg:justify-end">
-                        <div className="w-full max-w-[420px] bg-[#F7FBFC] rounded-[20px] p-6 shadow-[0px_6px_20px_rgba(0,0,0,0.08)] border border-[#EAF2F4]">
+                        <div className={`w-full max-w-[420px] bg-[#F7FBFC] rounded-[20px] p-6 shadow-[0px_6px_20px_rgba(0,0,0,0.08)] border border-[#EAF2F4] ${currentOnboarding?.target === "info" ? "ring-2 ring-[#40C9DB]/35" : ""}`}>
                             <h3 className="text-[#2D3748] text-[18px] font-semibold mb-4">
                                 {t("contact.infoTitle")}
                             </h3>
@@ -62,7 +185,7 @@ export const Contacto = () => {
                         {t("contact.sendMessage")}
                     </h2>
 
-                    <div className="bg-white rounded-[16px] border border-[#EFEFEF] shadow-[0px_3px_10px_rgba(0,0,0,0.06)] p-6 lg:p-8 max-w-[720px]">
+                    <div className={`bg-white rounded-[16px] border border-[#EFEFEF] shadow-[0px_3px_10px_rgba(0,0,0,0.06)] p-6 lg:p-8 max-w-[720px] ${currentOnboarding?.target === "form" ? "ring-2 ring-[#40C9DB]/35" : ""}`}>
                         <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="flex flex-col gap-2">
                                 <label className="text-[#404040] text-[13px] font-medium [font-family:'Poppins',sans-serif]">
