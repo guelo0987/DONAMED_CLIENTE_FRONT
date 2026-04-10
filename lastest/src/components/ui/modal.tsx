@@ -7,9 +7,20 @@ interface ModalProps {
     onClose: () => void;
     title: string;
     children: React.ReactNode;
+    hideHeader?: boolean;
+    panelClassName?: string;
+    bodyClassName?: string;
 }
 
-export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
+export const Modal = ({
+    isOpen,
+    onClose,
+    title,
+    children,
+    hideHeader = false,
+    panelClassName = "",
+    bodyClassName = "",
+}: ModalProps) => {
     const { t } = useI18n();
     const modalRef = useRef<HTMLDivElement>(null);
 
@@ -41,29 +52,38 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
 
     return (
         <div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
             onClick={handleBackdropClick}
         >
             <div
                 ref={modalRef}
-                className="bg-white rounded-[17px] w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl animate-in zoom-in-95 duration-200"
+                className={`relative bg-white rounded-[17px] w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-xl animate-in zoom-in-95 duration-200 flex flex-col ${panelClassName}`}
             >
-                {/* Header */}
-                <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                    <h2 className="text-[24px] font-medium text-[#2D3748] font-['Poppins']">
-                        {title}
-                    </h2>
+                {!hideHeader ? (
+                    <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                        <h2 className="text-[24px] font-medium text-[#2D3748] font-['Poppins']">
+                            {title}
+                        </h2>
+                        <button
+                            onClick={onClose}
+                            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                            aria-label={`${t("common.cerrar")} modal`}
+                        >
+                            <X className="w-6 h-6 text-gray-500" />
+                        </button>
+                    </div>
+                ) : (
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        className="absolute top-4 right-4 z-20 p-2 hover:bg-gray-100 rounded-full transition-colors"
                         aria-label={`${t("common.cerrar")} modal`}
                     >
-                        <X className="w-6 h-6 text-gray-500" />
+                        <X className="w-6 h-6 text-[#6B7280]" />
                     </button>
-                </div>
+                )}
 
                 {/* Body */}
-                <div className="p-6 font-['Poppins']">
+                <div className={`font-['Poppins'] flex-1 min-h-0 overflow-y-auto ${bodyClassName || "p-6"}`}>
                     {children}
                 </div>
             </div>

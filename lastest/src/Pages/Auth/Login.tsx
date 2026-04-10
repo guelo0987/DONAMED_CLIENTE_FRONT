@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Button } from "../../components/ui/buttons";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import { Modal } from "../../components/ui/modal";
 import LandingPage from "../Landing/LandingPage";
+import { ReactivationConfirmModal } from "./ReactivationConfirmModal";
 import { useAuth } from "../../hooks/useAuth";
 import { validarCorreo, validarContrasena } from "../../utils/validators";
 import { useI18n } from "../../i18n/language-context";
@@ -12,10 +14,11 @@ import { useI18n } from "../../i18n/language-context";
 export const Login = () => {
     const { t } = useI18n();
     const navigate = useNavigate();
-    const { login, isLoading, error, setError } = useAuth();
+    const { login, reactivateAccount, isLoading, error, setError } = useAuth();
     const [correo, setCorreo] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [showContrasena, setShowContrasena] = useState(false);
+    const [showReactivationPrompt, setShowReactivationPrompt] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,9 +34,22 @@ export const Login = () => {
             return;
         }
 
-        const success = await login({ correo, contrasena });
-        if (success) {
+        const result = await login({ correo, contrasena });
+        if (result && !("reactivationRequired" in result)) {
             navigate("/dashboard"); // Ajustar la ruta si es necesario (ej: /, /home o /dashboard)
+            return;
+        }
+
+        if (result && "reactivationRequired" in result) {
+            setShowReactivationPrompt(true);
+        }
+    };
+
+    const handleReactivate = async () => {
+        const success = await reactivateAccount({ correo, contrasena });
+        if (success) {
+            setShowReactivationPrompt(false);
+            navigate("/dashboard");
         }
     };
 
@@ -175,6 +191,26 @@ export const Login = () => {
                     </div>
                 </div>
             </div>
+
+            <Modal
+                isOpen={showReactivationPrompt}
+                onClose={() => setShowReactivationPrompt(false)}
+                title={t("auth.reactivate.title")}
+                hideHeader
+                panelClassName="max-w-[980px] h-[76vh] lg:h-[74vh] rounded-[24px] lg:rounded-[34px] overflow-hidden"
+                bodyClassName="p-0 h-full min-h-0"
+            >
+                <ReactivationConfirmModal
+                    title={t("auth.reactivate.title")}
+                    highlight={t("auth.reactivate.highlight")}
+                    description={t("auth.reactivate.description")}
+                    confirmLabel={t("auth.reactivate.confirm")}
+                    cancelLabel={t("auth.reactivate.cancel")}
+                    isLoading={isLoading}
+                    onConfirm={handleReactivate}
+                    onCancel={() => setShowReactivationPrompt(false)}
+                />
+            </Modal>
         </div>
     );
 };

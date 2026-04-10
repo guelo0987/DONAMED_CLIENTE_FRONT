@@ -1,6 +1,6 @@
 import { apiClient } from '../api/client';
 import { ENDPOINTS } from '../config/endpoints';
-import type { ApiResponse, AuthResponse } from '../types/auth';
+import type { ApiResponse, AuthResponse, LoginData } from '../types/auth';
 import type { UserProfile } from '../types/user';
 
 export const userService = {
@@ -61,8 +61,8 @@ export const userService = {
     /**
      * Reactiva la cuenta.
      */
-    reactivateAccount: async (): Promise<ApiResponse<AuthResponse>> => {
-        const response = await apiClient.post<ApiResponse<AuthResponse>>(ENDPOINTS.USER.PROFILE + '/reactivar');
+    reactivateAccount: async (credentials?: LoginData): Promise<ApiResponse<AuthResponse>> => {
+        const response = await apiClient.post<ApiResponse<AuthResponse>>(ENDPOINTS.USER.REACTIVATE, credentials ?? {});
         return response.data;
     }
 };

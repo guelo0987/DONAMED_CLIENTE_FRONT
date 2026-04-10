@@ -30,5 +30,6 @@ export const ENDPOINTS = {
         PROFILE: '/api/v1/perfil',
         CHANGE_PASSWORD: '/api/v1/perfil/password',
         DEACTIVATE: '/api/v1/perfil/desactivar',
+        REACTIVATE: '/api/v1/perfil/reactivar',
     }
 } as const;
