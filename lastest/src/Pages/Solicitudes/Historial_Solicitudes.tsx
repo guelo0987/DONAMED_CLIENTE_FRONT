@@ -6,6 +6,9 @@ import { useSolicitudes } from "../../hooks/useSolicitudes";
 import type { SolicitudResumen, EstadoSolicitud } from "../../types/solicitud";
 import { useI18n } from "../../i18n/language-context";
 
+const HISTORIAL_GUIDE_STORAGE_KEY = "donamed.historial.guide.dismissed";
+const HISTORIAL_ONBOARDING_STORAGE_KEY = "donamed.historial.onboarding.completed";
+
 // Helper to translate backend states to human-readable badges
 const getStatusLabel = (estado: EstadoSolicitud, isEnglish: boolean) => {
     const labels: Record<EstadoSolicitud, string> = isEnglish ? {
@@ -117,6 +120,20 @@ export const HistorialSolicitudes = () => {
     const { t, language } = useI18n();
     const { fetchHistorial, isLoading, error } = useSolicitudes();
     const [solicitudes, setSolicitudes] = useState<SolicitudResumen[]>([]);
+    const [showGuide, setShowGuide] = useState<boolean>(() => {
+        try {
+            return localStorage.getItem(HISTORIAL_GUIDE_STORAGE_KEY) !== "1";
+        } catch {
+            return true;
+        }
+    });
+    const [onboardingStep, setOnboardingStep] = useState<number>(() => {
+        try {
+            return localStorage.getItem(HISTORIAL_ONBOARDING_STORAGE_KEY) === "1" ? -1 : 0;
+        } catch {
+            return 0;
+        }
+    });
 
     useEffect(() => {
         const loadHistory = async () => {
@@ -132,6 +149,48 @@ export const HistorialSolicitudes = () => {
     // Opcional: Separar recentes vs anteriores bajo alguna logica del front. 
     // Por el momento enviaremos todo en "Recientes" (ya vienen ordenadas desc por Fecha de creación)
     const recentRequests = solicitudes;
+    const onboardingSteps = [
+        {
+            target: "list",
+            title: t("historial.onboarding.step1Title"),
+            description: t("historial.onboarding.step1Desc"),
+        },
+        {
+            target: "status",
+            title: t("historial.onboarding.step2Title"),
+            description: t("historial.onboarding.step2Desc"),
+        },
+        {
+            target: "open",
+            title: t("historial.onboarding.step3Title"),
+            description: t("historial.onboarding.step3Desc"),
+        },
+    ] as const;
+    const isOnboardingActive = onboardingStep >= 0;
+    const currentOnboarding = isOnboardingActive ? onboardingSteps[onboardingStep] : null;
+
+    const handleHideGuide = () => {
+        setShowGuide(false);
+        localStorage.setItem(HISTORIAL_GUIDE_STORAGE_KEY, "1");
+    };
+
+    const handleShowGuide = () => {
+        setShowGuide(true);
+        localStorage.removeItem(HISTORIAL_GUIDE_STORAGE_KEY);
+    };
+
+    const finishOnboarding = () => {
+        setOnboardingStep(-1);
+        localStorage.setItem(HISTORIAL_ONBOARDING_STORAGE_KEY, "1");
+    };
+
+    const nextOnboardingStep = () => {
+        if (onboardingStep >= onboardingSteps.length - 1) {
+            finishOnboarding();
+            return;
+        }
+        setOnboardingStep((prev) => prev + 1);
+    };
 
     return (
         <MainLayout>
@@ -161,9 +220,78 @@ export const HistorialSolicitudes = () => {
 
                 {/* Content Container */}
                 <div className="max-w-[1060px] mx-auto px-4 sm:px-5 md:px-6 lg:px-7">
+                    <div className="mb-4 space-y-2">
+                        <div className="flex justify-end">
+                            {showGuide ? (
+                                <button
+                                    type="button"
+                                    onClick={handleHideGuide}
+                                    className="inline-flex items-center rounded-full border border-[#BFEAF2] bg-[#EBFAFD] px-3 py-1 text-[#34A4B3] text-[12px] font-medium hover:bg-[#E1F6FB] transition-colors"
+                                >
+                                    {t("historial.guide.hide")}
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={handleShowGuide}
+                                    className="inline-flex items-center rounded-full border border-[#BFEAF2] bg-[#EBFAFD] px-3 py-1 text-[#34A4B3] text-[12px] font-medium hover:bg-[#E1F6FB] transition-colors"
+                                >
+                                    {t("historial.guide.show")}
+                                </button>
+                            )}
+                        </div>
+
+                        {isOnboardingActive && currentOnboarding && (
+                            <div className="rounded-[12px] border border-[#BFEAF2] bg-[#EBFAFD] p-3 shadow-[0_6px_16px_rgba(52,164,179,0.12)]">
+                                <p className="text-[#34A4B3] text-[11px] font-semibold uppercase tracking-wide">
+                                    {t("historial.onboarding.badge")} {onboardingStep + 1}/{onboardingSteps.length}
+                                </p>
+                                <p className="text-[#2D3748] text-[13px] font-semibold mt-1">
+                                    {currentOnboarding.title}
+                                </p>
+                                <p className="text-[#64748B] text-[11px] mt-1 leading-snug">
+                                    {currentOnboarding.description}
+                                </p>
+                                <div className="mt-3 flex items-center justify-between">
+                                    <button
+                                        type="button"
+                                        onClick={finishOnboarding}
+                                        className="text-[#64748B] text-[11px] font-medium hover:underline"
+                                    >
+                                        {t("historial.onboarding.skip")}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={nextOnboardingStep}
+                                        className="text-[#34A4B3] text-[11px] font-semibold hover:underline"
+                                    >
+                                        {onboardingStep === onboardingSteps.length - 1
+                                            ? t("historial.onboarding.finish")
+                                            : t("historial.onboarding.next")}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {showGuide && (
+                            <div className="rounded-[12px] border border-[#CFEFF4] bg-[#F1FBFD] p-3">
+                                <p className="text-[#2D3748] text-[13px] font-semibold">
+                                    {t("historial.guide.title")}
+                                </p>
+                                <p className="text-[#64748B] text-[11px] mt-0.5">
+                                    {t("historial.guide.subtitle")}
+                                </p>
+                                <div className="mt-2.5 space-y-1.5">
+                                    <p className="text-[#2D3748] text-[12px] font-medium">1. {t("historial.guide.step1")}</p>
+                                    <p className="text-[#2D3748] text-[12px] font-medium">2. {t("historial.guide.step2")}</p>
+                                    <p className="text-[#2D3748] text-[12px] font-medium">3. {t("historial.guide.step3")}</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
                     {/* Recientes Section */}
-                    <section className="mb-10">
+                    <section className={`mb-10 rounded-[12px] ${currentOnboarding?.target === "list" || currentOnboarding?.target === "status" ? "ring-2 ring-[#40C9DB]/30 p-2" : ""}`}>
                         <h2 className="font-['Poppins'] font-normal text-[#2D3748] text-[22px] sm:text-[26px] mb-5 border-b border-[#DCD7D7] pb-2">
                             {t("historial.myRequests")}
                         </h2>
@@ -186,7 +314,7 @@ export const HistorialSolicitudes = () => {
                             </div>
                         )}
 
-                        <div className="space-y-3">
+                        <div className={`space-y-3 ${currentOnboarding?.target === "open" ? "rounded-[12px] ring-2 ring-[#40C9DB]/30 p-2" : ""}`}>
                             {recentRequests.map((req) => (
                                 <RequestCard
                                     key={req.numerosolicitud}
