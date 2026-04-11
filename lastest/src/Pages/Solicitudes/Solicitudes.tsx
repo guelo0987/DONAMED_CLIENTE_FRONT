@@ -169,7 +169,7 @@ export const Solicitudes = () => {
 
                 <SolicitudForm
                     mode="create"
-                    className={`max-w-none px-0 md:px-0 lg:px-0 rounded-[14px] transition-all ${isOnboardingActive ? "ring-2 ring-[#40C9DB]/30" : ""}`}
+                    className={`max-w-none px-0 md:px-0 lg:px-0 rounded-[14px] transition-all ${isOnboardingActive ? "" : ""}`}
                 />
             </div>
         </MainLayout>
