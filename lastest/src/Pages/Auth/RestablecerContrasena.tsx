@@ -7,10 +7,12 @@ import { Label } from "../../components/ui/label";
 import LandingPage from "../Landing/LandingPage";
 import { authService } from "../../services/authService";
 import { validarContrasena } from "../../utils/validators";
+import { useI18n } from "../../i18n/language-context";
 
 type Estado = "formulario" | "exito" | "error" | "sin_token";
 
 export const RestablecerContrasena = () => {
+    const { t } = useI18n();
     const [searchParams] = useSearchParams();
     const token = searchParams.get("token");
 
@@ -26,9 +28,9 @@ export const RestablecerContrasena = () => {
     useEffect(() => {
         if (!token) {
             setEstado("sin_token");
-            setMensaje("No se encontró el token. Por favor, utiliza el enlace que recibiste por correo para restablecer tu contraseña.");
+            setMensaje(t("auth.resetWithToken.noToken"));
         }
-    }, [token]);
+    }, [token, t]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,12 +42,12 @@ export const RestablecerContrasena = () => {
         }
 
         if (!validarContrasena(nuevaContrasena)) {
-            setErrorForm("La contraseña debe tener al menos 8 caracteres.");
+            setErrorForm(t("auth.resetWithToken.min8"));
             return;
         }
 
         if (nuevaContrasena !== confirmarContrasena) {
-            setErrorForm("Las contraseñas no coinciden.");
+            setErrorForm(t("auth.resetWithToken.notMatch"));
             return;
         }
 
@@ -53,14 +55,14 @@ export const RestablecerContrasena = () => {
         try {
             const response = await authService.restablecerContrasena(token, nuevaContrasena);
             if (response.success) {
-                setMensaje(response.message || "Contraseña actualizada exitosamente. Ya puedes iniciar sesión.");
+                setMensaje(response.message || t("auth.resetWithToken.success"));
                 setEstado("exito");
             } else {
-                setErrorForm(response.message || "Error al restablecer la contraseña.");
+                setErrorForm(response.message || t("auth.resetWithToken.errorReset"));
             }
         } catch (err: unknown) {
             const axiosError = err as { response?: { data?: { message?: string }; status?: number } };
-            const msg = axiosError.response?.data?.message || "El enlace ha expirado o no es válido. Solicita uno nuevo.";
+            const msg = axiosError.response?.data?.message || t("auth.verify.expiredLink");
             if (axiosError.response?.status === 403) {
                 setEstado("error");
                 setMensaje(msg);
@@ -116,10 +118,10 @@ export const RestablecerContrasena = () => {
                                 <>
                                     <div className="space-y-3 w-full">
                                         <h1 className="text-[#404040] text-[22px] md:text-[28px] xl:text-[32px] font-medium leading-[1.2] tracking-normal">
-                                            Restablecer Contraseña
+                                            {t("auth.resetTitle")}
                                         </h1>
                                         <p className="text-[#2D3748] text-[13px] md:text-[14px] xl:text-[15px] font-medium leading-relaxed">
-                                            Ingrese su nueva contraseña (mínimo 8 caracteres)
+                                            {t("auth.resetWithToken.subtitleMin8")}
                                         </p>
                                     </div>
 
@@ -127,7 +129,7 @@ export const RestablecerContrasena = () => {
                                         <div className="space-y-1.5 text-left">
                                             <div className="flex items-center gap-2">
                                                 <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
-                                                    Nueva Contraseña
+                                                    {t("auth.newPassword")}
                                                 </Label>
                                                 <img
                                                     src="/assets/plus_icon.png"
@@ -140,14 +142,14 @@ export const RestablecerContrasena = () => {
                                                     type={showNuevaContrasena ? "text" : "password"}
                                                     value={nuevaContrasena}
                                                     onChange={(e) => setNuevaContrasena(e.target.value)}
-                                                    placeholder="Nueva Contraseña"
+                                                    placeholder={t("auth.newPassword")}
                                                     className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowNuevaContrasena((prev) => !prev)}
                                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
-                                                    aria-label={showNuevaContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                                    aria-label={showNuevaContrasena ? t("auth.hidePassword") : t("auth.showPassword")}
                                                 >
                                                     {showNuevaContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
                                                 </button>
@@ -157,7 +159,7 @@ export const RestablecerContrasena = () => {
                                         <div className="space-y-1.5 text-left">
                                             <div className="flex items-center gap-2">
                                                 <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
-                                                    Confirmar Contraseña
+                                                    {t("auth.confirmPassword")}
                                                 </Label>
                                                 <img
                                                     src="/assets/plus_icon.png"
@@ -170,14 +172,14 @@ export const RestablecerContrasena = () => {
                                                     type={showConfirmarContrasena ? "text" : "password"}
                                                     value={confirmarContrasena}
                                                     onChange={(e) => setConfirmarContrasena(e.target.value)}
-                                                    placeholder="Confirmar Contraseña"
+                                                    placeholder={t("auth.confirmPassword")}
                                                     className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowConfirmarContrasena((prev) => !prev)}
                                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
-                                                    aria-label={showConfirmarContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                                    aria-label={showConfirmarContrasena ? t("auth.hidePassword") : t("auth.showPassword")}
                                                 >
                                                     {showConfirmarContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
                                                 </button>
@@ -194,18 +196,18 @@ export const RestablecerContrasena = () => {
                                                 disabled={isLoading}
                                                 className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] disabled:opacity-50 rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                             >
-                                                {isLoading ? "Restableciendo..." : "Restablecer contraseña"}
+                                                {isLoading ? t("auth.resetWithToken.resetting") : t("auth.resetWithToken.resetButton")}
                                             </Button>
                                         </div>
                                     </form>
 
                                     <p className="text-center text-[#404040] text-[11px] xl:text-[12px] font-medium pt-2">
-                                        ¿Recordaste tu contraseña?{" "}
+                                        {t("auth.rememberedPasswordQ")}{" "}
                                         <Link
                                             to="/iniciar-sesion"
                                             className="text-[#34A4B3] hover:underline"
                                         >
-                                            Iniciar Sesión
+                                            {t("auth.iniciarSesion")}
                                         </Link>
                                     </p>
                                 </>
@@ -215,7 +217,7 @@ export const RestablecerContrasena = () => {
                                 <>
                                     <div className="space-y-3 w-full">
                                         <h1 className="text-[#404040] text-[22px] md:text-[28px] xl:text-[32px] font-medium leading-[1.2] tracking-normal">
-                                            Contraseña actualizada
+                                            {t("auth.resetWithToken.updatedTitle")}
                                         </h1>
                                         <p className="text-[#2D3748] text-[13px] md:text-[14px] xl:text-[15px] font-medium leading-relaxed">
                                             {mensaje}
@@ -226,7 +228,7 @@ export const RestablecerContrasena = () => {
                                             asChild
                                             className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                         >
-                                            <Link to="/iniciar-sesion">Ir al inicio de sesión</Link>
+                                            <Link to="/iniciar-sesion">{t("auth.goToSignIn")}</Link>
                                         </Button>
                                     </div>
                                 </>
@@ -236,14 +238,14 @@ export const RestablecerContrasena = () => {
                                 <>
                                     <div className="space-y-3 w-full">
                                         <h1 className="text-[#404040] text-[22px] md:text-[28px] xl:text-[32px] font-medium leading-[1.2] tracking-normal">
-                                            {estado === "sin_token" ? "Enlace inválido" : "Error"}
+                                            {estado === "sin_token" ? t("auth.verify.invalidLink") : t("auth.resetWithToken.errorGeneric")}
                                         </h1>
                                         <p className="text-red-500 text-[13px] md:text-[14px] xl:text-[15px] font-medium leading-relaxed">
                                             {mensaje}
                                         </p>
                                         {estado === "sin_token" && (
                                             <p className="text-[#2D3748] text-[12px] xl:text-[13px] font-medium leading-relaxed">
-                                                Solicita un nuevo enlace desde la opción de recuperar contraseña.
+                                                {t("auth.resetWithToken.requestNewLink")}
                                             </p>
                                         )}
                                     </div>
@@ -252,14 +254,14 @@ export const RestablecerContrasena = () => {
                                             asChild
                                             className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                         >
-                                            <Link to="/iniciar-sesion">Ir al inicio de sesión</Link>
+                                            <Link to="/iniciar-sesion">{t("auth.goToSignIn")}</Link>
                                         </Button>
                                         {estado === "sin_token" && (
                                             <Button
                                                 asChild
                                                 className="w-full md:w-[220px] h-[38px] bg-white border border-[#34A4B3] text-[#34A4B3] hover:bg-[#F8F7F7] rounded-[10px] text-[12px] font-medium transition-all"
                                             >
-                                                <Link to="/forgot-password">Solicitar nuevo enlace</Link>
+                                                <Link to="/forgot-password">{t("auth.resetWithToken.requestLinkButton")}</Link>
                                             </Button>
                                         )}
                                     </div>

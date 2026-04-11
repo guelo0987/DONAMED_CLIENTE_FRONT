@@ -1,7 +1,10 @@
+import { useI18n } from "../../i18n/language-context";
+
 export const AssistanceSection = () => {
+    const { t } = useI18n();
     return (
-        <section className="w-full py-8 px-4">
-            <div className="max-w-[1327px] mx-auto relative">
+        <section className="w-full py-10 px-4 sm:px-5 md:px-6 lg:px-7">
+            <div className="max-w-[1060px] mx-auto relative">
                 {/* Main Card Container */}
                 <div className="relative bg-white rounded-[12px] shadow-[0px_3.43px_34.5px_rgba(0,0,0,0.33)] overflow-hidden">
                     {/* Background Image */}
@@ -12,33 +15,33 @@ export const AssistanceSection = () => {
                     />
 
                     {/* Content Container */}
-                    <div className="relative z-10 flex flex-col lg:flex-row items-center min-h-[380px]">
+                    <div className="relative z-10 flex flex-col lg:flex-row items-center min-h-[320px]">
                         {/* Left - Doctor Image */}
                         <div className="w-full lg:w-[45%] relative flex items-end justify-center lg:justify-start">
                             <img
                                 src="/banners/chica_asistencia_landing.png"
                                 alt="Doctora"
-                                className="w-auto max-w-[350px] h-auto max-h-[380px] object-contain"
+                                className="w-auto max-w-[300px] h-auto max-h-[330px] object-contain"
                             />
                         </div>
 
                         {/* Right - Content */}
-                        <div className="w-full lg:w-[55%] p-8 lg:p-10 text-center lg:text-left">
+                        <div className="w-full lg:w-[55%] p-6 lg:p-8 text-center lg:text-left">
                             {/* Title */}
-                            <h2 className="text-[28px] lg:text-[44px] font-medium mb-3 [font-family:'Poppins',sans-serif]">
-                                <span className="text-[#404040]">¿Necesitas </span>
-                                <span className="text-[#40C9DB]">Asistencia?</span>
+                            <h2 className="text-[24px] lg:text-[36px] font-medium mb-2.5 [font-family:'Poppins',sans-serif]">
+                                <span className="text-[#404040]">{t("landing.assistance.title1")}</span>
+                                <span className="text-[#40C9DB]">{t("landing.assistance.title2")}</span>
                             </h2>
 
                             {/* Subtitle */}
-                            <p className="text-[#2D3748] text-[15px] lg:text-[18px] font-medium mb-6 [font-family:'Poppins',sans-serif]">
-                                Para hablar con un representante llamar al
+                            <p className="text-[#2D3748] text-[14px] lg:text-[16px] font-medium mb-5 [font-family:'Poppins',sans-serif]">
+                                {t("landing.assistance.subtitle")}
                             </p>
 
                             {/* Phone Button */}
                             <a
-                                
-                                className="inline-block bg-[#34A4B3] text-white px-8 py-3 rounded-[4px] [font-family:'Poppins',sans-serif] font-normal text-[18px] lg:text-[22px] hover:bg-[#2D8A96] transition-colors shadow-[0px_4px_33px_rgba(255,255,255,0.16)]"
+                                href="tel:+18298291829"
+                                className="inline-block bg-[#34A4B3] text-white px-6 lg:px-7 py-2.5 rounded-[4px] [font-family:'Poppins',sans-serif] font-normal text-[16px] lg:text-[19px] hover:bg-[#2D8A96] transition-colors shadow-[0px_4px_33px_rgba(255,255,255,0.16)]"
                             >
                                 +1 829-829-1829
                             </a>

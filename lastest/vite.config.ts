@@ -5,4 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   envDir: '../', // Cargar archivo .env desde la carpeta padre
+  build: {
+    chunkSizeWarningLimit: 900,
+  },
 })

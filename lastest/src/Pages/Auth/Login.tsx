@@ -4,34 +4,52 @@ import { useState } from "react";
 import { Button } from "../../components/ui/buttons";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import { Modal } from "../../components/ui/modal";
 import LandingPage from "../Landing/LandingPage";
+import { ReactivationConfirmModal } from "./ReactivationConfirmModal";
 import { useAuth } from "../../hooks/useAuth";
 import { validarCorreo, validarContrasena } from "../../utils/validators";
+import { useI18n } from "../../i18n/language-context";
 
 export const Login = () => {
+    const { t } = useI18n();
     const navigate = useNavigate();
-    const { login, isLoading, error, setError } = useAuth();
+    const { login, reactivateAccount, isLoading, error, setError } = useAuth();
     const [correo, setCorreo] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [showContrasena, setShowContrasena] = useState(false);
+    const [showReactivationPrompt, setShowReactivationPrompt] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
 
         if (!validarCorreo(correo)) {
-            setError("El formato del correo electrónico no es válido.");
+            setError(t("auth.invalidEmailFormat"));
             return;
         }
 
         if (!validarContrasena(contrasena)) {
-            setError("La contraseña ingresada no es válida.");
+            setError(t("auth.invalidPassword"));
             return;
         }
 
-        const success = await login({ correo, contrasena });
-        if (success) {
+        const result = await login({ correo, contrasena });
+        if (result && !("reactivationRequired" in result)) {
             navigate("/dashboard"); // Ajustar la ruta si es necesario (ej: /, /home o /dashboard)
+            return;
+        }
+
+        if (result && "reactivationRequired" in result) {
+            setShowReactivationPrompt(true);
+        }
+    };
+
+    const handleReactivate = async () => {
+        const success = await reactivateAccount({ correo, contrasena });
+        if (success) {
+            setShowReactivationPrompt(false);
+            navigate("/dashboard");
         }
     };
 
@@ -77,7 +95,7 @@ export const Login = () => {
                         <form onSubmit={handleLogin} className="w-full max-w-[620px] space-y-5 flex flex-col items-center text-center">
                             <div className="space-y-3 w-full">
                                 <h1 className="text-[#404040] text-[20px] md:text-[24px] xl:text-[26px] font-medium leading-[1.2] tracking-normal text-center">
-                                    Iniciar Sesión
+                                    {t("auth.loginTitle")}
                                 </h1>
                                 {error && (
                                     <p className="text-red-500 text-sm mt-2">{error}</p>
@@ -88,7 +106,7 @@ export const Login = () => {
                                 <div className="space-y-1.5">
                                     <div className="flex items-center gap-2">
                                         <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
-                                            Correo Electrónico
+                                            {t("auth.email")}
                                         </Label>
                                         <img
                                             src="/assets/plus_icon.png"
@@ -101,7 +119,7 @@ export const Login = () => {
                                         value={correo}
                                         onChange={(e) => setCorreo(e.target.value)}
                                         required
-                                        placeholder="Dirección de correo electrónico"
+                                        placeholder={t("auth.emailPlaceholder")}
                                         className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3"
                                     />
                                 </div>
@@ -109,7 +127,7 @@ export const Login = () => {
                                 <div className="space-y-1.5">
                                     <div className="flex items-center gap-2">
                                         <Label className="text-[#404040] text-[12px] xl:text-[13px] font-medium">
-                                            Contraseña
+                                            {t("auth.password")}
                                         </Label>
                                         <img
                                             src="/assets/plus_icon.png"
@@ -123,14 +141,14 @@ export const Login = () => {
                                             value={contrasena}
                                             onChange={(e) => setContrasena(e.target.value)}
                                             required
-                                            placeholder="Tu contraseña"
+                                            placeholder={t("auth.passwordPlaceholder")}
                                             className="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium placeholder:text-[#9A9A9A]/80 focus:border-[#40C9DB] transition-all px-3 pr-10"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowContrasena((prev) => !prev)}
                                             className="absolute right-3 top-1/2 -translate-y-1/2 text-[#34A4B3] hover:text-[#2d8f9c] transition-colors"
-                                            aria-label={showContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                            aria-label={showContrasena ? t("auth.hidePassword") : t("auth.showPassword")}
                                         >
                                             {showContrasena ? <EyeOff size={16} /> : <Eye size={16} />}
                                         </button>
@@ -145,27 +163,27 @@ export const Login = () => {
                                         disabled={isLoading}
                                         className="w-full md:w-[220px] h-[38px] bg-[#34A4B3] hover:bg-[#2d8f9c] disabled:opacity-50 rounded-[10px] text-white text-[12px] font-medium shadow-none hover:shadow-lg transition-all"
                                     >
-                                        {isLoading ? "Ingresando..." : "Ingresar"}
+                                        {isLoading ? t("auth.signingIn") : t("auth.signInButton")}
                                     </Button>
                                 </div>
 
                                 <p className="text-center text-[#404040] text-[11px] xl:text-[12px] font-medium">
-                                    ¿Olvidaste tu Contraseña?{" "}
+                                    {t("auth.forgotPasswordQ")}{" "}
                                     <Link
                                         to="/forgot-password"
                                         className="text-[#34A4B3] hover:underline"
                                     >
-                                        Recuperar Contraseña
+                                        {t("auth.recoverPassword")}
                                     </Link>
                                 </p>
 
                                 <p className="text-center text-[#404040] text-[11px] xl:text-[12px] font-medium">
-                                    ¿No tienes una cuenta?{" "}
+                                    {t("auth.noAccountQ")}{" "}
                                     <Link
                                         to="/crear-cuenta"
                                         className="text-[#34A4B3] hover:underline"
                                     >
-                                        Crea una cuenta
+                                        {t("auth.createOne")}
                                     </Link>
                                 </p>
                             </div>
@@ -173,6 +191,26 @@ export const Login = () => {
                     </div>
                 </div>
             </div>
+
+            <Modal
+                isOpen={showReactivationPrompt}
+                onClose={() => setShowReactivationPrompt(false)}
+                title={t("auth.reactivate.title")}
+                hideHeader
+                panelClassName="max-w-[980px] h-[76vh] lg:h-[74vh] rounded-[24px] lg:rounded-[34px] overflow-hidden"
+                bodyClassName="p-0 h-full min-h-0"
+            >
+                <ReactivationConfirmModal
+                    title={t("auth.reactivate.title")}
+                    highlight={t("auth.reactivate.highlight")}
+                    description={t("auth.reactivate.description")}
+                    confirmLabel={t("auth.reactivate.confirm")}
+                    cancelLabel={t("auth.reactivate.cancel")}
+                    isLoading={isLoading}
+                    onConfirm={handleReactivate}
+                    onCancel={() => setShowReactivationPrompt(false)}
+                />
+            </Modal>
         </div>
     );
 };

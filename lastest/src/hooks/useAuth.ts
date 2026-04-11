@@ -7,10 +7,17 @@ import type { UserProfile } from '../types/user';
 export const useAuth = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [needsReactivation, setNeedsReactivation] = useState(false);
+
+    const isDeactivatedAccountMessage = (msg?: string) => {
+        const lower = msg?.toLowerCase() || '';
+        return /desactivad|deactivated|inactiva|inactive|reactivar|reactivate/i.test(lower);
+    };
 
     const login = async (data: LoginData) => {
         setIsLoading(true);
         setError(null);
+        setNeedsReactivation(false);
         try {
             const response = await authService.login(data);
             if (response.success && response.data) {
@@ -20,12 +27,22 @@ export const useAuth = () => {
                 localStorage.setItem('user', JSON.stringify(response.data.usuario));
                 return response.data;
             } else {
-                setError(response.message || 'Error en el inicio de sesión');
+                const msg = response.message || 'Error en el inicio de sesión';
+                setError(msg);
+                if (isDeactivatedAccountMessage(msg)) {
+                    setNeedsReactivation(true);
+                    return { reactivationRequired: true as const };
+                }
             }
         } catch (err: unknown) {
             const axiosError = err as { response?: { data?: { message?: string, error?: { message?: string } } }, message?: string };
             const errorMsg = axiosError.response?.data?.error?.message || axiosError.response?.data?.message;
-            setError(errorMsg || axiosError.message || 'Error de conexión');
+            const msg = errorMsg || axiosError.message || 'Error de conexión';
+            setError(msg);
+            if (isDeactivatedAccountMessage(msg)) {
+                setNeedsReactivation(true);
+                return { reactivationRequired: true as const };
+            }
         } finally {
             setIsLoading(false);
         }
@@ -237,6 +254,29 @@ export const useAuth = () => {
         }
     };
 
+    const reactivateAccount = async (credentials: LoginData) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await userService.reactivateAccount(credentials);
+            if (response.success && response.data) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.usuario));
+                setNeedsReactivation(false);
+                return true;
+            }
+            setError(response.message || 'No se pudo reactivar la cuenta');
+            return false;
+        } catch (err: unknown) {
+            const axiosError = err as { response?: { data?: { message?: string, error?: { message?: string } } }, message?: string };
+            const errorMsg = axiosError.response?.data?.error?.message || axiosError.response?.data?.message;
+            setError(errorMsg || axiosError.message || 'Error al conectar con el servidor');
+            return false;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const deleteAccount = async () => {
         setIsLoading(true);
         setError(null);
@@ -264,11 +304,13 @@ export const useAuth = () => {
         updateProfile,
         changePassword,
         deactivateAccount,
+        reactivateAccount,
         deleteAccount,
         logout,
         getUser,
         isLoading,
         error,
-        setError
+        setError,
+        needsReactivation
     };
 };

@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { useI18n } from "../../i18n/language-context";
 
 interface AssistanceModalProps {
     open: boolean;
@@ -6,6 +7,7 @@ interface AssistanceModalProps {
 }
 
 export const AssistanceModal = ({ open, onClose }: AssistanceModalProps) => {
+    const { t } = useI18n();
     if (!open) return null;
 
     return (
@@ -14,7 +16,7 @@ export const AssistanceModal = ({ open, onClose }: AssistanceModalProps) => {
                 <button
                     onClick={onClose}
                     className="absolute top-5 right-5 z-10 p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    aria-label="Cerrar"
+                    aria-label={t("common.cerrar")}
                 >
                     <X className="w-5 h-5 text-[#5F6368]" />
                 </button>
@@ -22,7 +24,7 @@ export const AssistanceModal = ({ open, onClose }: AssistanceModalProps) => {
                 <div className="w-full md:w-[44%] bg-[#40C9DB] flex items-end justify-center p-0">
                     <img
                         src="/banners/popup-Ayuda.png"
-                        alt="Asistencia"
+                        alt={t("landing.assistance.title2")}
                         className="max-h-[520px] md:max-h-[590px] object-contain self-end"
                     />
                 </div>
@@ -30,12 +32,12 @@ export const AssistanceModal = ({ open, onClose }: AssistanceModalProps) => {
                 <div className="w-full md:w-[56%] px-8 md:px-12 py-10 flex flex-col justify-center">
                     <h2 className="text-[#2D3748] text-[24px] md:text-[30px] font-semibold leading-tight mb-3">
                         <span className="text-[#34A4B3] font-['Merienda']">
-                            ¿Necesitas Ayuda?
+                            {t("help.title.main")}
                         </span>{" "}
-                        Estamos Aquí para Ti
+                        {t("help.modalSuffix", "We're Here for You")}
                     </h2>
                     <p className="text-[#4A5568] text-[14px] md:text-[15px] font-medium [font-family:'Poppins',sans-serif] mb-6 max-w-[360px]">
-                        Para hablar con un representante llamar al
+                        {t("landing.assistance.subtitle")}
                     </p>
                     <a
                         href="tel:+18298291829"

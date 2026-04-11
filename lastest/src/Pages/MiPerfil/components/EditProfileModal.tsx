@@ -6,6 +6,7 @@ import { DropdownSelect } from "../../../components/ui/dropdown-select";
 import { geoService } from "../../../services/geoService";
 import type { Provincia, Ciudad } from "../../../types/geo";
 import { getStoragePublicUrl } from "../../../utils/storageUrl";
+import { useI18n } from "../../../i18n/language-context";
 
 interface EditProfileModalProps {
     profile: UserProfile;
@@ -14,6 +15,7 @@ interface EditProfileModalProps {
 }
 
 export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileModalProps) => {
+    const { t } = useI18n();
     const { updateProfile, error, setError } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -151,7 +153,7 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
                         className="text-sm font-medium text-[#40C9DB] hover:text-[#34A4B3] transition-colors flex items-center gap-2"
                     >
                         <RefreshCw className="w-4 h-4" />
-                        Cambiar foto
+                        {t("profile.edit.changePhoto")}
                     </button>
                     {(previewUrl || getStoragePublicUrl(profile.foto_url)) && !removePhoto && (
                         <button
@@ -160,74 +162,74 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
                             className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors flex items-center gap-2"
                         >
                             <Trash2 className="w-4 h-4" />
-                            Eliminar foto
+                            {t("profile.edit.removePhoto")}
                         </button>
                     )}
                 </div>
                 <p className="text-xs text-gray-500 text-center">
-                    Formatos soportados: JPG, PNG, GIF o WebP. Max 5MB.
+                    {t("profile.edit.supportedFormats")}
                 </p>
             </div>
 
             {/* Information Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-gray-700">Nombre</label>
+                    <label className="text-sm font-medium text-gray-700">{t("profile.edit.firstName")}</label>
                     <input
                         required
                         type="text"
                         value={formData.nombre}
                         onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#40C9DB] focus:ring-1 focus:ring-[#40C9DB] outline-none transition-all placeholder:text-gray-400"
-                        placeholder="Tu nombre"
+                        placeholder={t("profile.edit.namePlaceholder")}
                     />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-gray-700">Apellidos</label>
+                    <label className="text-sm font-medium text-gray-700">{t("profile.edit.lastName")}</label>
                     <input
                         required
                         type="text"
                         value={formData.apellidos}
                         onChange={(e) => setFormData({ ...formData, apellidos: e.target.value })}
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#40C9DB] focus:ring-1 focus:ring-[#40C9DB] outline-none transition-all placeholder:text-gray-400"
-                        placeholder="Tus apellidos"
+                        placeholder={t("profile.edit.lastNamePlaceholder")}
                     />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-gray-700">Número telefónico</label>
+                    <label className="text-sm font-medium text-gray-700">{t("profile.edit.phoneNumber")}</label>
                     <input
                         required
                         type="tel"
                         value={formData.telefono}
                         onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#40C9DB] focus:ring-1 focus:ring-[#40C9DB] outline-none transition-all placeholder:text-gray-400"
-                        placeholder="Ej. 809-555-5555"
+                        placeholder={t("profile.edit.phonePlaceholder")}
                     />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-gray-700">Dirección</label>
+                    <label className="text-sm font-medium text-gray-700">{t("detail.address")}</label>
                     <input
                         required
                         type="text"
                         value={formData.direccion}
                         onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#40C9DB] focus:ring-1 focus:ring-[#40C9DB] outline-none transition-all placeholder:text-gray-400"
-                        placeholder="Tu dirección"
+                        placeholder={t("profile.edit.addressPlaceholder")}
                     />
                 </div>
 
                 <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium text-gray-700 flex justify-between">
-                        Provincia
+                        {t("profile.edit.province")}
                         {isLoadingGeo && <Loader2 className="w-4 h-4 animate-spin text-[#40C9DB]" />}
                     </label>
                     <DropdownSelect
                         value={formData.codigoprovincia}
                         onChange={(value) => setFormData({ ...formData, codigoprovincia: value, codigociudad: "" })}
                         options={provincias.map((prov) => ({ value: prov.codigoprovincia, label: prov.nombre }))}
-                        placeholder="Selecciona una provincia"
+                        placeholder={t("profile.edit.selectProvince")}
                         disabled={isLoadingGeo || provincias.length === 0}
                         buttonClassName="w-full h-[52px] bg-[#F3F4F6] rounded-[10px] px-4 text-[#4A5568] text-sm md:text-base outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
                     />
@@ -235,14 +237,14 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
 
                 <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium text-gray-700 flex justify-between">
-                        Ciudad
+                        {t("profile.edit.city")}
                         {isLoadingGeo && <Loader2 className="w-4 h-4 animate-spin text-[#40C9DB]" />}
                     </label>
                     <DropdownSelect
                         value={formData.codigociudad}
                         onChange={(value) => setFormData({ ...formData, codigociudad: value })}
                         options={ciudadesFiltradas.map((ciudad) => ({ value: ciudad.codigociudad, label: ciudad.nombre }))}
-                        placeholder="Selecciona tu ciudad"
+                        placeholder={t("profile.edit.selectCity")}
                         disabled={isLoadingGeo || ciudades.length === 0 || !formData.codigoprovincia}
                         buttonClassName="w-full h-[52px] bg-[#F3F4F6] rounded-[10px] px-4 text-[#4A5568] text-sm md:text-base outline-none focus:ring-2 focus:ring-[#40C9DB]/30 transition-all"
                     />
@@ -256,14 +258,14 @@ export const EditProfileModal = ({ profile, onClose, onSuccess }: EditProfileMod
                     disabled={isLoading}
                     className="px-6 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
                 >
-                    Cancelar
+                    {t("detail.cancel")}
                 </button>
                 <button
                     type="submit"
                     disabled={isLoading}
                     className="px-6 py-2.5 rounded-lg bg-[#40C9DB] text-white font-medium hover:bg-[#34A4B3] transition-colors flex items-center justify-center min-w-[140px] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Guardar Cambios"}
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : t("profile.edit.saveChanges")}
                 </button>
             </div>
         </form>
