@@ -31,7 +31,7 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, posi
         <div
             className={`
                 bg-white rounded-[13px] shadow-[0px_3.5px_21px_-0.8px_rgba(0,0,0,0.2)]
-                relative flex flex-col items-center pb-8 transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform cursor-pointer
+                relative flex flex-col items-center pb-8 transition-[transform,box-shadow] duration-500 will-change-transform cursor-pointer
                 ${isCenter
                     ? "w-[250px] lg:w-[280px] min-h-[355px] z-20 opacity-100 shadow-[0px_18px_42px_rgba(0,0,0,0.22)]"
                     : "w-[250px] lg:w-[280px] min-h-[355px] z-10 opacity-100 shadow-[0px_8px_20px_rgba(0,0,0,0.12)]"
@@ -41,6 +41,7 @@ export const MedicationCard = ({ name, image, categories, isCenter = false, posi
             style={{
                 transform: cardTransform,
                 transformStyle: "preserve-3d",
+                transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
             }}
         >
             {/* Availability Badge */}
