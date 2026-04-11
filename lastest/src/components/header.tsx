@@ -114,7 +114,7 @@ export const NavigationHeaderSection = () => {
     };
 
     return (
-        <header className="relative w-full bg-transparent py-4 lg:py-8 z-[220]">
+        <header className="relative w-full bg-transparent py-4 lg:py-8 z-30">
             <div className="relative flex items-center justify-between max-w-[1299px] mx-auto px-4">
                 {/* Logo - Clickable to go home */}
                 <Link to="/">
@@ -163,7 +163,7 @@ export const NavigationHeaderSection = () => {
                                     {/* Dropdown Menu */}
                                     {openDropdown === item.id && item.dropdownItems && (
                                         <div
-                                            className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-100 py-2 min-w-[220px] z-50"
+                                            className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-100 py-2 min-w-[220px] z-40"
                                             onMouseEnter={() => handleDropdownOpen(item.id)}
                                             onMouseLeave={handleDropdownClose}
                                         >
@@ -233,7 +233,7 @@ export const NavigationHeaderSection = () => {
                         </button>
 
                         {showLanguageMenu && (
-                            <div className="absolute top-full right-0 mt-2 min-w-[150px] bg-white rounded-lg border border-gray-100 shadow-lg py-1 z-[260]">
+                            <div className="absolute top-full right-0 mt-2 min-w-[150px] bg-white rounded-lg border border-gray-100 shadow-lg py-1 z-50">
                                 {languageOptions.map(([code, label]) => (
                                     <button
                                         key={code}

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "./buttons";
+import { OverlayPortal } from "./overlay-portal";
 
 interface ConfirmationCardProps {
     open?: boolean;
@@ -80,45 +81,47 @@ export const ConfirmationCard = ({
         : null;
 
     return (
-        <div
-            className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 ${overlayClassName}`}
-        >
+        <OverlayPortal>
             <div
-                className={`bg-white rounded-[20px] border border-[#E7E7E7] shadow-lg px-10 py-8 text-center ${className}`}
+                className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 ${overlayClassName}`}
             >
-                {inlineTitle ? (
-                    <p className="text-[#2D3748] text-[16px] xl:text-[18px] font-semibold leading-snug">
-                        {title}{" "}
-                        <span className="text-[#34A4B3] font-['Merienda']">
-                            {highlight}
-                        </span>
-                        {titleSuffix}
-                    </p>
-                ) : (
-                    <>
+                <div
+                    className={`bg-white rounded-[20px] border border-[#E7E7E7] shadow-lg px-10 py-8 text-center ${className}`}
+                >
+                    {inlineTitle ? (
                         <p className="text-[#2D3748] text-[16px] xl:text-[18px] font-semibold leading-snug">
-                            {title}
-                        </p>
-                        <p className="text-[#34A4B3] text-[18px] xl:text-[20px] font-semibold mt-1 font-['Merienda']">
-                            {highlight}
-                        </p>
-                    </>
-                )}
-                {description && (
-                    <p className="text-[#2D3748] text-[12px] xl:text-[13px] font-medium mt-2">
-                        {description}{" "}
-                        {descriptionHighlight && (
-                            <span className="text-[#34A4B3] font-semibold">
-                                {descriptionHighlight}
+                            {title}{" "}
+                            <span className="text-[#34A4B3] font-['Merienda']">
+                                {highlight}
                             </span>
-                        )}
-                    </p>
-                )}
-                <div className={`mt-6 flex justify-center ${hasSecondary ? "gap-6" : ""}`}>
-                    {primaryButton}
-                    {secondaryButton}
+                            {titleSuffix}
+                        </p>
+                    ) : (
+                        <>
+                            <p className="text-[#2D3748] text-[16px] xl:text-[18px] font-semibold leading-snug">
+                                {title}
+                            </p>
+                            <p className="text-[#34A4B3] text-[18px] xl:text-[20px] font-semibold mt-1 font-['Merienda']">
+                                {highlight}
+                            </p>
+                        </>
+                    )}
+                    {description && (
+                        <p className="text-[#2D3748] text-[12px] xl:text-[13px] font-medium mt-2">
+                            {description}{" "}
+                            {descriptionHighlight && (
+                                <span className="text-[#34A4B3] font-semibold">
+                                    {descriptionHighlight}
+                                </span>
+                            )}
+                        </p>
+                    )}
+                    <div className={`mt-6 flex justify-center ${hasSecondary ? "gap-6" : ""}`}>
+                        {primaryButton}
+                        {secondaryButton}
+                    </div>
                 </div>
             </div>
-        </div>
+        </OverlayPortal>
     );
 };
