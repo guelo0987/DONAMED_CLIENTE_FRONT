@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useI18n } from "../../../i18n/language-context";
+import { esContrasenaSegura } from "../../../utils/validators";
 import { Button } from "../../../components/ui/buttons";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
@@ -12,7 +13,7 @@ interface ChangePasswordModalProps {
 }
 
 export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalProps) => {
-    const { t } = useI18n();
+    const { t, language } = useI18n();
     const { changePassword, error, setError } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -27,10 +28,18 @@ export const ChangePasswordModal = ({ onClose, onSuccess }: ChangePasswordModalP
     const [showConfirm, setShowConfirm] = useState(false);
 
     // Validation
-    const isValid = nuevaContrasena.length >= 8 && nuevaContrasena === confirmarContrasena && contrasenaActual.length > 0;
+    const isValid = esContrasenaSegura(nuevaContrasena) && nuevaContrasena === confirmarContrasena && contrasenaActual.length > 0;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!esContrasenaSegura(nuevaContrasena)) {
+             setError(language !== "es" 
+                 ? "Password must be at least 8 chars, contain an uppercase, a lowercase, a number and a special char." 
+                 : "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial."
+             );
+             return;
+        }
 
         if (nuevaContrasena !== confirmarContrasena) {
             setError(t("profile.changePassword.notMatch"));

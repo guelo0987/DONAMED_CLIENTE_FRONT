@@ -6,13 +6,14 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import LandingPage from "../Landing/LandingPage";
 import { authService } from "../../services/authService";
-import { validarContrasena } from "../../utils/validators";
+import { esContrasenaSegura } from "../../utils/validators";
 import { useI18n } from "../../i18n/language-context";
 
 type Estado = "formulario" | "exito" | "error" | "sin_token";
 
 export const RestablecerContrasena = () => {
-    const { t } = useI18n();
+    const { t, language } = useI18n();
+    const isEn = language !== "es";
     const [searchParams] = useSearchParams();
     const token = searchParams.get("token");
 
@@ -41,8 +42,11 @@ export const RestablecerContrasena = () => {
             return;
         }
 
-        if (!validarContrasena(nuevaContrasena)) {
-            setErrorForm(t("auth.resetWithToken.min8"));
+        if (!esContrasenaSegura(nuevaContrasena)) {
+            setErrorForm(isEn 
+                ? "Password must be at least 8 chars, contain an uppercase, a lowercase, a number and a special char." 
+                : "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial."
+            );
             return;
         }
 

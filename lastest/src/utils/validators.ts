@@ -40,8 +40,26 @@ export const validarCorreo = (correo: string): boolean => {
 
 /**
  * Valida contraseña (mínimo 8 caracteres)
- * Puedes agregar más validaciones si es necesario (mayúscula, números, etc.)
+ * Para uso en login donde solo necesitamos asegurar que no está vacía o cumple el mínimo
  */
 export const validarContrasena = (contrasena: string): boolean => {
     return contrasena.length >= 8;
+};
+
+/**
+ * Valida que una contraseña cumpla con estándares de seguridad:
+ * - Mínimo 8 caracteres
+ * - Al menos una letra mayúscula
+ * - Al menos una letra minúscula
+ * - Al menos un número
+ * - Al menos un carácter especial
+ */
+export const esContrasenaSegura = (contrasena: string): boolean => {
+    const minLength = contrasena.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(contrasena);
+    const hasLowerCase = /[a-z]/.test(contrasena);
+    const hasNumbers = /\d/.test(contrasena);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(contrasena);
+    
+    return minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar;
 };

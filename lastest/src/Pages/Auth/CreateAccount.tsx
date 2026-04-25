@@ -11,7 +11,7 @@ import { useAuth } from "../../hooks/useAuth";
 import type { RegisterData } from "../../types/auth";
 import type { Provincia, Ciudad } from "../../types/geo";
 import { geoService } from "../../services/geoService";
-import { validarCedulaDominicana, validarContrasena, validarCorreo } from "../../utils/validators";
+import { validarCedulaDominicana, esContrasenaSegura, validarCorreo } from "../../utils/validators";
 import { useI18n } from "../../i18n/language-context";
 
 export const CreateAccount = () => {
@@ -92,8 +92,10 @@ export const CreateAccount = () => {
             return;
         }
 
-        if (!validarContrasena(formData.contrasena)) {
-            setError(isEn ? "Password must be at least 8 characters." : "La contraseña debe tener al menos 8 caracteres.");
+        if (!esContrasenaSegura(formData.contrasena)) {
+            setError(isEn 
+                ? "Password must be at least 8 chars, contain an uppercase, a lowercase, a number and a special char." 
+                : "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.");
             return;
         }
 
@@ -237,7 +239,6 @@ export const CreateAccount = () => {
                                             options={[
                                                 { value: "F", label: isEn ? "Female" : "Femenino" },
                                                 { value: "M", label: isEn ? "Male" : "Masculino" },
-                                                { value: "O", label: isEn ? "Other" : "Otro" },
                                             ]}
                                             buttonClassName="h-[36px] xl:h-[40px] w-full bg-[#F8F7F7] border border-[#DCD7D7] rounded-[10px] text-left text-[#9A9A9A] text-[12px] xl:text-[13px] font-medium focus:border-[#40C9DB] focus:ring-2 focus:ring-[#40C9DB]/20 transition-all px-3"
                                         />
